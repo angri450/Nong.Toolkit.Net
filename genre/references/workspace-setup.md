@@ -4,7 +4,7 @@ Required before first use of Paper Analysis or Write Paper. Subsequent sessions 
 
 ## 0. Check Existing Project
 
-If `~/Documents/GroundPA Toolkit Workplace/genre/GenreWriter/` already exists, open `GenreWriter.csproj`:
+If `<workplace>/genre/GenreWriter/` already exists, open `GenreWriter.csproj`:
 
 - Search for `Angri450.Nong.Genre`
 - If `<Reference Include="...">` or `<HintPath>` — local DLL reference, delete the entire `<Reference>` block, replace with:
@@ -37,7 +37,7 @@ dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org
 
 ## 3. Create Project
 
-Ask user for working directory, suggest `~/Documents/GroundPA Toolkit Workplace/genre/GenreWriter/`. On confirmation:
+Ask user for working directory, suggest `<workplace>/genre/GenreWriter/`. On confirmation:
 
 ```powershell
 dotnet new console -n GenreWriter -o <target-dir> --force
@@ -141,7 +141,7 @@ if (args.Length > 0 && args[0] == "variable-plan")
 
 string outDir = Path.Combine(
     Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-    "GroundPA Toolkit Workplace", "output",
+    "Nong Toolkit Workspace", "output",
     $"genre-{DateTime.Now:yyyyMMdd-HHmmss}");
 Directory.CreateDirectory(outDir);
 string outPath = Path.Combine(outDir, "paper.docx");
@@ -192,4 +192,4 @@ Each session:
 1. Write new `Program.cs` via Write tool
 2. `dotnet run --project <project-path> -- <subcommand> <args>` for analysis
 3. `dotnet run --project <project-path>` (no subcommand) for paper generation
-4. Output always at `~/Documents/GroundPA Toolkit Workplace/output/<timestamp>/paper.docx`
+4. Output always at `<workplace>/output/<timestamp>/paper.docx`

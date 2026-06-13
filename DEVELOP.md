@@ -4,17 +4,17 @@
 
 - 仓库：`https://github.com/angri450/GroundPA-Toolkit`
 - 本地：`<repo-root>`
-- 版本：v2.1.0
+- 版本：v2.2.1
 - 架构：Nong CLI-first skill layer
 
-## 2.1.0 边界
+## 2.2.1 边界
 
 只把当前 `nong commands --json` 中标记为 `implemented` 的能力做成 skill。
 
 已暴露：
 
 ```text
-word, inspect, excel, chart, diagram, genre, icons
+word, pdf, inspect, excel, chart, diagram, genre, icons
 pptx, multimodal
 bash, powershell, dotnet, github, gitee, ghproxy, nuget, ilspycmd, email, skill-manager
 ```
@@ -22,8 +22,10 @@ bash, powershell, dotnet, github, gitee, ghproxy, nuget, ilspycmd, email, skill-
 门控暴露：
 
 ```text
-ocr local: 入口存在，但可能返回 E005/E009；只有本地模型和推理路径实测 EXIT:0 后才能作为稳定 OCR 路径推荐。
-ocr cloud / ocr to-word: 需要 PADDLEOCR_ACCESS_TOKEN。
+pdf: 暴露 check/dissect/render/images；主输出是 `content.nongmark`，plain Markdown 只当预览；本地 OCR 模式只做文字识别，不承诺云端级版面、表格或跨页重建。
+ocr local: 入口存在，经 Nong 的纯 .NET PP-OCRv5 runtime 执行；只有 `check-env` 报 localDotNetPpOcrV5.status=ok 且真实图片 smoke test EXIT:0 后才能作为稳定 OCR 路径推荐。
+ocr install-model: 安装/检查当前平台第一方 `Angri450.Nong.OcrRuntime.*` PP-OCRv5 native runtime 缓存；默认走华为 NuGet v3；`--dry-run` 给部署计划，不安装 Python；上游 fallback 必须显式 `--allow-upstream-fallback`。
+ocr cloud / ocr to-word: 需要来自 https://aistudio.baidu.com/account/accessToken 的 PADDLEOCR_ACCESS_TOKEN。
 pptx: 只暴露 read/slides，不承诺生成或编辑。
 ```
 
@@ -63,13 +65,13 @@ git push origin vX.Y.Z
 
 ## 注意事项
 
-1. 不要把未实现或 E005/E009 门控能力写成稳定可用。
+1. 不要把未实现、未安装、或未通过环境预检的能力写成稳定可用。
 2. 不要让 skill 默认生成临时 .NET 项目调用旧 NuGet 包。
 3. Nong-facing skill 优先使用 `--json`。
 4. 生成物路径以 JSON 的 `artifacts` 字段为准。
 5. 不要提交 `bin/`、`obj/`、`.zip`、`.nupkg`。
 6. `word add paragraph/table/...` 是 canonical；`word add-*` 只能作为兼容 alias 提及。
-7. OCR token 只写 `PADDLEOCR_ACCESS_TOKEN`，不要写命令行 token 选项或旧 token 示例。
+7. OCR token 只写 `PADDLEOCR_ACCESS_TOKEN`，可给出 AI Studio AccessToken 页面，不要写命令行 token 选项或旧 token 示例。
 
 ## 本地验收
 

@@ -5,22 +5,11 @@ description: Scientific diagram CLI via nong. Trigger on flowchart, workflow dia
 
 # Diagram
 
-Use `nong` for implemented scientific diagram rendering. GroundPA routes to the CLI; do not recreate diagram rendering logic in scripts or temporary projects.
+Use `nong` for implemented scientific diagram rendering. Nong.Toolkit.Net routes to the CLI; do not recreate diagram rendering logic in scripts or temporary projects.
 
-## Prerequisites
+## Nong CLI Preflight
 
-Run once before work:
-
-```powershell
-nong commands --json
-```
-
-If `nong` is missing, tell the user to install:
-
-```powershell
-dotnet tool install --global Angri450.Nong.Cli
-```
-
+Read [../references/shared/nong-cli-preflight.md](../references/shared/nong-cli-preflight.md) before the first Nong command in a session. Confirm Nong.Cli.Net `4.0.0+` and the needed command group.
 ## Implemented Commands
 
 ```powershell

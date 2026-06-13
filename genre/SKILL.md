@@ -7,20 +7,9 @@ description: Template discovery via nong. Trigger on available writing templates
 
 Use `nong genre` only for template discovery. Paper diagnosis and paper generation live in the `inspect` skill.
 
-## Prerequisites
+## Nong CLI Preflight
 
-Run once before work:
-
-```powershell
-nong commands --json
-```
-
-If `nong` is missing, tell the user to install:
-
-```powershell
-dotnet tool install --global Angri450.Nong.Cli
-```
-
+Read [../references/shared/nong-cli-preflight.md](../references/shared/nong-cli-preflight.md) before the first Nong command in a session. Confirm Nong.Cli.Net `4.0.0+` and the needed command group.
 ## Implemented Commands
 
 ```powershell
@@ -34,3 +23,4 @@ nong genre show <name> [--json]
 2. To inspect one template, run `nong genre show <name> --json`.
 3. Do not claim official document writing, letter writing, or full paper writing from this skill.
 4. For writing a paper from a JSON spec, use `nong inspect write-paper`.
+5. For writing an official-document draft from a JSON spec, use `nong inspect write-official`.

@@ -1,13 +1,13 @@
 # Excel Workspace Setup
 
-Excel workflows in GroundPA are CLI-first. A separate Excel writer project is not required for the supported command surface.
+Excel workflows in Nong.Toolkit.Net are CLI-first. A separate Excel writer project is not required for the supported command surface.
 
 ## Recommended Workspace
 
 Keep inputs and outputs in a task-local directory, for example:
 
 ```text
-GroundPA Toolkit Workplace/
+Nong Toolkit Workspace/
   excel/
     specs/
     input/
@@ -43,4 +43,4 @@ Use `--json` for agent-facing commands and treat `status: "error"` as failure. C
 
 ## Boundary
 
-Do not install Excel libraries or build custom .NET writer projects for GroundPA routing. If the user needs unsupported Excel authoring features, state that the current `nong excel` CLI only exposes `sheets`, `read`, `to-groups`, and `create`.
+Do not install Excel libraries or build custom .NET writer projects for Nong.Toolkit.Net routing. If the user needs unsupported Excel authoring features, state that the current `nong excel` CLI only exposes `sheets`, `read`, `to-groups`, and `create`.

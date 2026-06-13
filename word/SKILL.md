@@ -1,120 +1,209 @@
 ---
 name: word
-description: Word document CLI operations via nong. Trigger on .docx, Word text extraction, NongMark slicing, structure/format inspection, validation, merge, template fill, or Word edits.
+description: Word document workflows through nong. Trigger on .doc/.docx conversion handoff, DOCX reading, formatting/layout inspection, NongMark slicing, existing-document repair, template fill, document edits, validation, merge, protection, comments, images, fonts, or Word-to-paper/official-document preparation.
 ---
 
 # Word
 
-Use `nong` as the only deterministic Word entrypoint. GroundPA routes Word work to the CLI and does not reimplement DOCX parsing or generation logic.
+Use `nong` as the deterministic Word entrypoint. Nong.Toolkit.Net decides the workflow, prepares NongMark or small specs, reads JSON/slice outputs, and reports evidence; it does not recreate DOCX parsing or generation logic in ad hoc scripts.
 
-## Prerequisites
+Do not answer layout or formatting questions from plain text alone. Do not use desktop Word COM automation as the normal editing path.
 
-Verify the installed command surface before work:
+NongMark is the primary Word authoring language. Do not use Markdown-to-DOCX, `python-docx`, or ad hoc PowerShell/COM scripts for normal Word generation or formatting. If a user asks for a new DOCX, write `document.nongmark` by default and run `nong word create`.
+
+Schema-valid is not visual-quality complete. For formatted deliverables, verify fonts, line spacing, paragraph layout, table borders, and visible content through `dissect`, `format.json`, `content.jsonl`, `fonts`, `styles`, or direct OOXML checks when the slice contract has a gap.
+
+## Nong CLI Preflight
+
+Read [../references/shared/nong-cli-preflight.md](../references/shared/nong-cli-preflight.md) before the first Nong command in a session. Confirm Nong.Cli.Net `4.0.0+` and the needed command group.
+## Three-Layer Workflow
+
+### Layer 1: NongMark -> DOCX
+
+Use this for new documents, papers, proposals, reports, and generated Word deliverables:
 
 ```powershell
-nong commands --json
+nong word create document.nongmark -o document.docx --json
+nong word validate document.docx --json
+nong word dissect document.docx --output document.slice --json
 ```
 
-If `nong` is missing, install the CLI:
+Do not create `.md` as the Word source. Do not route Markdown through Pandoc, Word COM, or `python-docx`.
+
+### Layer 2: DOCX -> NongMark + Preview
+
+Use this for reading, slicing, analysis, and evidence gathering:
+
+1. For any user-supplied `.doc` or `.docx`, preflight first:
 
 ```powershell
-dotnet tool install --global Angri450.Nong.Cli
+nong word check <file.docx|file.doc> --json
 ```
 
-## Implemented Commands
-
-Current `nong commands --json` exposes these 30 implemented Word leaf commands.
-
-Read and inspect:
+If `word check` reports legacy `.doc`, convert to explicit `.docx`:
 
 ```powershell
-nong word read <file.docx> --json
-nong word preview <file.docx> --json
+nong word convert <file.doc> -o <file.docx> --json
+```
+
+2. For complex existing `.docx`, layout questions, table-heavy contracts, or "does this look right" requests, slice after preflight:
+
+```powershell
 nong word dissect <file.docx> --output <slice-dir> --json
-nong word stats <file.docx> --json
+```
+
+Inspect at least:
+
+- `<slice-dir>/content.nongmark`
+- `<slice-dir>/format.json`
+- `<slice-dir>/content.jsonl`
+- `<slice-dir>/structure.json`
+- `<slice-dir>/preview/content.txt`
+
+3. Add targeted inventory/diagnostic commands as needed:
+
+```powershell
 nong word fonts <file.docx> --json
 nong word styles <file.docx> --json
-nong word outline <file.docx> --json
-nong word images <file.docx> --json
-nong word comments <file.docx> --json
-nong word revisions <file.docx> --json
-```
-
-Validate, repair, and infer:
-
-```powershell
+nong word preview <file.docx> --json
 nong word validate <file.docx> --json
-nong word infer-format "黑体 四号 居中" --json
-nong word fix-order <file.docx> -o <out.docx> --json
-nong word rebuild <file.docx> -o <out.docx> --json
 ```
 
-Generate, combine, and protect:
+### Layer 3: DOCX Repair/Format
+
+Use this for existing documents, especially dirty OOXML, WPS/COM/python-docx output, table-heavy files, or academic formatting:
 
 ```powershell
-nong word fill <template.docx> <data.json> -o <out.docx> --json
-nong word merge <file1.docx> <file2.docx> -o <out.docx> --json
-nong word extract <file.docx> -o <images-dir> --json
-nong word protect <file.docx> -o <out.docx> --mode readonly --json
-nong word embed-font <file.docx> <font-file> -o <out.docx> --json
+nong word fix-order <file.docx> -o <fixed.docx> --json
+nong word validate <fixed.docx> --json
 ```
 
-Append content. Use this nested `word add ...` form in examples, scripts, and automation:
+For existing DOCX academic/paper formatting, do not switch to Word COM. Apply the deterministic formatter first:
+
+```powershell
+nong word repair-plan --json
+nong word academic-format <input.docx> -o <academic.docx> --json
+nong word validate <academic.docx> --json
+nong word format-audit <academic.docx> --profile academic --min-score 80 --json
+nong word dissect <academic.docx> --output <academic.slice> --json
+```
+
+Use `word repair-plan` when the user's request mixes OOXML repair, visible formatting, and table layout. Use `word format-audit` as the read-only visual-format evidence gate for academic deliverables. Use `word table-reflow` when long or wide tables still need explicit continuation tables after formatting:
+
+```powershell
+nong word table-reflow <academic.docx> -o <tables.docx> --max-rows 20 --max-cols 6 --repeat-left-cols 1 --json
+nong word validate <tables.docx> --json
+nong word format-audit <tables.docx> --profile academic --min-score 80 --json
+```
+
+For existing DOCX official-document/gongwen formatting, use the public CLI command instead of library calls or COM:
+
+```powershell
+nong word format-gongwen <input.docx> -o <gongwen.docx> --json
+nong word validate <gongwen.docx> --json
+nong word dissect <gongwen.docx> --output <gongwen.slice> --json
+```
+
+Write to explicit output paths with `-o`. Never overwrite the user's source unless they explicitly request that.
+
+## Evidence Rules
+
+- `word read` is text-only evidence. It cannot prove fonts, font size, line spacing, indentation, alignment, table borders, margins, captions, or visual layout.
+- For formatting/layout claims, cite facts from `format.json`, `content.jsonl`, `structure.json`, `fonts`, `styles`, `preview`, or `validate`.
+- For final academic-format claims, prefer `word format-audit` plus slice evidence. `validate`, `preview`, `outline`, `dissect`, and `fix-order` alone do not prove visible formatting quality.
+- VML formula/picture content appears as image blocks/assets, not editable text. Do not treat blank plain-text lines as proof that source content was empty.
+- If the first extraction was plain text, say so and run the format-oriented path before judging.
+- Schema-valid does not mean visually ideal. A formatted DOCX can only be called done after format evidence is reviewed.
+- Do not treat `content.md` as a slice artifact. Current slices use `content.nongmark` as the readable semantic stream and `preview/content.txt` as the lossy plain-text preview.
+
+Minimum quality gates for existing-document formatting:
+
+- Fonts: Chinese body/heading and Latin runs are intentional, not default Calibri pollution.
+- Paragraphs: title/heading/body spacing, indentation, and alignment match the requested style.
+- Line spacing: no unwanted exact/fixed compression unless explicitly requested.
+- Tables: three-line/header/body borders, width, merged cells, and readable cell spacing are inspected.
+- Content: `preview/content.txt` and `content.jsonl` show no missing sections, tables, formulas, or images.
+
+## Existing Documents
+
+For user-supplied contracts, old Word files, table-heavy forms, or "modify this document's formatting", read [references/existing-document-editing.md](references/existing-document-editing.md).
+
+Core stance:
+
+- `.doc` requires a conversion handoff before OpenXML work. Use Word/LibreOffice conversion only as a boundary step, then return to `nong word`.
+- Existing `.docx` should be inspected, repaired, edited through CLI/library-backed operations, and validated.
+- Use `word repair-plan` to choose between `academic-format`, `format-audit`, `fix-order`, and `table-reflow` when the request is ambiguous.
+- COM is an escape hatch, not the main implementation.
+
+## Reference Routing
+
+Load only the reference needed for the task:
+
+- [references/read-word.md](references/read-word.md): reading, slicing, formatting evidence, assets, comments, revisions.
+- [references/write-word.md](references/write-word.md): template fill, add operations, merge, protect, embed fonts, repair, validation after writes.
+- [references/api-reference.md](references/api-reference.md): exact command syntax and JSON spec shapes.
+- [references/existing-document-editing.md](references/existing-document-editing.md): `.doc` handoff, legacy DOCX repair, real-case contract workflow, official-document transformation.
+- [references/com-automation.md](references/com-automation.md): only when installed Microsoft Word must be driven.
+- [references/workspace-setup.md](references/workspace-setup.md): case workspace layout and artifact organization.
+- [references/paper-analysis.md](references/paper-analysis.md): when Word output feeds inspect/paper workflows.
+
+## Writing And Editing
+
+For long DOCX generation, author NongMark first and let Nong create the document:
+
+```powershell
+nong word create document.nongmark -o document.docx --json
+nong word validate document.docx --json
+nong word dissect document.docx --output document.slice --json
+```
+
+Use `.nongmark` or `.nmk`, not `.md`, as the source file. `content.nongmark` is the source-like semantic stream; `preview/content.txt` is only a plain preview.
+
+Use canonical nested add commands:
 
 ```powershell
 nong word add paragraph <file.docx> --spec paragraph.json -o <out.docx> --json
 nong word add table <file.docx> --spec table.json -o <out.docx> --json
-nong word add footnote <file.docx> --text "Footnote text" -o <out.docx> --json
-nong word add endnote <file.docx> --text "Endnote text" -o <out.docx> --json
 nong word add image <file.docx> --src fig.png --caption "Figure 1" -o <out.docx> --json
-nong word add toc <file.docx> --title "Contents" -o <out.docx> --json
-nong word add xref <file.docx> --to "_Toc001" --text "see Table 1" -o <out.docx> --json
-nong word add link <file.docx> --url "https://example.com" --text "Example" -o <out.docx> --json
-nong word add bookmark <file.docx> --name "_Toc001" -o <out.docx> --json
 nong word add comment <file.docx> --text "Review note" -o <out.docx> --json
 nong word add math <file.docx> --latex "E=mc^2" --display -o <out.docx> --json
 ```
 
-`word add-*` remains a compatibility alias pattern only. Do not use flattened add aliases as canonical examples.
-
-## Primary DOCX Slice Path
-
-For complex `.docx` files, use NongMark one-cut three-stream slicing before making model decisions:
+### Document Comparison
 
 ```powershell
-nong word dissect paper.docx --output paper.slice --json
+nong word compare <original.docx> <revised.docx> --json
 ```
 
-The slice directory separates content, structure, formatting, and assets:
+Reports paragraph-level differences: added, removed, and modified paragraphs with their text and style IDs.
+```
 
-- `document.json`: document identity, package-level metadata, relationships, and top-level counts.
-- `content.jsonl`: ordered block stream with stable block IDs for paragraphs, tables, images, comments, and other content units.
-- `structure.json`: heading tree, section hierarchy, outline order, and block-to-section mapping.
-- `format.json`: styles, fonts, paragraph/run formatting, page setup, and detected format features.
-- Media manifest JSON in the slice output: extracted or referenced media assets, relationship IDs, source paths, captions, and content links.
-- `content.md`: readable Markdown projection for paper-level analysis, review, and summarization.
-- `summary.json`: compact counts, warnings, errors, artifact paths, and recommended next commands.
+Use `--after <blockId>` only after `word dissect --output` has identified the insertion point.
 
-Use block IDs from the slice with `--after <blockId>` when inserting paragraphs, tables, images, notes, links, bookmarks, comments, or math.
+Use `word add-*` flattened aliases only for compatibility with older scripts; do not teach them as the canonical form.
 
-## Dispatch
+## COM Escape Hatch
 
-1. For a complex source document, run `nong word dissect <file> --output <slice-dir> --json` first, then inspect the slice files.
-2. For quick plain text only, run `nong word read <file> --json`.
-3. For structural warnings and OOXML diagnostics, run `nong word preview <file> --json`, `nong word validate <file> --json`, or `nong word outline <file> --json`.
-4. For format inventory, run `nong word fonts`, `nong word styles`, `nong word stats`, and `nong word infer-format`.
-5. For embedded media, run `nong word images <file> --json`; only extract files with `nong word extract <file> -o <dir> --json` when the user asks for assets or the workflow needs them.
-6. For document edits, use `nong word add ...`, `fill`, `merge`, `protect`, `embed-font`, `fix-order`, or `rebuild`; do not edit OOXML directly.
-7. For paper diagnosis, reference checks, or semantic analysis, create text or a NongMark slice first, then use the `inspect` skill.
+Use desktop Word COM only when all are true:
 
-## Contract
+1. The user explicitly asks to drive installed Word, or the task requires Word's visual/layout engine.
+2. `nong` cannot provide the needed fact or transformation.
+3. The environment is Windows with Word installed.
+4. You can isolate outputs and clean COM objects safely.
 
-Always pass `--json` when output will feed another tool or model decision. Treat `status: "error"` as failed even if stdout contains useful text.
+Before writing any COM script, read [references/com-automation.md](references/com-automation.md). Do not blanket-kill `WINWORD` without explicit user approval.
 
-Handle common error codes explicitly:
+## Error Contract
 
-- `E001 file_not_found`: verify the input path and do not continue with stale output.
-- `E003 missing_argument`: add the required option or argument, such as `--spec`, `--text`, `--latex`, `--src`, or `-o`.
-- `E006 validation_failed`: fix the JSON spec, format description, or document validation issue before retrying.
+Always pass `--json` when output feeds another tool or model decision. Treat `status: "error"` as failed.
+
+Common codes:
+
+- `E001 file_not_found`: fix input path; do not continue from stale output.
+- `E002 unsupported_format`: run `word check`; for `.doc`, run `word convert` first.
+- `E003 missing_argument`: supply required `--spec`, `--text`, `--latex`, `--src`, or `-o`.
+- `E005 dependency_missing`: install/update `Angri450.Nong.Cli`, or install a boundary converter such as LibreOffice/Word when `word convert` needs it.
+- `E006 validation_failed`: repair the spec, format description, or document validation issue before retrying.
+- `E009 not_implemented`: do not continue as success; report the limitation and use an implemented Nong command path.
 
 Generated DOCX paths should be explicit with `-o`; use `artifacts.docx` only when no better user-facing path is available.

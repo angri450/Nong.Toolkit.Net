@@ -1,14 +1,14 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "angri450",
-  "description": "GroundPA Toolkit — Nong CLI-first skills for agricultural paper and document workflows",
+  "description": "Nong.Toolkit.Net - Claude Code multi-skill plugin for pure .NET Nong CLI document, literature, and agricultural paper workflows",
   "owner": {
     "name": "angri450"
   },
   "plugins": [
     {
-      "name": "groundpa-toolkit",
-      "description": "GroundPA Toolkit 2.1.0: implemented nong CLI workflows for Word, paper inspection, Excel, statistics, diagrams, PPTX reads, OCR/image QA, templates, Bioicons, plus shell, .NET, GitHub/Gitee, NuGet, ILSpy, email, and skill-manager",
+      "name": "nong-toolkit",
+      "description": "Nong.Toolkit.Net 2.4.0: Claude Code multi-skill plugin for Nong 4.0.0+ pure .NET document work, literature retrieval, agricultural paper inspection, Office formats, OCR/image QA, slices, skill lifecycle, progress reports, and Bioicons",
       "author": {
         "name": "angri450"
       },

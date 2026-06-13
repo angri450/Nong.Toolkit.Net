@@ -1,26 +1,15 @@
 ---
 name: chart
-description: Agricultural statistics and chart CLI via nong. Trigger on ANOVA, Duncan MRT, 方差分析, 显著性, treatment groups, error bars, bar charts, line charts, scatter plots, or pie charts.
+description: Agricultural statistics and chart CLI via nong. Trigger on ANOVA, Duncan MRT, 方差分析, 显著性, treatment groups, error bars, bar charts, line charts, scatter plots, pie charts, box plots, histograms, heatmaps, or radar charts.
 ---
 
 # Chart
 
-Use `nong` for statistical analysis and implemented figure generation. GroundPA routes to the CLI; do not recreate chart rendering logic in scripts or temporary projects.
+Use `nong` for statistical analysis and implemented figure generation. Nong.Toolkit.Net routes to the CLI; do not recreate chart rendering logic in scripts or temporary projects.
 
-## Prerequisites
+## Nong CLI Preflight
 
-Run once before work:
-
-```powershell
-nong commands --json
-```
-
-If `nong` is missing, tell the user to install:
-
-```powershell
-dotnet tool install --global Angri450.Nong.Cli
-```
-
+Read [../references/shared/nong-cli-preflight.md](../references/shared/nong-cli-preflight.md) before the first Nong command in a session. Confirm Nong.Cli.Net `4.0.0+` and the needed command group.
 ## Implemented Commands
 
 ```powershell
@@ -31,6 +20,10 @@ nong chart bar <groups.json> -o <out.png> [--title <text>] [--ylabel <text>] [--
 nong chart line <spec.json> -o <out.png> [--json]
 nong chart scatter <spec.json> -o <out.png> [--json]
 nong chart pie <spec.json> -o <out.png> [--json]
+nong chart boxplot <groups.json> -o <out.png> [--title <text>] [--ylabel <text>] [--json]
+nong chart histogram <values.json> -o <out.png> [--title <text>] [--xlabel <text>] [--ylabel <text>] [--bin-count 20] [--json]
+nong chart heatmap <spec.json> -o <out.png> [--title <text>] [--colormap <name>] [--json]
+nong chart radar <spec.json> -o <out.png> [--title <text>] [--json]
 ```
 
 ## Dispatch
@@ -42,8 +35,12 @@ nong chart pie <spec.json> -o <out.png> [--json]
 5. For trends, use `nong chart line <spec.json> -o <out.png> --json`.
 6. For x/y relationships, use `nong chart scatter <spec.json> -o <out.png> --json`.
 7. For composition shares, use `nong chart pie <spec.json> -o <out.png> --json`.
-8. If data starts in Excel, use `excel to-groups --raw` first for analysis/bar charts.
-9. Do not promise box plots, histograms, heatmaps, radar charts, combined panels, or figure editing unless a future `nong commands --json` exposes those as implemented CLI commands.
+8. For treatment group distribution comparison, use `nong chart boxplot <groups.json> -o <out.png> --json`.
+9. For data distribution visualization, use `nong chart histogram <values.json> -o <out.png> --json`.
+10. If data starts in Excel, use `excel to-groups --raw` first for analysis/bar charts.
+11. For treatment group distribution, use `nong chart heatmap <spec.json> -o <out.png> --json` (heatmap input: `{"data":[[...]],"rows":N,"cols":M}`).
+12. For multi-index comparison, use `nong chart radar <spec.json> -o <out.png> --json` (radar input: `{"categories":["A","B"],"series":[{"name":"X","values":[1,2]}]}`).
+13. Do not promise combined panels or figure editing unless a future `nong commands --json` exposes those as implemented CLI commands.
 
 ## Input Contracts
 

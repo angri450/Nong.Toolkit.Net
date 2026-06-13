@@ -35,7 +35,7 @@ if (-not $hasSubcommandRoute) {
 
 $docxName = [System.IO.Path]::GetFileNameWithoutExtension($DocxPath)
 if (-not $OutDir) {
-    $docsRoot = Join-Path $env:USERPROFILE "Documents\GroundPA Toolkit Workplace\word"
+    $docsRoot = Join-Path $env:USERPROFILE "Documents\Nong Toolkit Workspace\word"
     New-Item -ItemType Directory -Force $docsRoot | Out-Null
     $OutDir = Join-Path $docsRoot $docxName
 }

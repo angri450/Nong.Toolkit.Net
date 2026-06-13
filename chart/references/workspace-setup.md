@@ -1,13 +1,13 @@
 # Chart Workspace Setup
 
-Chart workflows in GroundPA are CLI-first. A separate ChartCore project is not required for the supported command surface.
+Chart workflows in Nong.Toolkit.Net are CLI-first. A separate ChartCore project is not required for the supported command surface.
 
 ## Recommended Workspace
 
 Keep specs, grouped data, figures, and optional QA output in a task-local directory:
 
 ```text
-GroundPA Toolkit Workplace/
+Nong Toolkit Workspace/
   chart/
     specs/
     data/
@@ -56,4 +56,4 @@ Use `--json` and treat `status: "error"` as failure. For validation errors, fix 
 
 ## Boundary
 
-Do not install chart libraries or build custom rendering projects for GroundPA routing. The current implemented chart surface is `analyze`, `bar`, `anova`, `duncan`, `line`, `scatter`, and `pie`.
+Do not install chart libraries or build custom rendering projects for Nong.Toolkit.Net routing. The current implemented chart surface is `analyze`, `bar`, `anova`, `duncan`, `line`, `scatter`, and `pie`.

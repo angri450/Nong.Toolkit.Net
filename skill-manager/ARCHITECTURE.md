@@ -9,7 +9,7 @@ Target: `net8.0`. Execution: `dotnet run --project tools/SkillManager.Cli`.
 ```
 skill-manager/
 ├── SKILL.md                          # kernel/router
-├── Directory.Build.props              # build output -> ~/Documents/GroundPA Toolkit Workplace/skill-manager
+├── Directory.Build.props              # build output -> <workplace>/skill-manager
 ├── LICENSE.txt                        # Apache 2.0
 ├── .scan-allowlist.json               # scan allowlist
 

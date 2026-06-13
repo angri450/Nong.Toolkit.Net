@@ -8,7 +8,7 @@ For a complex paper document:
 
 ```powershell
 nong word dissect paper.docx --output paper.slice --json
-nong inspect diagnose paper.slice/content.md --json
+nong inspect diagnose paper.slice/preview/content.txt --json
 ```
 
 For quick text-only analysis:
@@ -17,7 +17,7 @@ For quick text-only analysis:
 nong word read paper.docx --json
 ```
 
-Save the extracted text to a `.txt` or use `paper.slice/content.md`, then run inspect commands.
+Save the extracted text to a `.txt` or use `paper.slice/preview/content.txt`, then run inspect commands. Keep `paper.slice/content.nongmark` as the structured NongMark evidence stream when sectioning, tables, references, or figure placeholders matter.
 
 ## Inspect Commands
 

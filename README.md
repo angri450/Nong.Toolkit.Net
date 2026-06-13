@@ -1,209 +1,158 @@
-# GroundPA Toolkit
+# Nong.Toolkit.Net
 
-GroundPA Toolkit 2.1.0 is a Nong CLI-first Claude Code skill set for agricultural paper and document workflows.
+Nong.Toolkit.Net is a Claude Code multi-skill plugin for agricultural paper and document workflows.
 
-The skill layer no longer asks the model to scaffold temporary .NET projects for normal Office work. It routes requests to the deterministic `nong` CLI, then lets the model read JSON output, fix inputs, and compose the next step.
+The plugin gives Claude Code a focused set of skills for Word, PDF, literature retrieval, Excel, statistics charts, diagrams, PPTX reads, OCR/image QA, format templates, Bioicons, and paper inspection. Deterministic document and literature work is routed through the pure .NET `nong` CLI from [Nong.Cli.Net](https://github.com/angri450/Nong.Cli.Net); the model handles planning, interpretation, and writing.
 
-## Design
+## Install
 
-Model capacity is for semantic work: choosing workflows, drafting specs, interpreting diagnostics, and writing. Deterministic work runs through .NET tools:
+Install the Claude Code plugin from a marketplace source:
+
+```bash
+claude plugin marketplace add https://gitcode.com/angri450/Nong.Toolkit.Net.git
+claude plugin install nong-toolkit@angri450
+```
+
+GitHub source:
+
+```bash
+claude plugin marketplace add angri450/Nong.Toolkit.Net
+claude plugin install nong-toolkit@angri450
+```
+
+After installation, restart Claude Code or run `/reload-plugins`.
+
+The plugin installs skills only. Install or update the required Nong CLI separately:
 
 ```powershell
-dotnet tool install --global Angri450.Nong.Cli
+dotnet tool install --global Angri450.Nong.Cli --add-source https://mirrors.huaweicloud.com/repository/nuget/v3/index.json
+```
+
+If Nong is already installed:
+
+```powershell
+dotnet tool update --global Angri450.Nong.Cli --add-source https://mirrors.huaweicloud.com/repository/nuget/v3/index.json
+```
+
+Check the command surface before using the skills:
+
+```powershell
 nong commands --json
 ```
 
-Nong also provides the primary lifecycle commands for validating, scanning, inventorying, and packaging skills:
+Nong.Toolkit.Net 2.4.0 targets Nong 4.0.0+ with the 93-command surface.
 
-```powershell
-nong skill inventory . --json
-nong skill scan . --json
-nong skill package . --json
-```
-
-## Implemented Nong Skills
-
-Only implemented `nong` commands are exposed as 2.1.0 skills.
-
-| Skill | Implemented Commands |
-|-------|----------------------|
-| `word` | read, preview, fill, rebuild, extract, dissect, stats, fonts, styles, validate, merge, outline, images, comments, revisions, infer-format, fix-order, protect, embed-font, add paragraph/table/footnote/endnote/image/toc/xref/link/bookmark/comment/math |
-| `inspect` | diagnose, refs, write-paper, classify, structure, varplan, evidence, data-req, gap, semantics |
-| `excel` | sheets, read, to-groups, create |
-| `chart` | analyze, anova, duncan, bar, line, scatter, pie |
-| `diagram` | flowchart, network, tree |
-| `pptx` | read, slides |
-| `multimodal` | ocr check-env, analyze-image, cloud, to-word, models, install-model, gated local |
-| `genre` | `genre list`, `genre show` |
-| `icons` | `icons list`, `icons search` |
-
-## Other Skills
+## Skills
 
 | Skill | Purpose |
 |-------|---------|
-| `bash` | Bash quoting, arrays, error handling, and sandbox-safe patterns |
-| `powershell` | PowerShell cmdlets, modules, error handling, and credential safety |
-| `dotnet` | C#, MSBuild, ASP.NET Core, EF Core, MAUI, diagnostics, and NuGet workflows |
-| `github` | `git` and `gh` CLI workflows |
-| `gitee` | Gitee and Gitee MCP workflows |
-| `ghproxy` | GitHub URL acceleration for restricted-network environments |
-| `nuget` | Package installation, packing, and publishing |
-| `ilspycmd` | .NET assembly decompilation |
-| `email` | ClawEmail mail-cli workflows |
-| `skill-manager` | Meta-skill maintenance, eval references, and legacy skill-manager workflows |
+| `word` | DOC/DOCX check, conversion handoff, slicing, layout evidence, repair, filling, edits, validation, merge, comments, images, fonts, and protection |
+| `pdf` | PDF check, local slicing, `content.nongmark`, page rendering, embedded image extraction, and text/scan routing |
+| `literature` | CNKI-like search DSL, OpenAlex/Crossref/Unpaywall metadata and OA lookup, local filtering/ranking, and JSON/Markdown/BibTeX export |
+| `inspect` | Agricultural paper diagnosis, references, structure, evidence, data requirements, gaps, and writing support |
+| `excel` | Workbook reads, sheet inventory, grouped data extraction, and workbook creation |
+| `chart` | Statistics and chart workflows: analyze, ANOVA, Duncan, bar, line, scatter, and pie |
+| `diagram` | Flowchart, network, and tree diagram generation through Nong |
+| `pptx` | PPTX reads and slide inventory |
+| `ocr` | OCR environment checks, image structure QA, cloud OCR, image/PDF-to-Word, OCR model inventory, and gated local OCR |
+| `genre` | Paper genre listing and genre-specific writing guidance |
+| `icons` | Bioicons listing and search |
+| `slice` | NongPandoc package inspection, strict provenance checks, block reads, and asset inventory |
+| `skill` | `nong skill validate/scan/inventory/package` lifecycle gates |
+| `skill-manager` | Skill design, maintenance, trigger quality, and legacy workflow migration |
+| `progress-report` | Structured log summaries and HTML progress report guidance |
 
-## Common Workflows
+Archived development-only material is kept outside the repository at `../Nong.Toolkit_archive/` and ignored by Git if it is accidentally copied back. Development process records stay in `log/` and are committed.
 
-### Word
+## Common Commands
+
+Word:
 
 ```powershell
-nong word read paper.docx --json
-nong word preview paper.docx --json
+nong word check paper.docx --json
 nong word dissect paper.docx --output paper.slice --json
-nong word fill template.docx data.json -o out.docx --json
-nong word rebuild dirty.docx -o clean.docx --json
-nong word add paragraph paper.docx --spec paragraph.json -o out.docx --json
+nong word fonts paper.docx --json
+nong word styles paper.docx --json
+nong word validate paper.docx --json
 ```
 
-### Paper Inspection
+PDF:
 
 ```powershell
-nong inspect diagnose paper.txt --json
-nong inspect refs paper.txt --json
-nong inspect write-paper spec.json -o paper.docx --json
-nong inspect classify paper.txt --json
-nong inspect evidence paper.txt --json
+nong pdf check guide.pdf --json
+nong pdf dissect guide.pdf --output guide.slice --mode auto --json
+nong pdf render guide.pdf --output guide.pages --dpi 150 --json
+nong pdf images guide.pdf --output guide.assets --json
 ```
 
-### Excel to Statistics to Chart
+Literature:
 
 ```powershell
-nong excel to-groups data.xlsx --group Treatment --value Yield --raw > groups.json
-nong excel create workbook.json -o workbook.xlsx --json
+nong lit validate --query "SU=('腐植酸'+'腐殖酸')*('稀土'+'微肥')" --json
+nong lit plan --query "SU=('腐植酸'+'腐殖酸')*('稀土'+'微肥')" --sources openalex,crossref,unpaywall --json
+nong lit search --query "DOI='10.1016/j.chemgeo.2007.05.018'" --sources openalex,crossref,unpaywall --limit 20 --profile balanced --out refs.json --json
+nong lit export --input refs.json --format bibtex --out refs.bib --json
+```
+
+Stage19 literature providers are OpenAlex, Crossref, and Unpaywall only. Unpaywall requires `NONG_LIT_UNPAYWALL_EMAIL` or `NONG_LIT_MAILTO`; OpenAlex may use `NONG_LIT_OPENALEX_API_KEY` or `NONG_LIT_OPENALEX_KEY`; Crossref may use `NONG_LIT_MAILTO`. Full-text retrieval, scraping, paywall bypass, Semantic Scholar, PubMed, PMC, arXiv, Wanfang, and automatic Chinese-English synonym expansion are not implemented.
+
+Excel, chart, and diagram:
+
+```powershell
+nong excel sheets data.xlsx --json
+nong excel to-groups data.xlsx --group Treatment --value Yield --raw
 nong chart analyze groups.json --json
 nong chart bar groups.json -o fig.png --json
-nong chart line line.json -o line.png --json
-nong chart scatter scatter.json -o scatter.png --json
-nong chart pie pie.json -o pie.png --json
-```
-
-### Diagrams
-
-```powershell
 nong diagram flowchart flow.json -o flow.png --json
-nong diagram network network.json -o network.png --json
-nong diagram tree tree.nwk -o tree.png --json
 ```
 
-### PPTX
+PPTX and OCR:
 
 ```powershell
 nong pptx read deck.pptx --json
 nong pptx slides deck.pptx --json
-```
-
-### OCR and Image QA
-
-```powershell
 nong ocr check-env --json
 nong ocr analyze-image fig.png -o fig.analysis --json
 nong ocr cloud scan.png -o ocr-out --json
 nong ocr to-word scan.png -o out.docx --json
 ```
 
-`ocr cloud` and `ocr to-word` require `PADDLEOCR_ACCESS_TOKEN`. `ocr analyze-image` checks image structure and layout; it does not recognize text. `ocr local` is a gated local path and may return E005/E009 unless the local model path is installed and verified.
+`ocr cloud` and `ocr to-word` require `PADDLEOCR_ACCESS_TOKEN` from `https://aistudio.baidu.com/account/accessToken`.
 
-## Install
+## Development Boundary
 
-### Skills install (recommended, no Git login, no SSH key)
-
-This is the **classic Claude Code skills installation**: git clone the repo and copy to `~/.claude/skills/`. It does not use the plugin marketplace mechanism, avoids background clone, and won't trigger interactive Gitee login prompts.
-
-**GitCode (recommended, anonymous clone)**
-
-```bash
-git clone https://gitcode.com/angri450/GroundPA-Toolkit.git /tmp/groundpa && mkdir -p ~/.claude/skills && cp -r /tmp/groundpa/. ~/.claude/skills/ && rm -rf /tmp/groundpa && dotnet tool install --global Angri450.Nong.Cli
-```
-
-**Gitee**
-
-```bash
-git clone https://gitee.com/angri450/GroundPA-Toolkit.git /tmp/groundpa && mkdir -p ~/.claude/skills && cp -r /tmp/groundpa/. ~/.claude/skills/ && rm -rf /tmp/groundpa && dotnet tool install --global Angri450.Nong.Cli
-```
-
-**GitHub**
-
-```bash
-git clone https://github.com/angri450/GroundPA-Toolkit.git /tmp/groundpa && mkdir -p ~/.claude/skills && cp -r /tmp/groundpa/. ~/.claude/skills/ && rm -rf /tmp/groundpa && dotnet tool install --global Angri450.Nong.Cli
-```
-
-After install, run `/reload-plugins` or restart Claude Code.
-
-### Plugin Marketplace install (experimental)
-
-This uses the Claude Code plugin marketplace mechanism. It requires Claude Code to clone the repository in the background; Gitee HTTPS may trigger authentication prompts and fail.
-
-```bash
-claude plugin marketplace add https://gitcode.com/angri450/GroundPA-Toolkit.git
-claude plugin install groundpa-toolkit@angri450
-/reload-plugins
-```
-
-GitHub alternative:
-
-```bash
-claude plugin marketplace add angri450/GroundPA-Toolkit
-claude plugin install groundpa-toolkit@angri450
-/reload-plugins
-```
-
-### Required .NET Tools
-
-```powershell
-dotnet tool install --global Angri450.Nong.Cli
-```
-
-If already installed:
-
-```powershell
-dotnet tool update --global Angri450.Nong.Cli
-```
-
-## Update
-
-Skills install: re-clone and overwrite.
-
-```bash
-git clone https://gitcode.com/angri450/GroundPA-Toolkit.git /tmp/groundpa && cp -r /tmp/groundpa/. ~/.claude/skills/ && rm -rf /tmp/groundpa
-```
-
-Plugin Marketplace:
-
-```bash
-claude plugin marketplace update angri450
-claude plugin update groundpa-toolkit@angri450
-/reload-plugins
-```
-
-## Workspace
-
-Runtime outputs should go under:
+This repository is organized as an installable Claude Code plugin. The installable plugin surface is:
 
 ```text
-$HOME/Documents/GroundPA Toolkit Workplace/output/
+.claude-plugin/
+word/ pdf/ literature/ inspect/ excel/ chart/ diagram/ pptx/ ocr/ genre/ icons/
+slice/ skill/ skill-manager/ progress-report/
+README.md README.zh-CN.md skill.zh skills.sh.json LICENSE
 ```
 
-Use absolute paths when calling `nong` from agent workflows. For generated files, read the `artifacts` field from JSON output.
+The Git commit surface also keeps `log/` for development-process history. `nong skill package` packages the plugin surface, while `log/` remains visible in the repository.
 
-## Contract
+Keep generated outputs, old experiments, local rules, package artifacts, and temporary builds out of both surfaces. Move retained local material to `../Nong.Toolkit_archive/`, not to a repo-local `_archive/`.
 
-All Nong-facing skills follow the same rule:
+## Validation
 
-1. Run `nong commands --json` to discover available commands.
-2. Use only commands marked `implemented`.
-3. Prefer `--json` for model-readable output.
-4. Treat `status: "error"` as failure.
-5. Read `errors[0].code`, `errors[0].message`, and `artifacts` before taking the next step.
+Validate the plugin:
+
+```bash
+claude plugin validate .
+```
+
+Validate the Nong-facing skills:
+
+```powershell
+nong skill inventory . --json
+```
+
+For a specific skill:
+
+```powershell
+nong skill validate .\word --json
+```
 
 ## License
 

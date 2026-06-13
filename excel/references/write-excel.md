@@ -1,6 +1,6 @@
 # Excel Create Reference
 
-Use `nong excel create` for workbook creation. GroundPA should not scaffold temporary .NET projects or call ClosedXML directly as its main path.
+Use `nong excel create` for workbook creation. Nong.Toolkit.Net should not scaffold temporary .NET projects or call ClosedXML directly as its main path.
 
 ## Command
 

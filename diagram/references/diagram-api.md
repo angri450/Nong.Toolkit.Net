@@ -1,6 +1,6 @@
 # Diagram CLI Reference
 
-GroundPA uses the implemented `nong diagram` CLI commands. Do not call DiagramCore directly for normal skill routing.
+Nong.Toolkit.Net uses the implemented `nong diagram` CLI commands. Do not call DiagramCore directly for normal skill routing.
 
 ## Flowchart
 

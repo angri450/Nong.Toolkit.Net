@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nong.Toolkit.Net skill-manager 审计</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "Microsoft YaHei", sans-serif; line-height: 1.72; color: #172033; background: #f5f7fb; }
+.container { max-width: 1400px; margin: 0 auto; padding: 28px 18px 48px; }
+header { margin-bottom: 22px; }
+h1 { font-size: 30px; color: #0f172a; margin-bottom: 8px; }
+.subtitle { color: #64748b; font-size: 14px; }
+h2 { font-size: 22px; margin: 34px 0 14px; padding-bottom: 8px; border-bottom: 2px solid #d9dee7; color: #111827; }
+h3 { font-size: 18px; margin: 24px 0 10px; color: #263248; }
+p { margin: 8px 0; }
+code { background: #edf0f5; border: 1px solid #dde3ee; padding: 1px 5px; border-radius: 4px; font-family: "Cascadia Code", Consolas, monospace; font-size: 0.88em; }
+.dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 18px 0 26px; }
+.card { background: #fff; border: 1px solid #e4e8f0; border-radius: 8px; padding: 18px; box-shadow: 0 1px 3px rgba(15,23,42,0.06); }
+.card-num { font-size: 30px; font-weight: 800; color: #0f172a; }
+.card-label { color: #64748b; font-size: 13px; margin-top: 4px; }
+.note { background: #fff; border: 1px solid #dbe3ef; border-left: 5px solid #2563eb; border-radius: 8px; padding: 15px 18px; margin: 14px 0 18px; }
+.good { border-left-color: #16a34a; background: #f4fbf6; }
+.warn { border-left-color: #d97706; background: #fffaf0; }
+.bad { border-left-color: #dc2626; background: #fff7f7; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #e4e8f0; border-radius: 8px; overflow: hidden; margin: 12px 0 22px; font-size: 14px; box-shadow: 0 1px 3px rgba(15,23,42,0.05); }
+th { background: #eef2f7; color: #334155; font-size: 12px; text-transform: uppercase; letter-spacing: 0.02em; text-align: left; padding: 10px 12px; border-bottom: 1px solid #dce3ed; }
+td { padding: 10px 12px; border-bottom: 1px solid #edf0f5; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+.tag { display: inline-block; padding: 2px 7px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.ok { background: #dcfce7; color: #166534; }
+.watch { background: #fef3c7; color: #92400e; }
+.gap { background: #fee2e2; color: #991b1b; }
+.info { background: #dbeafe; color: #1d4ed8; }
+.grid-2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+.box { background: #fff; border: 1px solid #e4e8f0; border-radius: 8px; padding: 14px 16px; box-shadow: 0 1px 3px rgba(15,23,42,0.04); }
+ul { margin: 8px 0 8px 22px; }
+li { margin: 4px 0; }
+footer { margin-top: 36px; padding-top: 18px; border-top: 1px solid #dce3ed; color: #64748b; font-size: 13px; }
+@media (max-width: 860px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  table { font-size: 13px; }
+  th, td { padding: 8px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+<h1>skill-manager 审计</h1>
+<p class="subtitle">2026-06-10 | 目标：把 `skill-manager` 这个 skill 到底该干什么、为什么现在不好用、后面应该怎么拆，说清楚。</p>
+</header>
+
+<div class="dashboard">
+<div class="card"><div class="card-num">1 个文件</div><div class="card-label">当前只有 SKILL.md</div></div>
+<div class="card"><div class="card-num">0 个</div><div class="card-label">配套 references</div></div>
+<div class="card"><div class="card-num">描述过宽</div><div class="card-label">触发词像大网兜</div></div>
+<div class="card"><div class="card-num">4 种职责</div><div class="card-label">现在混在一起</div></div>
+</div>
+
+<h2>一句话结论</h2>
+<div class="note bad">
+<p><strong>现在的 `skill-manager` 不是一个精确 skill，而是一个“凡是和 skill 有点关系都能往里塞”的总兜底说明。</strong></p>
+<p>它的问题不在于内容完全错，而在于：<strong>名字太大、描述太宽、材料太薄、职责太混</strong>。结果就是触发不准，渐进式披露做不起来，AI 一旦触发它，也拿不到足够分层的后续材料。</p>
+</div>
+
+<h2>它本来应该是什么</h2>
+<div class="note good">
+<p>从 Toolkit 的整体设计看，`skill-manager` 本来不是“打包器”，也不是“扫描器”，更不是“所有和 skill 有关的事都归我”。</p>
+<p>它真正应该是：<strong>Skill 设计与维护的策略层 skill</strong>。也就是说，它要教 AI 怎么做这几件事：</p>
+<ul>
+<li>什么时候该新建一个 skill</li>
+<li>什么时候该把一个 skill 拆成两个</li>
+<li>什么时候该把两个 skill 合并</li>
+<li>怎么写触发 description 才精准</li>
+<li>怎么把真实报错沉淀成例子、reference 或回归用例</li>
+<li>怎么保证 skill 不只是“会说”，而是“能用”</li>
+</ul>
+</div>
+
+<h2>它现在为什么像一坨粥</h2>
+<table>
+<thead><tr><th>问题</th><th>现状</th><th>为什么会不好用</th></tr></thead>
+<tbody>
+<tr>
+<td>名字太大</td>
+<td><code>skill-manager</code></td>
+<td>这个名字听起来像“管所有 skill 的总控中心”，天然容易吸走大量不该它处理的问题。</td>
+</tr>
+<tr>
+<td>description 太宽</td>
+<td><code>Create, improve, split, merge, deprecate, audit, and maintain ...</code></td>
+<td>几乎把 skill 生命周期全包了，触发词又包含 design / editing / trigger quality / migration / regression capture，像一张大网。</td>
+</tr>
+<tr>
+<td>没有渐进式披露材料</td>
+<td>只有一个 <code>SKILL.md</code>，没有 <code>references/</code></td>
+<td>AI 触发后，拿不到更细的子场景说明。它只能看到一段总规则，但不知道下一步应该读哪份具体材料。</td>
+</tr>
+<tr>
+<td>职责混在一起</td>
+<td>设计、维护、拆分、迁移、回归、旧 workflow 边界写在同一个 skill 里</td>
+<td>AI 很难判断当前问题到底属于哪一类，也就很难精准路由。</td>
+</tr>
+<tr>
+<td>和 <code>skill</code> skill 边界不够锐利</td>
+<td>`skill-manager` 说自己是 policy；`skill` 说自己是 lifecycle gate</td>
+<td>逻辑上分得开，但触发描述上没有拉开足够距离，容易让 AI 在“我是在设计 skill 还是在验证 skill”之间摇摆。</td>
+</tr>
+</tbody>
+</table>
+
+<h2>说人话：它现在到底像什么</h2>
+<div class="note">
+<p>它现在像一个办公室门口挂着“综合事务处”的房间。</p>
+<p>你要办新证、改信息、补材料、投诉、归档、问流程、查旧案，全都往这个门里挤。结果就是：</p>
+<ul>
+<li>谁都能进去</li>
+<li>进去之后不知道该找哪个窗口</li>
+<li>窗口后面也没有分好的表格和流程单</li>
+<li>最后大家都觉得“这个部门什么都管，但其实什么都不顺手”</li>
+</ul>
+</div>
+
+<h2>它最该保留的特色是什么</h2>
+<table>
+<thead><tr><th>特色</th><th>应该保留吗</th><th>为什么</th></tr></thead>
+<tbody>
+<tr><td>渐进式披露</td><td><span class="tag ok">必须保留</span></td><td>这是 Toolkit 的基本设计哲学。主 skill 只放路由核，细节放 references。</td></tr>
+<tr><td>收集真实报错再改进 skill</td><td><span class="tag ok">必须保留</span></td><td>没有真实失败反馈，skill 很容易越写越像空洞教程。</td></tr>
+<tr><td>创建 skill 时必须带例子</td><td><span class="tag ok">必须保留</span></td><td>没有例子，skill 只剩原则，没有可执行质量。</td></tr>
+<tr><td>和 CLI gate 分离</td><td><span class="tag ok">必须保留</span></td><td>`skill-manager` 教策略，`skill` 负责验证/扫描/打包，这是对的。</td></tr>
+</tbody>
+</table>
+
+<h2>它现在缺的不是更多字，而是分层</h2>
+<div class="grid-2">
+<div class="box">
+<h3>现在的状态</h3>
+<ul>
+<li>一个 skill</li>
+<li>一个 description</li>
+<li>一个 SKILL.md</li>
+<li>很多职责</li>
+<li>没有子材料</li>
+</ul>
+</div>
+<div class="box">
+<h3>应该的状态</h3>
+<ul>
+<li>一个总策略 skill 或总入口</li>
+<li>多个明确子任务材料</li>
+<li>每类问题有自己的触发词</li>
+<li>每类问题有自己的例子和失败样本</li>
+<li>让 AI 能逐层往下读，不是一口吞</li>
+</ul>
+</div>
+</div>
+
+<h2>我建议把它拆成四块</h2>
+<table>
+<thead><tr><th>块</th><th>建议名字</th><th>职责</th><th>为什么要拆</th></tr></thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>skill-policy</code> 或继续保留 <code>skill-manager</code> 但只做总入口</td>
+<td>只回答：什么时候新建 / 拆分 / 合并 / 废弃一个 skill。</td>
+<td>这部分最像“架构策略”，应该保持很薄。</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>skill-authoring</code></td>
+<td>专管新建 skill：怎么写 frontmatter、怎么写 description、怎么放 references、怎么写例子。</td>
+<td>“创建 skill”本身就是高频场景，值得单独精化。</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>skill-trigger-audit</code></td>
+<td>专管触发精度：名字、description、触发词、会不会误触发、会不会吞掉别的 skill。</td>
+<td>你现在最不满意的就是这个点，它不该被埋在总 skill 里。</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>skill-regression</code> 或 <code>skill-feedback</code></td>
+<td>专管真实失败回收：怎么从报错、用户反馈、scan finding、validate 失败中反推 skill 改进。</td>
+<td>这部分是 Toolkit 的质量闭环，不应只在一行规则里带过。</td>
+</tr>
+</tbody>
+</table>
+
+<h2>如果暂时不新建四个 skill，最低限度也该怎么做</h2>
+<table>
+<thead><tr><th>动作</th><th>理由</th></tr></thead>
+<tbody>
+<tr><td>把 `skill-manager` 的 description 大幅收窄</td><td>先减误触发。别再把所有和 skill 有关的话题都兜进去。</td></tr>
+<tr><td>补 `skill-manager/references/`</td><td>没有 references，就谈不上渐进式披露。</td></tr>
+<tr><td>至少拆出 3 份 reference：创建、触发审计、失败回收</td><td>这是最核心的三类下钻材料。</td></tr>
+<tr><td>在 `SKILL.md` 里明确“先判断你属于哪一类问题”</td><td>先做分类，再读对应 reference，AI 才不会糊成一团。</td></tr>
+<tr><td>把“必须带例子”写成硬规则，而不是一句建议</td><td>这是 skill 质量的最低线。</td></tr>
+</tbody>
+</table>
+
+<h2>现在的名字和介绍为什么会误触发</h2>
+<table>
+<thead><tr><th>现状</th><th>问题</th><th>更好的方向</th></tr></thead>
+<tbody>
+<tr>
+<td><code>name: skill-manager</code></td>
+<td>太像“总控后台”，范围感过大。</td>
+<td>如果保留名字，description 必须显著收窄；否则考虑改成更像策略层的名字。</td>
+</tr>
+<tr>
+<td><code>Create, improve, split, merge, deprecate, audit, and maintain...</code></td>
+<td>这是把一整条生命周期全写进一行。</td>
+<td>改成“设计与维护策略”，不要把所有具体动作都塞进 trigger 描述。</td>
+</tr>
+<tr>
+<td><code>Trigger on skill design, SKILL.md editing, trigger quality, reference layout, eval planning, regression capture...</code></td>
+<td>几乎所有改 skill 的场景都能命中。</td>
+<td>应该先分主类：新建、触发审计、失败回收、旧流程迁移。</td>
+</tr>
+</tbody>
+</table>
+
+<h2>我建议的最终口径</h2>
+<div class="note good">
+<p><strong>`skill-manager` 不该再是一个万能 skill。</strong></p>
+<p>它应该变成一个“技能设计策略入口”，只负责把问题分流到更具体的子材料或子 skill。真正的验证/打包走 <code>skill</code>；真正的创建指南、触发审计、失败回收则应该各有自己的渐进式披露材料。</p>
+</div>
+
+<h2>建议改法</h2>
+<table>
+<thead><tr><th>优先级</th><th>动作</th><th>影响</th></tr></thead>
+<tbody>
+<tr><td><span class="tag watch">P1</span></td><td>重写 `skill-manager` 的 description，收窄 trigger</td><td>立刻减少误触发</td></tr>
+<tr><td><span class="tag watch">P1</span></td><td>增加 `references/`，至少 3 份：authoring、trigger-audit、feedback-loop</td><td>让渐进式披露真的成立</td></tr>
+<tr><td><span class="tag watch">P1</span></td><td>在 `SKILL.md` 中加入“先判断你属于哪一类问题”的入口段</td><td>AI 先分流，再下钻</td></tr>
+<tr><td><span class="tag info">P2</span></td><td>把“必须带例子”写成硬规则，并给例子模板</td><td>提升新 skill 质量</td></tr>
+<tr><td><span class="tag info">P2</span></td><td>考虑后续拆成 3~4 个独立 skill</td><td>长期彻底解决“总兜底”问题</td></tr>
+</tbody>
+</table>
+
+<h2>最后一句话</h2>
+<div class="note">
+<p>你现在觉得 `skill-manager` 不好用，不是因为它理念错了，而是因为它<strong>把正确理念全挤在一个太宽、太薄、太模糊的入口里</strong>。</p>
+<p>真正的问题不是“写得少”，而是“没有分层”。</p>
+</div>
+
+<footer>
+<p>来源：`skill-manager/SKILL.md`、`skill/SKILL.md`、Toolkit `README.md`、历史 sync/changelog/debug 记录。结论基于当前仓库实际内容：`skill-manager` 只有一个主文件，没有配套 references 或例子模板。</p>
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,6 +1,6 @@
 # Chart CLI Reference
 
-GroundPA uses the implemented `nong chart` CLI commands. Do not call ChartCore directly for normal skill routing.
+Nong.Toolkit.Net uses the implemented `nong chart` CLI commands. Do not call ChartCore directly for normal skill routing.
 
 ## Statistics
 

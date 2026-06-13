@@ -1,6 +1,6 @@
 # Excel Read Reference
 
-This skill uses the current `nong` CLI for Excel inspection. Do not load `.xlsx` files through custom ClosedXML scripts unless the user explicitly asks for library-level development outside the GroundPA skill workflow.
+This skill uses the current `nong` CLI for Excel inspection. Do not load `.xlsx` files through custom ClosedXML scripts unless the user explicitly asks for library-level development outside the Nong.Toolkit.Net skill workflow.
 
 ## Commands
 
@@ -44,7 +44,7 @@ Every `--json` response uses the standard `nong` envelope:
   "artifacts": {},
   "metrics": {},
   "errors": [],
-  "meta": { "durationMs": 0, "version": "3.1.0" }
+  "meta": { "durationMs": 0, "version": "4.0.0" }
 }
 ```
 

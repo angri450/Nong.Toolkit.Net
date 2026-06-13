@@ -2,9 +2,14 @@
 
 This reference describes the Word command surface exposed by `nong`. Use the CLI directly; do not build a temporary project to access Word internals.
 
+For workflows that start from an existing `.doc`/`.docx` and need repair or layout changes, pair this command reference with [existing-document-editing.md](existing-document-editing.md).
+
 ## Read and Inspect
 
 ```powershell
+nong word check paper.docx --json
+nong word convert legacy.doc -o legacy.docx --json
+nong word create document.nongmark -o document.docx --json
 nong word read paper.docx --json
 nong word preview paper.docx --json
 nong word dissect paper.docx --output paper.slice --json
@@ -17,22 +22,32 @@ nong word comments paper.docx --json
 nong word revisions paper.docx --json
 ```
 
-Use `word dissect --output` for complex documents. Use `read` only when plain text is enough, and `preview` or `validate` when you need OOXML diagnostics.
+Use `word check` before working on user-supplied `.doc`/`.docx`. Use `word convert` only as a `.doc -> .docx` boundary step, then return to OpenXML commands. Use `word dissect --output` for complex documents. Use `read` only when plain text is enough, and `preview` or `validate` when you need OOXML diagnostics.
+
+For layout or formatting questions, `read` is insufficient evidence. Run `word dissect --output`, inspect `format.json`, `content.jsonl`, and `structure.json`, then add `fonts`, `styles`, `preview`, or `validate` as targeted follow-ups. Do not answer "open Word manually" unless the CLI failed or the exact visual property is outside the current extraction contract.
+
+Do not use desktop Word COM automation as a fallback for these commands. If the user explicitly asks to automate installed Word, read [com-automation.md](com-automation.md) before writing any PowerShell COM script.
 
 ## Validate, Repair, and Infer
 
 ```powershell
 nong word validate paper.docx --json
+nong word repair-plan --json
 nong word infer-format "宋体 小五号 首行缩进" --json
 nong word fix-order paper.docx -o fixed.docx --json
+nong word academic-format paper.docx -o paper.academic.docx --json
+nong word format-gongwen paper.docx -o paper.gongwen.docx --json
+nong word format-audit paper.academic.docx --profile academic --min-score 80 --json
+nong word table-reflow paper.academic.docx -o paper.tables.docx --max-rows 20 --max-cols 6 --repeat-left-cols 1 --json
 nong word rebuild paper.docx -o rebuilt.docx --json
 ```
 
-`validate` reports schema issues. `fix-order` corrects OOXML child ordering. `rebuild` cleans style pollution. `infer-format` maps a natural-language Chinese formatting description to an OpenXML-oriented format result.
+`validate` reports schema issues. It does not prove typography or visual layout quality. `repair-plan` explains which repair command matches the user's goal. `fix-order` corrects OOXML child ordering and known dirty-OOXML artifacts. `academic-format` applies deterministic paper formatting to an existing DOCX. `format-gongwen` applies Chinese official-document formatting to an existing DOCX and accepts optional `--config <style.json>`. `format-audit` is a read-only visible-format evidence gate for academic documents. `table-reflow` explicitly splits long or wide tables into continuation tables. `rebuild` cleans style pollution. `infer-format` maps a natural-language Chinese formatting description to an OpenXML-oriented format result.
 
 ## Generate and Combine
 
 ```powershell
+nong word create document.nongmark -o document.docx --json
 nong word fill template.docx data.json -o filled.docx --json
 nong word merge intro.docx body.docx appendix.docx -o merged.docx --json
 nong word extract paper.docx -o extracted-images --json
@@ -41,6 +56,8 @@ nong word embed-font paper.docx simsun.ttf -o embedded.docx --json
 ```
 
 Use `fill` for template placeholders, `merge` for ordered DOCX composition, `extract` for media export, `protect` for document protection, and `embed-font` when a real font file is available.
+
+For a new document, `word create` from `.nongmark` is the default route. Do not generate DOCX from Markdown, `python-docx`, or a temporary Word COM script.
 
 ## Add Leaves
 
@@ -99,7 +116,10 @@ Common Word-facing error codes:
 | Code | Meaning | Action |
 |------|---------|--------|
 | `E001` | `file_not_found` | Fix the path and rerun. |
+| `E002` | `unsupported_format` | Run `word check`; convert `.doc` to `.docx` first. |
 | `E003` | `missing_argument` | Add the required argument or option. |
+| `E005` | `dependency_missing` | Install the CLI/runtime or a boundary converter such as LibreOffice/Word. |
 | `E006` | `validation_failed` | Repair the spec, document, or format input. |
+| `E009` | `not_implemented` | Stop and report the limitation; do not continue from a failed command. |
 
 Do not continue from stale output after any `status: "error"` response.

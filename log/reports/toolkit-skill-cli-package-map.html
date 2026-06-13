@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nong.Toolkit.Net Skill / CLI / 包 对照图</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "Microsoft YaHei", sans-serif; line-height: 1.72; color: #172033; background: #f5f7fb; }
+.container { max-width: 1520px; margin: 0 auto; padding: 28px 18px 48px; }
+header { margin-bottom: 22px; }
+h1 { font-size: 30px; color: #0f172a; margin-bottom: 8px; }
+.subtitle { color: #64748b; font-size: 14px; }
+h2 { font-size: 22px; margin: 34px 0 14px; padding-bottom: 8px; border-bottom: 2px solid #d9dee7; color: #111827; }
+h3 { font-size: 18px; margin: 22px 0 10px; color: #263248; }
+p { margin: 8px 0; }
+code { background: #edf0f5; border: 1px solid #dde3ee; padding: 1px 5px; border-radius: 4px; font-family: "Cascadia Code", Consolas, monospace; font-size: 0.88em; }
+.dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 18px 0 26px; }
+.card { background: #fff; border: 1px solid #e4e8f0; border-radius: 8px; padding: 18px; box-shadow: 0 1px 3px rgba(15,23,42,0.06); }
+.card-num { font-size: 30px; font-weight: 800; color: #0f172a; }
+.card-label { color: #64748b; font-size: 13px; margin-top: 4px; }
+.note { background: #fff; border: 1px solid #dbe3ef; border-left: 5px solid #2563eb; border-radius: 8px; padding: 15px 18px; margin: 14px 0 18px; }
+.good { border-left-color: #16a34a; background: #f4fbf6; }
+.warn { border-left-color: #d97706; background: #fffaf0; }
+.bad { border-left-color: #dc2626; background: #fff7f7; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #e4e8f0; border-radius: 8px; overflow: hidden; margin: 12px 0 22px; font-size: 14px; box-shadow: 0 1px 3px rgba(15,23,42,0.05); }
+th { background: #eef2f7; color: #334155; font-size: 12px; text-transform: uppercase; letter-spacing: 0.02em; text-align: left; padding: 10px 12px; border-bottom: 1px solid #dce3ed; }
+td { padding: 10px 12px; border-bottom: 1px solid #edf0f5; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+.tag { display: inline-block; padding: 2px 7px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.ok { background: #dcfce7; color: #166534; }
+.watch { background: #fef3c7; color: #92400e; }
+.gap { background: #fee2e2; color: #991b1b; }
+.info { background: #dbeafe; color: #1d4ed8; }
+.grid-2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+.box { background: #fff; border: 1px solid #e4e8f0; border-radius: 8px; padding: 14px 16px; box-shadow: 0 1px 3px rgba(15,23,42,0.04); }
+ul { margin: 8px 0 8px 22px; }
+li { margin: 4px 0; }
+footer { margin-top: 36px; padding-top: 18px; border-top: 1px solid #dce3ed; color: #64748b; font-size: 13px; }
+@media (max-width: 980px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  table { font-size: 13px; }
+  th, td { padding: 8px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+<h1>Toolkit Skill / CLI / 包 对照图</h1>
+<p class="subtitle">2026-06-10 | 目标：把每个 skill 背后的 CLI 命令组、核心包、直接依赖包、运行时包和仓库边界说清楚，判断现在是不是你想要的“像胳膊一样好指挥”的结构。</p>
+</header>
+
+<div class="dashboard">
+<div class="card"><div class="card-num">15 个</div><div class="card-label">当前 Toolkit skills</div></div>
+<div class="card"><div class="card-num">11 个</div><div class="card-label">skill 名和 CLI 组名基本直连</div></div>
+<div class="card"><div class="card-num">1 条最乱</div><div class="card-label">OCR 线：skill / CLI / 包 / runtime 四层不同名</div></div>
+<div class="card"><div class="card-num">2 个例外</div><div class="card-label">`skill-manager` 和 `progress-report` 带治理性质，不是纯命令镜像</div></div>
+</div>
+
+<h2>一句话结论</h2>
+<div class="note bad">
+<p><strong>现在的结构只是“半对齐”，还不是你设想的那种一伸手就能顺着胳膊摸到骨头的结构。</strong></p>
+<p>大多数 skill 到 CLI 这一层已经差不多对上了，但 <strong>CLI 到包层、包到运行时层、策略 skill 到执行 skill 的边界</strong> 还没有统一标出来。最明显的乱点就是 OCR 线。</p>
+</div>
+
+<h2>先把四层说人话</h2>
+<div class="grid-2">
+<div class="box">
+<h3>1. Skill 层</h3>
+<p>这是给 AI 看的入口词。它应该尽量贴近用户说法，让模型一看到请求就能想到该触发谁。</p>
+</div>
+<div class="box">
+<h3>2. CLI 层</h3>
+<p>这是确定性执行入口。最好和 skill 同名，或者至少是一眼能对应上的缩写/别名。</p>
+</div>
+</div>
+
+<div class="grid-2">
+<div class="box">
+<h3>3. 包层</h3>
+<p>这是代码归属边界。它不一定要和 skill/CLI 完全同名，但必须能稳定映射，不要每次都靠猜。</p>
+</div>
+<div class="box">
+<h3>4. 运行时包/外部仓库层</h3>
+<p>只在 OCR、PDF render 这种重依赖场景特别重要。这里不是 AI 主入口，但必须在映射图里标出来，不然一出安装问题就找不到源头。</p>
+</div>
+</div>
+
+<h2>哪一层必须同名，哪一层不用死磕同名</h2>
+<table>
+<thead><tr><th>层之间</th><th>最好状态</th><th>为什么</th></tr></thead>
+<tbody>
+<tr>
+<td>skill ↔ CLI</td>
+<td><span class="tag ok">尽量同名或极易联想</span></td>
+<td>这是 AI 路由最关键的一跳。这里越省翻译，误触发越少。</td>
+</tr>
+<tr>
+<td>CLI ↔ 核心包</td>
+<td><span class="tag watch">不必强行同名，但必须有固定映射</span></td>
+<td>包层服务的是代码组织，不一定和用户语言一模一样。比如 `word` 对应 `Docx` 就能接受，只要表是清楚的。</td>
+</tr>
+<tr>
+<td>核心包 ↔ 运行时包</td>
+<td><span class="tag watch">只在重依赖场景显式标出</span></td>
+<td>不是每个 skill 都有 runtime 仓库，但 OCR 这类必须写清楚，不然排障会乱。</td>
+</tr>
+</tbody>
+</table>
+
+<h2>最乱的一条：OCR 线</h2>
+<div class="note warn">
+<p>你说得对，这条线现在最需要标清。</p>
+<p><strong>仓库名是 `Nong.OcrRuntime`，不是别的。</strong> 但当前实际层次是：</p>
+<p><code>multimodal</code> skill -> <code>nong ocr</code> CLI -> <code>Angri450.Nong.MultiModal</code> 核心包 -> <code>Nong.OcrRuntime</code> 仓库 -> <code>Angri450.Nong.OcrRuntime.*</code> 五个平台运行时包</p>
+</div>
+
+<table>
+<thead><tr><th>层</th><th>当前名字</th><th>问题</th><th>建议</th></tr></thead>
+<tbody>
+<tr>
+<td>Skill</td>
+<td><code>multimodal</code></td>
+<td>太泛，像什么图像、多模态、OCR 都能装进去。</td>
+<td>优先改成 <code>ocr</code>。这里不建议再绕成 <code>ocr-routing</code>，因为 CLI 已经叫 <code>ocr</code> 了。</td>
+</tr>
+<tr>
+<td>CLI</td>
+<td><code>nong ocr</code></td>
+<td>这一层名字反而是对的。</td>
+<td>保持不动，作为执行主轴。</td>
+</tr>
+<tr>
+<td>核心包</td>
+<td><code>Angri450.Nong.MultiModal</code></td>
+<td>代码包名保留了历史“多模态”说法。</td>
+<td>短期不用急着改包名，但要在映射表里明确写：<code>ocr</code> 命令组的核心包就是它。</td>
+</tr>
+<tr>
+<td>运行时仓库</td>
+<td><code>Nong.OcrRuntime</code></td>
+<td>仓库名、包名、skill 名当前不在一条线上。</td>
+<td>把仓库名单独标出，告诉维护者：本地 OCR runtime 在这里维护。</td>
+</tr>
+<tr>
+<td>运行时包</td>
+<td><code>Angri450.Nong.OcrRuntime.WinX64</code> 等 5 个包</td>
+<td>安装失败时很容易只看到 `ocr install-model`，却不知道背后是哪些包。</td>
+<td>在 skill 文档和对照表里固定写出 5 个 RID 包，排障就有抓手。</td>
+</tr>
+</tbody>
+</table>
+
+<h2>OCR 这条线其实已经拆好的 reference</h2>
+<div class="note good">
+<p>这里有一个要纠偏的地方：<strong>OCR skill 的下钻材料其实已经拆了，不是没拆。</strong></p>
+<p>当前仓库里已经有：</p>
+<ul>
+<li><code>multimodal/references/ocr-local.md</code>：本地 OCR</li>
+<li><code>multimodal/references/ocr-cloud.md</code>：云端 OCR / to-word</li>
+<li><code>multimodal/references/image-analyzer.md</code>：图像结构 QA</li>
+</ul>
+<p>所以 OCR 现在的主要问题不是“没有分层”，而是<strong>外层 skill 名和内部三条路、CLI 命令组、runtime 仓库名没有串成一根主轴</strong>。</p>
+</div>
+
+<h2>每个 skill 对应哪个 CLI、哪个包、依赖哪个包</h2>
+<table>
+<thead><tr><th>Skill</th><th>CLI 命令组</th><th>核心包 / 项目</th><th>直接依赖包</th><th>运行时 / 外部仓库</th><th>现状判断</th></tr></thead>
+<tbody>
+<tr>
+<td><code>word</code></td>
+<td><code>nong word</code></td>
+<td><code>Angri450.Nong.Docx</code></td>
+<td><code>Angri450.Nong.Pandoc</code>, <code>Angri450.Nong.ThirdParty</code></td>
+<td>`.doc` 转换时可边界调用 Word/LibreOffice；非主路径</td>
+<td><span class="tag ok">顺</span><br>skill/CLI 名很顺，包层是 `Docx`，可接受。</td>
+</tr>
+<tr>
+<td><code>pdf</code></td>
+<td><code>nong pdf</code></td>
+<td><code>Angri450.Nong.Pdf</code></td>
+<td><code>Angri450.Nong.Pandoc</code>, <code>Angri450.Nong.ThirdParty</code></td>
+<td>OCR 模式会协同 <code>nong ocr</code> 路径；render 带 PDF native 资产</td>
+<td><span class="tag ok">顺</span><br>主轴清楚，OCR 是旁支协同。</td>
+</tr>
+<tr>
+<td><code>literature</code></td>
+<td><code>nong lit</code></td>
+<td><code>Angri450.Nong.Literature</code></td>
+<td>无额外主线包依赖</td>
+<td>依赖 provider 凭证环境变量，不依赖 runtime 仓库</td>
+<td><span class="tag watch">有别名</span><br>skill 用全词 `literature`，CLI 用短词 `lit`，可用但不是完全一线到底。</td>
+</tr>
+<tr>
+<td><code>inspect</code></td>
+<td><code>nong inspect</code></td>
+<td><code>Angri450.Nong.Inspect</code></td>
+<td><code>Angri450.Nong.Docx</code>, <code>Angri450.Nong.ThirdParty</code></td>
+<td>写稿输出落到 DOCX 时会继续走 Word 路径</td>
+<td><span class="tag ok">基本顺</span><br>命令和包对得上，但写作和诊断共居一个 skill。</td>
+</tr>
+<tr>
+<td><code>excel</code></td>
+<td><code>nong excel</code></td>
+<td><code>Angri450.Nong.Excel</code></td>
+<td><code>Angri450.Nong.Pandoc</code>, <code>Angri450.Nong.ThirdParty</code>, <code>System.IO.Packaging</code></td>
+<td>无额外 runtime 仓库</td>
+<td><span class="tag ok">顺</span></td>
+</tr>
+<tr>
+<td><code>chart</code></td>
+<td><code>nong chart</code></td>
+<td><code>Angri450.Nong.Chart</code></td>
+<td><code>Angri450.Nong.ThirdParty</code></td>
+<td>可选协同 <code>nong ocr analyze-image</code> 做图像结构 QA</td>
+<td><span class="tag ok">顺</span></td>
+</tr>
+<tr>
+<td><code>diagram</code></td>
+<td><code>nong diagram</code></td>
+<td><code>Angri450.Nong.Diagram</code></td>
+<td><code>Angri450.Nong.Bioicons</code>, <code>Angri450.Nong.ThirdParty</code></td>
+<td>可选协同 <code>nong ocr analyze-image</code> 做图像结构 QA</td>
+<td><span class="tag ok">顺</span></td>
+</tr>
+<tr>
+<td><code>pptx</code></td>
+<td><code>nong pptx</code></td>
+<td><code>Angri450.Nong.Pptx</code></td>
+<td><code>Angri450.Nong.Pandoc</code>, <code>Angri450.Nong.ThirdParty</code></td>
+<td>无额外 runtime 仓库</td>
+<td><span class="tag ok">顺</span><br>当前 skill 只教读，不教写，包能力比 skill 暴露面更大。</td>
+</tr>
+<tr>
+<td><code>multimodal</code><br><small>建议改成 <code>ocr</code></small></td>
+<td><code>nong ocr</code></td>
+<td><code>Angri450.Nong.MultiModal</code></td>
+<td><code>Angri450.Nong.Docx</code>, <code>Sdcb.PaddleOCR</code>, <code>Sdcb.PaddleOCR.Models.Local</code></td>
+<td><code>Nong.OcrRuntime</code> 仓库；<code>Angri450.Nong.OcrRuntime.*</code> 5 个运行时包</td>
+<td><span class="tag gap">最乱</span><br>skill / CLI / 核心包 / runtime 仓库四层名字没串成一根轴。</td>
+</tr>
+<tr>
+<td><code>genre</code></td>
+<td><code>nong genre</code></td>
+<td><code>Angri450.Nong.Genre</code></td>
+<td>无额外主线包依赖</td>
+<td>无额外 runtime 仓库</td>
+<td><span class="tag watch">词偏虚</span><br>命令和包是一致的，但词义更像“模板库”，不是一眼就懂。</td>
+</tr>
+<tr>
+<td><code>icons</code></td>
+<td><code>nong icons</code></td>
+<td><code>Angri450.Nong.Bioicons</code></td>
+<td>无额外主线包依赖</td>
+<td>也被 <code>Angri450.Nong.Diagram</code> 消费</td>
+<td><span class="tag watch">要翻译</span><br>skill/CLI 说 `icons`，包说 `Bioicons`，需要明说“它不是通用图标库”。</td>
+</tr>
+<tr>
+<td><code>slice</code></td>
+<td><code>nong slice</code></td>
+<td><code>Angri450.Nong.Pandoc</code></td>
+<td>上游生产者是 <code>Docx</code>/<code>Pdf</code>/<code>Excel</code>/<code>Pptx</code> 四类 slice</td>
+<td>无独立 runtime 仓库</td>
+<td><span class="tag watch">要翻译</span><br>命令面叫 slice，底层合同叫 Pandoc package，要在文档里写透。</td>
+</tr>
+<tr>
+<td><code>skill</code></td>
+<td><code>nong skill</code></td>
+<td><code>SkillManagerCore</code></td>
+<td><code>YamlDotNet</code></td>
+<td>无额外 runtime 仓库</td>
+<td><span class="tag watch">历史名残留</span><br>CLI 是对的，核心库还保留 `SkillManagerCore` 旧名。</td>
+</tr>
+<tr>
+<td><code>skill-manager</code></td>
+<td>无当前同名 CLI 组</td>
+<td>策略 skill；历史上关联旧 <code>skill-manager</code> 工具/流程</td>
+<td>不应承担当前 packaging gate</td>
+<td>无额外 runtime 仓库</td>
+<td><span class="tag gap">边界混</span><br>它不是 CLI 镜像 skill，而是治理层 skill。问题是现在写得像万能入口。</td>
+</tr>
+<tr>
+<td><code>progress-report</code></td>
+<td><code>nong progress report</code></td>
+<td><code>Angri450.Nong.Cli</code> 内部 <code>ProgressCommands</code></td>
+<td>无独立可复用主线包</td>
+<td>无额外 runtime 仓库</td>
+<td><span class="tag watch">CLI-only</span><br>有 CLI 命令，但还没有独立包层，所以链条到这里就断一格。</td>
+</tr>
+</tbody>
+</table>
+
+<h2>所以你设想的“像胳膊一样指挥”，和现在一样吗</h2>
+<div class="note bad">
+<p><strong>不一样。现在只是“有骨头，但骨节没有都露出来”。</strong></p>
+<p>现在最接近你设想的是 `word/pdf/excel/chart/diagram/pptx/inspect` 这批。最不像的是 `multimodal`，其次是 `skill-manager`、`progress-report`、`slice`、`icons` 这些需要解释一层才能懂的点。</p>
+</div>
+
+<h2>哪个更方便</h2>
+<div class="note good">
+<p><strong>对 AI 和维护者来说，你设想的结构更方便。</strong></p>
+<p>但要稍微收一刀：不是要求四层所有名字机械完全一样，而是要求 <strong>一条固定主轴 + 一张明确映射表</strong>。</p>
+<ul>
+<li>Skill 和 CLI：越同名越好，这是 AI 路由主轴。</li>
+<li>CLI 和核心包：可以不同名，但必须稳定映射。</li>
+<li>核心包和 runtime 包：只在 OCR 这类重依赖路径显式标出。</li>
+</ul>
+</div>
+
+<h2>我给你的落地建议</h2>
+<table>
+<thead><tr><th>优先级</th><th>动作</th><th>理由</th></tr></thead>
+<tbody>
+<tr>
+<td><span class="tag gap">P1</span></td>
+<td>把 Toolkit 的 <code>multimodal</code> skill 定位改成 <code>ocr</code></td>
+<td>让 skill -> CLI 这一跳直接对齐 `nong ocr`。</td>
+</tr>
+<tr>
+<td><span class="tag gap">P1</span></td>
+<td>在 README / 审计页 / skill 文档里固定写出 OCR 链：<code>ocr -> nong ocr -> Angri450.Nong.MultiModal -> Nong.OcrRuntime -> Angri450.Nong.OcrRuntime.*</code></td>
+<td>一旦装不上、跑不动、镜像不同步，就知道该去哪一层看。</td>
+</tr>
+<tr>
+<td><span class="tag watch">P2</span></td>
+<td>给 <code>slice</code>、<code>icons</code>、<code>skill</code>、<code>progress-report</code> 都补“核心包是谁”的说明</td>
+<td>这些现在都要读过代码才知道后面是谁。</td>
+</tr>
+<tr>
+<td><span class="tag watch">P2</span></td>
+<td>把 `skill-manager` 明确声明为治理 skill，不再伪装成执行 skill</td>
+<td>否则它会持续和 `nong skill` 抢入口。</td>
+</tr>
+</tbody>
+</table>
+
+<footer>
+<p>来源：Nong.Toolkit.Net 的 15 个 `SKILL.md`、Toolkit 审计页、Nong.Cli.Net `CLAUDE.md` / `Cli/AGENT.md` / `.claude/references/project-structure.md`、各核心 `.csproj`、以及 `Nong.OcrRuntime` 仓库的 `README.md` 与 `OcrRuntime.csproj`。</p>
+</footer>
+
+</div>
+</body>
+</html>

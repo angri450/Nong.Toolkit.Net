@@ -1366,8 +1366,8 @@ gh codespace ssh
 gh codespace code
 
 # Copy files
-gh codespace cp local-file.txt remote:~/path/
-gh codespace cp remote:~/path/file.txt ./local/
+gh codespace cp local-file.txt remote:/workspaces/project/path/
+gh codespace cp remote:/workspaces/project/path/file.txt ./local/
 
 # View details
 gh codespace view

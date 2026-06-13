@@ -1,6 +1,6 @@
 # PPTX Skill
 
-`pptx` is exposed as a read-only GroundPA skill for the current implemented Nong PPTX commands.
+`pptx` is exposed as a read-only Nong.Toolkit.Net skill for the current implemented Nong PPTX commands.
 
 Use:
 

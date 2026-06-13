@@ -23,6 +23,7 @@ description: >
 | Platform detection | `$IsWindows` / `$IsLinux` / `$IsMacOS` |
 | Parallel processing | `ForEach-Object -Parallel` |
 | Null-conditional | `??` and `?.` operators |
+| Office/Word COM | Avoid by default; for Word tasks prefer `nong word ...`. If COM is explicitly required, read `word/references/com-automation.md` first |
 | Module import | `Import-Module -MinimumVersion X.Y -ErrorAction Stop` |
 | Verb-noun naming | Use approved verbs from `Get-Verb`; run PSScriptAnalyzer `UseApprovedVerbs` |
 | Comment-based help | Required for public functions/scripts: `.SYNOPSIS`, `.DESCRIPTION`, `.PARAMETER`, `.EXAMPLE` |

@@ -1,29 +1,55 @@
-# Build artifacts
+# Local archive and development-only material.
+# Keep the real archive outside this repo as ../Nong.Toolkit_archive/.
+# These patterns protect against accidentally placing archive material back under the repo root.
+_archive/
+Nong.Toolkit_archive/
+_v1_backup/
+claude.md
+Claude.md
+CLAUDE.local.md
+claude.local.md
+DEVELOP.md
+install.ps1
+.claude/
+.codex/
+
+# Build, package, and test outputs.
 bin/
 obj/
+build/
+dist/
+TestResults/
+coverage/
+.coverage
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 __pycache__/
 *.pyc
 *.pyo
+*.skill
+*.zip
+*.nupkg
+*.tmp
+*.bak
+*.orig
+.skill/
+.security-scan-passed
 
-# IDE
+# Local dependency caches and environments.
+.venv/
+venv/
+node_modules/
+
+# IDE, editor, and OS noise.
 .vs/
 .vscode/
 .idea/
 *.user
 *.suo
-
-# OS
 .DS_Store
 Thumbs.db
 
-# Test/generated
-TestResults/
-*.skill
-*.zip
-*.nupkg
-.skill
-.security-scan-passed
-
-# Backup
-_v1_backup/
-_archive/
+# Keep development process records committed.
+!log/
+!log/**

@@ -1,13 +1,13 @@
 # Diagram Workspace Setup
 
-Diagram workflows in GroundPA are CLI-first. A separate DiagramCore project is not required for the supported command surface.
+Diagram workflows in Nong.Toolkit.Net are CLI-first. A separate DiagramCore project is not required for the supported command surface.
 
 ## Recommended Workspace
 
 Keep specs, Newick files, generated diagrams, and optional QA output in a task-local directory:
 
 ```text
-GroundPA Toolkit Workplace/
+Nong Toolkit Workspace/
   diagram/
     specs/
     figures/
@@ -72,4 +72,4 @@ Use `--json` and treat `status: "error"` as failure. For validation or internal 
 
 ## Boundary
 
-Do not install diagram libraries or build custom rendering projects for GroundPA routing. The current implemented diagram surface is `flowchart`, `network`, and `tree`.
+Do not install diagram libraries or build custom rendering projects for Nong.Toolkit.Net routing. The current implemented diagram surface is `flowchart`, `network`, and `tree`.

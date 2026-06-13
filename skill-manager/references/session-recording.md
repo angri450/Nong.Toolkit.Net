@@ -2,7 +2,7 @@
 
 Enabled globally via CLAUDE.md. After every session that uses skills, automatically append one JSON line per error/fix to:
 
-`~/Documents/GroundPA Toolkit Workplace/skill-manager/session-records/YYYY-MM-DD.jsonl`
+`<workplace>/skill-manager/session-records/YYYY-MM-DD.jsonl`
 
 Use today's date as the filename (e.g., `2026-05-30.jsonl`). Create the directory if it doesn't exist.
 

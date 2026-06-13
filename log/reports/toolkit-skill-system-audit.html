@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nong.Toolkit.Net Skill System Audit</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "Microsoft YaHei", sans-serif; line-height: 1.72; color: #172033; background: #f5f7fb; }
+.container { max-width: 1480px; margin: 0 auto; padding: 28px 18px 48px; }
+header { margin-bottom: 22px; }
+h1 { font-size: 30px; color: #0f172a; margin-bottom: 8px; }
+.subtitle { color: #64748b; font-size: 14px; }
+h2 { font-size: 22px; margin: 34px 0 14px; padding-bottom: 8px; border-bottom: 2px solid #d9dee7; color: #111827; }
+h3 { font-size: 18px; margin: 22px 0 10px; color: #263248; }
+p { margin: 8px 0; }
+code { background: #edf0f5; border: 1px solid #dde3ee; padding: 1px 5px; border-radius: 4px; font-family: "Cascadia Code", Consolas, monospace; font-size: 0.88em; }
+.dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 18px 0 26px; }
+.card { background: #fff; border: 1px solid #e4e8f0; border-radius: 8px; padding: 18px; box-shadow: 0 1px 3px rgba(15,23,42,0.06); }
+.card-num { font-size: 30px; font-weight: 800; color: #0f172a; }
+.card-label { color: #64748b; font-size: 13px; margin-top: 4px; }
+.note { background: #fff; border: 1px solid #dbe3ef; border-left: 5px solid #2563eb; border-radius: 8px; padding: 15px 18px; margin: 14px 0 18px; }
+.good { border-left-color: #16a34a; background: #f4fbf6; }
+.warn { border-left-color: #d97706; background: #fffaf0; }
+.bad { border-left-color: #dc2626; background: #fff7f7; }
+table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #e4e8f0; border-radius: 8px; overflow: hidden; margin: 12px 0 22px; font-size: 14px; box-shadow: 0 1px 3px rgba(15,23,42,0.05); }
+th { background: #eef2f7; color: #334155; font-size: 12px; text-transform: uppercase; letter-spacing: 0.02em; text-align: left; padding: 10px 12px; border-bottom: 1px solid #dce3ed; }
+td { padding: 10px 12px; border-bottom: 1px solid #edf0f5; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+.tag { display: inline-block; padding: 2px 7px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.ok { background: #dcfce7; color: #166534; }
+.watch { background: #fef3c7; color: #92400e; }
+.gap { background: #fee2e2; color: #991b1b; }
+.info { background: #dbeafe; color: #1d4ed8; }
+.grid-2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.box { background: #fff; border: 1px solid #e4e8f0; border-radius: 8px; padding: 14px 16px; box-shadow: 0 1px 3px rgba(15,23,42,0.04); }
+ul { margin: 8px 0 8px 22px; }
+li { margin: 4px 0; }
+footer { margin-top: 36px; padding-top: 18px; border-top: 1px solid #dce3ed; color: #64748b; font-size: 13px; }
+@media (max-width: 980px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  table { font-size: 13px; }
+  th, td { padding: 8px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+<h1>Nong.Toolkit.Net 整体 Skill 系统审计</h1>
+<p class="subtitle">2026-06-10 | 目标：不是只盯着 <code>skill-manager</code>，而是把整个 Toolkit 的 skill 体系按“触发准不准、分层够不够、例子有没有、闭环硬不硬”一次看清楚。</p>
+</header>
+
+<div class="dashboard">
+<div class="card"><div class="card-num">15 个</div><div class="card-label">当前技能总数</div></div>
+<div class="card"><div class="card-num">14 个</div><div class="card-label">没有任何 examples</div></div>
+<div class="card"><div class="card-num">5 个</div><div class="card-label">没有 references</div></div>
+<div class="card"><div class="card-num">4 个</div><div class="card-label">优先整改：名字/触发/边界明显有问题</div></div>
+</div>
+
+<h2>一句话结论</h2>
+<div class="note bad">
+<p><strong>Toolkit 现在不是“整体都废了”，而是“有一批已经成型，一批偏薄，一批名字和触发把自己搞糊了”。</strong></p>
+<p>最严重的问题不在命令少，而在 <strong>skill 的命名、description、references、examples、失败回收闭环没有按同一标准建设</strong>。结果就是：有的 skill 很能用，有的 skill 只有门牌，没有房间；有的 skill 明明对应一个 CLI 命令组，却起了一个太虚的名字，AI 很难稳稳触发到对的入口。</p>
+</div>
+
+<h2>先说人话：现在到底是什么局面</h2>
+<div class="grid-3">
+<div class="box">
+<h3>A 类：骨架已经稳</h3>
+<p><code>word</code>、<code>pdf</code>、<code>literature</code>、<code>chart</code>、<code>excel</code>、<code>diagram</code></p>
+<p>这些 skill 已经像工具手册了，边界大体清楚，命令面能对得上 CLI，主要问题是还缺例子和失败样本。</p>
+</div>
+<div class="box">
+<h3>B 类：方向对，但偏薄</h3>
+<p><code>skill</code>、<code>slice</code>、<code>pptx</code>、<code>genre</code>、<code>inspect</code></p>
+<p>这些 skill 并不是错，只是有的太短，有的材料不够分层，有的名字不够直观，有的把两个场景写在一个入口里。</p>
+</div>
+<div class="box">
+<h3>C 类：现在真不好用</h3>
+<p><code>skill-manager</code>、<code>multimodal</code>、<code>progress-report</code>、<code>icons</code></p>
+<p>这四个最该先动。不是都要推倒重来，但至少要重写 description、补 references，个别还要改名或拆层。</p>
+</div>
+</div>
+
+<h2>系统级问题</h2>
+<table>
+<thead><tr><th>问题</th><th>现在是什么样</th><th>为什么会出事</th><th>建议</th></tr></thead>
+<tbody>
+<tr>
+<td>命名标准不统一</td>
+<td>有的 skill 直接跟 CLI 命令组同名，比如 <code>word</code>、<code>pdf</code>；有的却用了更虚的词，比如 <code>multimodal</code>。</td>
+<td>AI 看到需求时，会更容易把问题往宽泛词上靠，导致误触发。</td>
+<td>能镜像 CLI 的，就尽量镜像 CLI；如果不是 CLI 镜像，而是策略或工作流 skill，就用角色名。</td>
+</tr>
+<tr>
+<td>渐进式披露深度不均匀</td>
+<td><code>word</code> 有 7 份 reference，<code>skill-manager</code>、<code>progress-report</code>、<code>icons</code> 这些却只有一个主文件甚至没有下钻材料。</td>
+<td>有的 skill 触发后能继续往下读，有的只看到一段总说明，后面没有路。</td>
+<td>高频 skill 至少 2 份 reference；策略 skill 至少 3 份 reference；简单命令镜像 skill 也要有最少 1 份边界说明。</td>
+</tr>
+<tr>
+<td>例子纪律几乎没立起来</td>
+<td>15 个 skill 里只有 <code>diagram</code> 真正带了 examples，其他 14 个都没有。</td>
+<td>没有例子，skill 容易停留在“口头上会”，遇到真实请求就会飘。</td>
+<td>把“每个 skill 至少 1 个成功例子，复杂 skill 再加 1 个失败例子”写成硬规则。</td>
+</tr>
+<tr>
+<td>失败反馈闭环没有落在 skill 结构里</td>
+<td>仓库里有 <code>log/debug</code>，也有用户反馈，但大多数 skill 没有明确告诉 AI 如何把失败沉淀回 reference 或例子。</td>
+<td>技能会越改越散，重复踩坑，触发和边界问题会反复出现。</td>
+<td>给策略类 skill 单独写 feedback/regression reference，把真实失误回收到例子和边界里。</td>
+</tr>
+<tr>
+<td>有些 skill 把不同层次混写</td>
+<td>比如 <code>inspect</code> 同时写诊断和生成，<code>progress-report</code> 同时写报告生成和旧工具迁移政策。</td>
+<td>AI 会不知道这是“执行动作”还是“治理动作”。</td>
+<td>执行入口和治理规则分开；主 skill 只做分流，细节放 reference。</td>
+</tr>
+</tbody>
+</table>
+
+<h2>最该先处理的四个 skill</h2>
+<table>
+<thead><tr><th>Skill</th><th>问题说人话</th><th>根因</th><th>优先动作</th></tr></thead>
+<tbody>
+<tr>
+<td><code>skill-manager</code></td>
+<td>像“凡是跟 skill 有点关系都能来”的总收发室。</td>
+<td>名字太大，description 太宽，0 references，0 examples，策略和执行混在一起。</td>
+<td>先收窄 description；至少补 authoring / trigger-audit / feedback-loop 三份 reference；长期拆成策略入口加子 skill。</td>
+</tr>
+<tr>
+<td><code>multimodal</code></td>
+<td>明明实际在教 <code>nong ocr</code>，却起了一个太泛的名字。</td>
+<td>外层 skill 名和 CLI 命令组不对齐；下层其实已经有 <code>ocr-local.md</code>、<code>ocr-cloud.md</code>、<code>image-analyzer.md</code> 三份 reference。</td>
+<td>优先改名到 <code>ocr</code>；把现有三条 reference 在总入口、README 和审计页里标清楚，再把 <code>Nong.OcrRuntime</code> 仓库链路写明。</td>
+</tr>
+<tr>
+<td><code>progress-report</code></td>
+<td>方向没错，但现在像一份半成品工作说明书。</td>
+<td>0 references，0 examples，同时承担日志结构说明和“旧工具别再乱放”的治理口径。</td>
+<td>补 2 份 reference：日志结构与报告生成；迁移策略单独放边界段或独立 reference。</td>
+</tr>
+<tr>
+<td><code>icons</code></td>
+<td>太薄了，看起来像命令速查表，不像可判断边界的 skill。</td>
+<td>0 references，0 examples，名字又容易让 AI 联想到通用图标设计，而不仅是 Bioicons 检索。</td>
+<td>如果只做 Bioicons，考虑名字或 description 明确成 <code>bioicons</code> / scientific icon search；至少补 1 份 reference 说明范围和不做什么。</td>
+</tr>
+</tbody>
+</table>
+
+<h2>每个 skill 到底该怎么判</h2>
+<table>
+<thead><tr><th>Skill</th><th>定位</th><th>触发精度</th><th>分层深度</th><th>例子</th><th>主要问题</th><th>建议</th></tr></thead>
+<tbody>
+<tr>
+<td><code>word</code></td>
+<td>CLI 镜像 + 高复杂工作流</td>
+<td><span class="tag ok">高</span></td>
+<td><span class="tag ok">厚</span></td>
+<td><span class="tag watch">无</span></td>
+<td>内容很全，但还没有把真实成功/失败案例固化。</td>
+<td>保持结构，不要大拆；补学术格式、表格重排、旧 DOCX 修复各 1 个例子。</td>
+</tr>
+<tr>
+<td><code>pdf</code></td>
+<td>CLI 镜像 + 证据型读取</td>
+<td><span class="tag ok">高</span></td>
+<td><span class="tag watch">中</span></td>
+<td><span class="tag watch">无</span></td>
+<td>主体清楚，但 reference 还不够厚，例子为零。</td>
+<td>补文本层 PDF、扫描 PDF、混合 PDF 三种判路例子。</td>
+</tr>
+<tr>
+<td><code>literature</code></td>
+<td>CLI 镜像 + Provider 路由</td>
+<td><span class="tag ok">高</span></td>
+<td><span class="tag watch">中</span></td>
+<td><span class="tag watch">无</span></td>
+<td>Provider 边界讲清了，但例子还是不够。</td>
+<td>补 1 个 DOI 查找例子、1 个复杂检索式例子、1 个 provider 失败例子。</td>
+</tr>
+<tr>
+<td><code>chart</code></td>
+<td>CLI 镜像 + 数据到图</td>
+<td><span class="tag ok">高</span></td>
+<td><span class="tag watch">中</span></td>
+<td><span class="tag watch">无</span></td>
+<td>命令面清楚，但缺“输入坏了怎么修”的例子。</td>
+<td>补分组 JSON、折线 spec、显著性展示失败案例。</td>
+</tr>
+<tr>
+<td><code>excel</code></td>
+<td>CLI 镜像 + 数据准备</td>
+<td><span class="tag ok">高</span></td>
+<td><span class="tag ok">够用</span></td>
+<td><span class="tag watch">无</span></td>
+<td>整体清楚，但缺“从 Excel 到 chart”的通路例子。</td>
+<td>补 1 个从工作表到 groups.json 再到 chart 的端到端例子。</td>
+</tr>
+<tr>
+<td><code>diagram</code></td>
+<td>CLI 镜像 + 图形生成</td>
+<td><span class="tag ok">高</span></td>
+<td><span class="tag ok">够用</span></td>
+<td><span class="tag ok">有</span></td>
+<td>目前是全仓最像“完成态”的一个 skill。</td>
+<td>可作为 examples 规范样板，反向指导别的 skill。</td>
+</tr>
+<tr>
+<td><code>skill</code></td>
+<td>CLI 镜像 + 生命周期关卡</td>
+<td><span class="tag ok">高</span></td>
+<td><span class="tag watch">薄</span></td>
+<td><span class="tag watch">无</span></td>
+<td>边界清楚，但 0 references，0 examples。</td>
+<td>补 1 份 packaging gate reference，至少给 validate / scan / package 一套最小顺序例子。</td>
+</tr>
+<tr>
+<td><code>slice</code></td>
+<td>CLI 镜像 + 通用包读取</td>
+<td><span class="tag ok">高</span></td>
+<td><span class="tag watch">薄</span></td>
+<td><span class="tag watch">无</span></td>
+<td>本体短而清楚，但缺块级读取例子和严格证据例子。</td>
+<td>补 1 份 reference：block/asset/read-order 的典型问答。</td>
+</tr>
+<tr>
+<td><code>pptx</code></td>
+<td>CLI 镜像 + 只读入口</td>
+<td><span class="tag ok">高</span></td>
+<td><span class="tag watch">薄</span></td>
+<td><span class="tag watch">无</span></td>
+<td>读得懂，但太短，用户容易误以为支持编辑。</td>
+<td>补 1 个“只读，不改稿”的 reference，明确和 future write path 的边界。</td>
+</tr>
+<tr>
+<td><code>genre</code></td>
+<td>CLI 镜像，但名字偏抽象</td>
+<td><span class="tag watch">中</span></td>
+<td><span class="tag watch">薄</span></td>
+<td><span class="tag watch">无</span></td>
+<td><code>genre</code> 这个词不够直观，AI 读到“模板”时未必先想到它。</td>
+<td>保留 CLI 对齐的同时，在 description 里更强地写 template catalog / preset discovery；必要时考虑命令别名。</td>
+</tr>
+<tr>
+<td><code>inspect</code></td>
+<td>CLI 镜像 + 论文/公文语义工作流</td>
+<td><span class="tag watch">中</span></td>
+<td><span class="tag watch">偏薄</span></td>
+<td><span class="tag watch">无</span></td>
+<td>诊断和起草都放在一个入口里，方向对，但层次还不够清楚。</td>
+<td>拆成诊断 reference 和写作 reference；给论文诊断、公文起草各 1 个例子。</td>
+</tr>
+<tr>
+<td><code>multimodal</code></td>
+<td>本质是 OCR 路由</td>
+<td><span class="tag gap">低</span></td>
+<td><span class="tag ok">已有分层</span></td>
+<td><span class="tag watch">无</span></td>
+<td>真正问题是外层名字太虚，不是内部 reference 没拆。</td>
+<td>优先改名到 <code>ocr</code>，并把 <code>ocr-local</code> / <code>ocr-cloud</code> / <code>image-analyzer</code> 三条已存在分路标到总入口。</td>
+</tr>
+<tr>
+<td><code>progress-report</code></td>
+<td>CLI 镜像 + 日志治理</td>
+<td><span class="tag watch">中</span></td>
+<td><span class="tag gap">薄</span></td>
+<td><span class="tag watch">无</span></td>
+<td>报告生成和治理规则写在一起，没有下钻材料。</td>
+<td>至少补日志结构 reference 和报告生成 reference。</td>
+</tr>
+<tr>
+<td><code>icons</code></td>
+<td>CLI 镜像，但范围表达过宽</td>
+<td><span class="tag watch">中</span></td>
+<td><span class="tag gap">薄</span></td>
+<td><span class="tag watch">无</span></td>
+<td>太像“所有图标问题都归我”，其实它只是 Bioicons 检索。</td>
+<td>补边界说明，必要时把名字朝 Bioicons 靠。</td>
+</tr>
+<tr>
+<td><code>skill-manager</code></td>
+<td>策略治理 skill</td>
+<td><span class="tag gap">低</span></td>
+<td><span class="tag gap">薄</span></td>
+<td><span class="tag watch">无</span></td>
+<td>总兜底入口，什么都想管。</td>
+<td>优先级最高，先收窄，再拆层。</td>
+</tr>
+</tbody>
+</table>
+
+<h2>关于名字：哪些词 AI 更容易看懂</h2>
+<div class="note warn">
+<p>你前面一直强调“名字得让 AI 看得懂，词得对得住意思”，这个判断是对的。</p>
+<p>Toolkit 里最典型的名字问题，不是所有 skill 都有，而是集中在少数几个词太虚、太泛、太不像 CLI 命令组。</p>
+</div>
+
+<table>
+<thead><tr><th>当前名字</th><th>问题</th><th>更稳的方向</th><th>说明</th></tr></thead>
+<tbody>
+<tr>
+<td><code>multimodal</code></td>
+<td>太大，像什么图片、OCR、视觉、多模态都能进。</td>
+<td><code>ocr</code></td>
+<td>它实际就是围绕 <code>nong ocr</code> 的路由 skill。内部三份 reference 已经分好，缺的是总入口名字和 <code>Nong.OcrRuntime</code> 链路说明。</td>
+</tr>
+<tr>
+<td><code>skill-manager</code></td>
+<td>像总后台，天然吸走过多问题。</td>
+<td><code>skill-policy</code>，或保留原名但大幅收窄 description</td>
+<td>如果它保留总入口身份，就要显式声明“我只做策略分流”。</td>
+</tr>
+<tr>
+<td><code>icons</code></td>
+<td>太像通用图标设计，而非 Bioicons 检索。</td>
+<td><code>bioicons</code> 或在 description 中明确 “scientific icon search”</td>
+<td>如果 CLI 就叫 <code>icons</code>，也可以不改命令名，但 skill 的描述必须更准。</td>
+</tr>
+<tr>
+<td><code>genre</code></td>
+<td>词本身偏文学/体裁，和“模板目录”不是一眼对齐。</td>
+<td>保留命令名，强化 description 中的 template/preset 词</td>
+<td>这里不一定要真改名，但至少要把触发词写得更像“模板库”。</td>
+</tr>
+</tbody>
+</table>
+
+<h2>最终应该长成什么样</h2>
+<div class="grid-2">
+<div class="box">
+<h3>1. 命令镜像 skill</h3>
+<ul>
+<li>名字尽量跟 CLI 命令组一致：<code>word</code>、<code>pdf</code>、<code>excel</code>、<code>pptx</code>、<code>slice</code>、<code>skill</code>、<code>chart</code>、<code>diagram</code>、<code>icons</code>、<code>literature</code></li>
+<li>主文件负责分流、边界、命令面</li>
+<li>reference 负责细场景</li>
+<li>至少一个成功例子</li>
+</ul>
+</div>
+<div class="box">
+<h3>2. 工作流 skill</h3>
+<ul>
+<li>处理跨命令组合，但名字要说清是“什么工作流”</li>
+<li><code>inspect</code> 属于论文/公文工作流</li>
+<li><code>ocr</code> 属于 OCR 路由工作流，不该继续挂在笼统的 <code>multimodal</code> 入口下</li>
+<li>要把不同子路径拆成 reference</li>
+</ul>
+</div>
+</div>
+
+<div class="grid-2">
+<div class="box">
+<h3>3. 策略治理 skill</h3>
+<ul>
+<li>不直接承接所有执行细节</li>
+<li><code>skill-manager</code> 只该做策略、分流、质量约束</li>
+<li><code>progress-report</code> 要么是纯报告生成 skill，要么是带少量治理边界，但不能混成一团</li>
+</ul>
+</div>
+<div class="box">
+<h3>4. 统一质量底线</h3>
+<ul>
+<li>每个 skill 都要有清晰边界</li>
+<li>每个复杂 skill 都要有 references</li>
+<li>每个 skill 至少 1 个成功例子</li>
+<li>每个高风险 skill 还要有 1 个失败例子或回归案例</li>
+</ul>
+</div>
+</div>
+
+<h2>建议的整改顺序</h2>
+<table>
+<thead><tr><th>优先级</th><th>动作</th><th>理由</th></tr></thead>
+<tbody>
+<tr>
+<td><span class="tag gap">P1</span></td>
+<td>重写 <code>skill-manager</code> description，并补至少 3 份 reference</td>
+<td>这是当前最明显的误触发源。</td>
+</tr>
+<tr>
+<td><span class="tag gap">P1</span></td>
+<td>把 <code>multimodal</code> 改到和 <code>nong ocr</code> 直接对齐，并把现有三份 OCR reference 与 <code>Nong.OcrRuntime</code> 链路标清</td>
+<td>问题主要在外层名和映射断裂，不在下层材料缺失。</td>
+</tr>
+<tr>
+<td><span class="tag gap">P1</span></td>
+<td>给 <code>progress-report</code> 和 <code>icons</code> 补 references 与边界说明</td>
+<td>这两个不是理念错，是太薄。</td>
+</tr>
+<tr>
+<td><span class="tag watch">P2</span></td>
+<td>给 <code>inspect</code>、<code>slice</code>、<code>skill</code>、<code>pptx</code>、<code>genre</code> 补最小例子和 reference</td>
+<td>把“可用但偏薄”的 skill 补成“可稳定使用”。</td>
+</tr>
+<tr>
+<td><span class="tag watch">P2</span></td>
+<td>给 <code>word</code>、<code>pdf</code>、<code>literature</code>、<code>chart</code>、<code>excel</code> 建失败样本</td>
+<td>这些 skill 已经够强，下一步该补闭环，而不是继续堆规则。</td>
+</tr>
+<tr>
+<td><span class="tag info">P3</span></td>
+<td>形成统一 skill 模板：命名规则、description 模板、reference 最低数、example 最低数</td>
+<td>不立模板，后面还会继续出现“有人写得厚，有人只写了个门牌”的情况。</td>
+</tr>
+</tbody>
+</table>
+
+<h2>最后一句判断</h2>
+<div class="note good">
+<p><strong>Toolkit 的问题不是“没有想法”，而是“好想法没有被做成统一的 skill 工程规范”。</strong></p>
+<p><code>skill-manager</code> 只是最显眼的一坨；真正要修的是整套 skill 系统的命名标准、分层深度、例子纪律和失败闭环。</p>
+<p>但也别一刀切地全盘重写。该保留的保留，该补材料的补材料，该改名的改名，该拆层的拆层。</p>
+</div>
+
+<footer>
+<p>来源：Toolkit <code>CLAUDE.md</code>、15 个 <code>SKILL.md</code> 入口文件、现有 <code>references/</code> / <code>scripts/</code> / <code>formats/</code> / <code>examples/</code> 目录统计，以及已完成的 <code>skill-manager</code> 专项审计页。</p>
+</footer>
+
+</div>
+</body>
+</html>

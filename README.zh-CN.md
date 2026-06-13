@@ -1,207 +1,158 @@
-# GroundPA Toolkit — 土地公的工具箱
+# Nong.Toolkit.Net
 
-GroundPA Toolkit 2.1.0 是面向农学生论文和文档工作流的 Claude Code skill 集。核心变化是：skill 层不再让模型临时写 .NET 小项目，而是统一调用 `nong` CLI。
+Nong.Toolkit.Net 是一个 Claude Code 多 skill 插件，面向农学论文和文档工作流。
 
-模型负责判断任务、准备 JSON/spec、解释诊断结果。确定性工作交给 .NET CLI。
+插件提供一组聚焦的 skills：Word、PDF、文献检索、Excel、统计图、流程图、PPTX 读取、OCR/图像检查、格式模板、Bioicons 和论文诊断。确定性的文档和文献处理统一交给纯 .NET `nong` CLI（来自 [Nong.Cli.Net](https://github.com/angri450/Nong.Cli.Net)）；模型负责判断流程、解释结果和写作。
 
-## 基础工具
+## 安装
+
+通过 Claude Code plugin marketplace 安装：
+
+```bash
+claude plugin marketplace add https://gitcode.com/angri450/Nong.Toolkit.Net.git
+claude plugin install nong-toolkit@angri450
+```
+
+GitHub 源：
+
+```bash
+claude plugin marketplace add angri450/Nong.Toolkit.Net
+claude plugin install nong-toolkit@angri450
+```
+
+安装后重启 Claude Code，或执行 `/reload-plugins`。
+
+插件只安装 skills。必需的 Nong CLI 需要单独安装或更新：
 
 ```powershell
-dotnet tool install --global Angri450.Nong.Cli
+dotnet tool install --global Angri450.Nong.Cli --add-source https://mirrors.huaweicloud.com/repository/nuget/v3/index.json
+```
+
+如果已经安装：
+
+```powershell
+dotnet tool update --global Angri450.Nong.Cli --add-source https://mirrors.huaweicloud.com/repository/nuget/v3/index.json
+```
+
+使用前先确认命令面：
+
+```powershell
 nong commands --json
 ```
 
-Nong 同时提供 skill 生命周期主工具：
+Nong.Toolkit.Net 2.4.0 面向 Nong 4.0.0+ 的 93 个命令面。
 
-```powershell
-nong skill inventory . --json
-nong skill scan . --json
-nong skill package . --json
-```
-
-## 2.1.0 暴露的 Nong Skills
-
-只暴露当前 `nong` CLI 已实现的命令。
-
-| Skill | 已实现命令 |
-|-------|------------|
-| `word` | read, preview, fill, rebuild, extract, dissect, stats, fonts, styles, validate, merge, outline, images, comments, revisions, infer-format, fix-order, protect, embed-font, add paragraph/table/footnote/endnote/image/toc/xref/link/bookmark/comment/math |
-| `inspect` | diagnose, refs, write-paper, classify, structure, varplan, evidence, data-req, gap, semantics |
-| `excel` | sheets, read, to-groups, create |
-| `chart` | analyze, anova, duncan, bar, line, scatter, pie |
-| `diagram` | flowchart, network, tree |
-| `pptx` | read, slides |
-| `multimodal` | ocr check-env, analyze-image, cloud, to-word, models, install-model, gated local |
-| `genre` | `genre list`, `genre show` |
-| `icons` | `icons list`, `icons search` |
-
-## 其他 Skills
+## Skills
 
 | Skill | 用途 |
 |-------|------|
-| `bash` | Bash 引用、数组、错误处理、沙箱安全模式 |
-| `powershell` | PowerShell cmdlet、模块、错误处理、凭据安全 |
-| `dotnet` | C#、MSBuild、ASP.NET Core、EF Core、MAUI、诊断、NuGet |
-| `github` | `git` 和 `gh` CLI 工作流 |
-| `gitee` | Gitee 与 Gitee MCP 工作流 |
-| `ghproxy` | GitHub 链接加速 |
-| `nuget` | 包安装、打包、发布 |
-| `ilspycmd` | .NET 程序集反编译 |
-| `email` | ClawEmail mail-cli 工作流 |
-| `skill-manager` | meta-skill 维护、评测资料和 legacy skill-manager 工作流 |
+| `word` | DOC/DOCX 检查、转换交接、切片、版式证据、修复、填充、编辑、校验、合并、批注、图片、字体和保护 |
+| `pdf` | PDF 检查、本地切片、`content.nongmark`、页面渲染、内嵌图片提取，以及文本/扫描路由 |
+| `literature` | 类 CNKI 检索 DSL、OpenAlex/Crossref/Unpaywall 元数据和开放获取查询、本地过滤排序，以及 JSON/Markdown/BibTeX 导出 |
+| `inspect` | 农学生论文诊断、参考文献、结构、证据、数据需求、差距分析和写作支持 |
+| `excel` | 工作簿读取、sheet 清单、分组数据提取和工作簿创建 |
+| `chart` | 统计和图表流程：analyze、ANOVA、Duncan、柱状图、折线图、散点图和饼图 |
+| `diagram` | 通过 Nong 生成流程图、网络图和树图 |
+| `pptx` | PPTX 读取和幻灯片清单 |
+| `ocr` | OCR 环境检查、图像结构 QA、云端 OCR、图片/PDF 转 Word、OCR 模型清单和受控本地 OCR |
+| `genre` | 论文体裁列表和体裁写作指导 |
+| `icons` | Bioicons 列表和搜索 |
+| `slice` | NongPandoc 包检查、严格证据检查、block 读取和资源清单 |
+| `skill` | `nong skill validate/scan/inventory/package` 生命周期闸门 |
+| `skill-manager` | Skill 设计、维护、触发质量和旧工作流迁移 |
+| `progress-report` | 结构化日志摘要和 HTML 进展报告指导 |
 
-## 常用流程
+开发态和旧材料本地保存在仓库外的 `../Nong.Toolkit_archive/`；如果误拷回仓库，也会被 Git 忽略。开发过程记录保留在 `log/`，需要提交。
 
-### Word
+## 常用命令
+
+Word：
 
 ```powershell
-nong word read paper.docx --json
-nong word preview paper.docx --json
+nong word check paper.docx --json
 nong word dissect paper.docx --output paper.slice --json
-nong word fill template.docx data.json -o out.docx --json
-nong word rebuild dirty.docx -o clean.docx --json
-nong word add paragraph paper.docx --spec paragraph.json -o out.docx --json
+nong word fonts paper.docx --json
+nong word styles paper.docx --json
+nong word validate paper.docx --json
 ```
 
-### 论文诊断
+PDF：
 
 ```powershell
-nong inspect diagnose paper.txt --json
-nong inspect refs paper.txt --json
-nong inspect write-paper spec.json -o paper.docx --json
-nong inspect classify paper.txt --json
-nong inspect evidence paper.txt --json
+nong pdf check guide.pdf --json
+nong pdf dissect guide.pdf --output guide.slice --mode auto --json
+nong pdf render guide.pdf --output guide.pages --dpi 150 --json
+nong pdf images guide.pdf --output guide.assets --json
 ```
 
-### Excel 到统计图
+文献检索：
 
 ```powershell
-nong excel to-groups data.xlsx --group Treatment --value Yield --raw > groups.json
-nong excel create workbook.json -o workbook.xlsx --json
+nong lit validate --query "SU=('腐植酸'+'腐殖酸')*('稀土'+'微肥')" --json
+nong lit plan --query "SU=('腐植酸'+'腐殖酸')*('稀土'+'微肥')" --sources openalex,crossref,unpaywall --json
+nong lit search --query "DOI='10.1016/j.chemgeo.2007.05.018'" --sources openalex,crossref,unpaywall --limit 20 --profile balanced --out refs.json --json
+nong lit export --input refs.json --format bibtex --out refs.bib --json
+```
+
+Stage19 文献提供方只包括 OpenAlex、Crossref 和 Unpaywall。Unpaywall 需要 `NONG_LIT_UNPAYWALL_EMAIL` 或 `NONG_LIT_MAILTO`；OpenAlex 可使用 `NONG_LIT_OPENALEX_API_KEY` 或 `NONG_LIT_OPENALEX_KEY`；Crossref 可使用 `NONG_LIT_MAILTO`。全文检索、爬虫、绕过付费墙、Semantic Scholar、PubMed、PMC、arXiv、万方和自动中英同义词扩展都未实现。
+
+Excel、统计图和图示：
+
+```powershell
+nong excel sheets data.xlsx --json
+nong excel to-groups data.xlsx --group Treatment --value Yield --raw
 nong chart analyze groups.json --json
 nong chart bar groups.json -o fig.png --json
-nong chart line line.json -o line.png --json
-nong chart scatter scatter.json -o scatter.png --json
-nong chart pie pie.json -o pie.png --json
-```
-
-### 图示
-
-```powershell
 nong diagram flowchart flow.json -o flow.png --json
-nong diagram network network.json -o network.png --json
-nong diagram tree tree.nwk -o tree.png --json
 ```
 
-### PPTX
+PPTX 和 OCR：
 
 ```powershell
 nong pptx read deck.pptx --json
 nong pptx slides deck.pptx --json
-```
-
-### OCR 与图像验收
-
-```powershell
 nong ocr check-env --json
 nong ocr analyze-image fig.png -o fig.analysis --json
 nong ocr cloud scan.png -o ocr-out --json
 nong ocr to-word scan.png -o out.docx --json
 ```
 
-`ocr cloud` 和 `ocr to-word` 需要 `PADDLEOCR_ACCESS_TOKEN`。`ocr analyze-image` 做图像结构和版面检查，不识别文本。`ocr local` 是受环境门控的本地路径，模型路径未安装或推理未就绪时可能返回 E005/E009。
+`ocr cloud` 和 `ocr to-word` 需要 `PADDLEOCR_ACCESS_TOKEN`。Token 页面是 `https://aistudio.baidu.com/account/accessToken`。
 
-## 安装
+## 开发边界
 
-### Skills 安装（推荐，无需 Git 登录，无需 SSH Key）
-
-这是**经典的 Claude Code Skills 安装方式**：git clone 整个仓库，复制到 `~/.claude/skills/`。不走 Claude Code plugin marketplace 机制，不需要后台 clone，不会触发 Gitee 交互式登录。
-
-**GitCode（推荐，匿名 clone，国内快）**
-
-```bash
-git clone https://gitcode.com/angri450/GroundPA-Toolkit.git /tmp/groundpa && mkdir -p ~/.claude/skills && cp -r /tmp/groundpa/. ~/.claude/skills/ && rm -rf /tmp/groundpa && dotnet tool install --global Angri450.Nong.Cli
-```
-
-**Gitee**
-
-```bash
-git clone https://gitee.com/angri450/GroundPA-Toolkit.git /tmp/groundpa && mkdir -p ~/.claude/skills && cp -r /tmp/groundpa/. ~/.claude/skills/ && rm -rf /tmp/groundpa && dotnet tool install --global Angri450.Nong.Cli
-```
-
-**GitHub（海外）**
-
-```bash
-git clone https://github.com/angri450/GroundPA-Toolkit.git /tmp/groundpa && mkdir -p ~/.claude/skills && cp -r /tmp/groundpa/. ~/.claude/skills/ && rm -rf /tmp/groundpa && dotnet tool install --global Angri450.Nong.Cli
-```
-
-安装后执行 `/reload-plugins` 或重启 Claude Code。
-
-### Plugin Marketplace 安装（实验性）
-
-这个方式通过 Claude Code plugin marketplace 机制安装。要求 Claude Code 在后台成功 clone 仓库，Gitee HTTPS 可能触发认证弹窗导致失败。
-
-```bash
-claude plugin marketplace add https://gitcode.com/angri450/GroundPA-Toolkit.git
-claude plugin install groundpa-toolkit@angri450
-/reload-plugins
-```
-
-GitHub 备用：
-
-```bash
-claude plugin marketplace add angri450/GroundPA-Toolkit
-claude plugin install groundpa-toolkit@angri450
-/reload-plugins
-```
-
-### 必装 .NET 工具
-
-```powershell
-dotnet tool install --global Angri450.Nong.Cli
-```
-
-如果已经安装：
-
-```powershell
-dotnet tool update --global Angri450.Nong.Cli
-```
-
-## 更新
-
-Skills 安装方式：重新 clone 覆盖即可。
-
-```bash
-git clone https://gitcode.com/angri450/GroundPA-Toolkit.git /tmp/groundpa && cp -r /tmp/groundpa/. ~/.claude/skills/ && rm -rf /tmp/groundpa
-```
-
-Plugin Marketplace 方式：
-
-```bash
-claude plugin marketplace update angri450
-claude plugin update groundpa-toolkit@angri450
-/reload-plugins
-```
-
-## 工作区
-
-运行时输出建议统一放在：
+这个仓库按可安装的 Claude Code plugin 组织。可安装插件面是：
 
 ```text
-$HOME/Documents/GroundPA Toolkit Workplace/output/
+.claude-plugin/
+word/ pdf/ literature/ inspect/ excel/ chart/ diagram/ pptx/ ocr/ genre/ icons/
+slice/ skill/ skill-manager/ progress-report/
+README.md README.zh-CN.md skill.zh skills.sh.json LICENSE
 ```
 
-agent 调用 `nong` 时优先使用绝对路径。生成文件以后读取 JSON 里的 `artifacts` 字段。
+Git 提交面还保留 `log/`，用于展示开发过程。`nong skill package` 打包可安装插件面，`log/` 保留在仓库中。
 
-## 契约
+生成输出、旧实验、本地 Claude/Codex 规则、打包产物和构建临时文件不要进入这两个面。需要本地保留时，挪到仓库外的 `../Nong.Toolkit_archive/`，不要放在仓库内 `_archive/`。
 
-所有 Nong-facing skills 都遵守同一规则：
+## 校验
 
-1. 先用 `nong commands --json` 看可用命令。
-2. 只调用 `implemented` 命令。
-3. 面向模型判断时优先加 `--json`。
-4. `status: "error"` 一律视为失败。
-5. 下一步行动前读取 `errors[0].code`、`errors[0].message` 和 `artifacts`。
+校验插件：
+
+```bash
+claude plugin validate .
+```
+
+查看 Nong-facing skills：
+
+```powershell
+nong skill inventory . --json
+```
+
+校验单个 skill：
+
+```powershell
+nong skill validate .\word --json
+```
 
 ## 开源协议
 
