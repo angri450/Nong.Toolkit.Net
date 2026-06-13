@@ -1,0 +1,15 @@
+{
+  "_comment": "Scan allowlist for email skill. Documentation examples only — no real credentials.",
+  "allowlist": [
+    {
+      "file": "SKILL.md",
+      "rules": ["EMAIL_EXPOSED"],
+      "reason": "Documentation example: recipient@example.com is an RFC 2606 reserved example address. Not a real email."
+    },
+    {
+      "file": "references/github-triage.md",
+      "rules": ["EMAIL_EXPOSED"],
+      "reason": "Documentation example: .ghbot@claw.163.com is a placeholder sub-mailbox format showing the naming convention. No real address."
+    }
+  ]
+}

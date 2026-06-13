@@ -1,0 +1,29 @@
+# Build artifacts
+bin/
+obj/
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test/generated
+TestResults/
+*.skill
+*.zip
+*.nupkg
+.skill
+.security-scan-passed
+
+# Backup
+_v1_backup/
+_archive/

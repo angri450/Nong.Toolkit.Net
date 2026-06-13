@@ -1,0 +1,24 @@
+{
+  "groups": [
+    {
+      "title": "Office & Document Generation",
+      "description": "Word, Excel, PowerPoint, chart, diagram, and OCR via OpenXML NuGet — read, write, format with full intelligence",
+      "skills": ["word", "excel", "pptx", "chart", "diagram", "multimodal"]
+    },
+    {
+      "title": "Shell Scripting",
+      "description": "Bash and PowerShell scripting references with error handling, tool selection, and sandbox safety",
+      "skills": ["bash", "powershell"]
+    },
+    {
+      "title": "Developer Tools",
+      "description": ".NET development, GitHub CLI, NuGet package management, assembly decompilation, and GitHub acceleration proxy",
+      "skills": ["dotnet", "github", "ghproxy", "nuget", "ilspycmd"]
+    },
+    {
+      "title": "Communication & Meta",
+      "description": "Email operations and the skill-manager meta-skill for building and maintaining skills",
+      "skills": ["email", "skill-manager"]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "_comment": "Scan allowlist for word skill. Documentation references only.",
+  "allowlist": [
+    {
+      "file": "references/workspace-setup.md",
+      "rules": [
+        "HOME_PATH_REFERENCE"
+      ],
+      "reason": "~/Documents/GroundPA Toolkit Workplace/word/ and ~/Documents/GroundPA Toolkit Workplace/output/ are standard workspace paths."
+    },
+    {
+      "file": "SKILL.md",
+      "rules": [
+        "HOME_PATH_REFERENCE"
+      ],
+      "reason": "~/Documents/GroundPA Toolkit Workplace/word/ is the standard output structure."
+    }
+  ]
+}

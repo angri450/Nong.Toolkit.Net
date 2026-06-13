@@ -1,0 +1,57 @@
+{
+  "skill_name": "github",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I just made some changes to my project. How do I save them and push to GitHub?",
+      "expected_output": "Shows git add, git commit -m, git push. Uses explicit file names or safe patterns, not git add -A.",
+      "expectations": [
+        "Uses git add with specific files or safe pattern",
+        "Uses git commit -m with a message",
+        "Uses git push",
+        "Does not suggest git add -A or git add . without warning"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "How do I create a pull request from my feature branch?",
+      "expected_output": "Shows gh pr create from the feature branch. Mentions pushing first if the branch isn't on remote.",
+      "expectations": [
+        "Uses gh pr create",
+        "Checks or mentions push prerequisite",
+        "Does not suggest manual PR creation on github.com as first option"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I accidentally committed something I shouldn't have. How do I undo my last commit but keep the changes?",
+      "expected_output": "Shows git reset --soft HEAD~1. Warns about git reset --hard. Mentions this only works if not yet pushed.",
+      "expectations": [
+        "Recommends git reset --soft HEAD~1",
+        "Warns about git reset --hard",
+        "Mentions the pushed/unpushed distinction"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "How do I check what's different between my local branch and what's on GitHub?",
+      "expected_output": "Shows git fetch + git diff --stat origin/main or git log comparison.",
+      "expectations": [
+        "Uses git fetch first",
+        "Shows git diff or git log to compare",
+        "Explains what the output means"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "I want to force push to fix a mistake. Is that OK?",
+      "expected_output": "Warns against force push unless absolutely necessary. Explains the risks (overwriting others' work, destroying history). Asks for explicit confirmation before proceeding.",
+      "expectations": [
+        "Warns about force push dangers",
+        "Mentions alternatives like --force-with-lease",
+        "Requires explicit user confirmation",
+        "Never force pushes to main without explicit request"
+      ]
+    }
+  ]
+}

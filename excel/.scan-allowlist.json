@@ -1,0 +1,19 @@
+{
+  "_comment": "Scan allowlist for excel skill. Documentation references only.",
+  "allowlist": [
+    {
+      "file": "references/workspace-setup.md",
+      "rules": [
+        "HOME_PATH_REFERENCE"
+      ],
+      "reason": "~/Documents/GroundPA Toolkit Workplace/excel/ and ~/Documents/GroundPA Toolkit Workplace/output/ are standard workspace paths."
+    },
+    {
+      "file": "SKILL.md",
+      "rules": [
+        "HOME_PATH_REFERENCE"
+      ],
+      "reason": "Standard workspace and output paths in documentation."
+    }
+  ]
+}
