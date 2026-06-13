@@ -1,90 +1,120 @@
 ---
 name: word
-description: >
-  Read and write Word documents with full formatting intelligence. MUST use this skill
-  when the user wants to read a docx (extract content + layout), analyze a template,
-  create formatted academic papers, generate reports, compare document formats, learn
-  formatting patterns from existing Word files, fill template placeholders, diagnose
-  paper quality, classify research design, extract paper structure, or check references.
-  Also trigger when the user mentions Word, docx, .docx, paper, thesis, report, format,
-  template, document generation, variable operationalization, references, paper diagnosis,
-  or research methods — even if they do not explicitly say "word". This skill separates
-  reading (extracting format DNA), writing (generating documents from specs), and
-  analyzing (paper quality diagnosis, structure extraction).
+description: Word document CLI operations via nong. Trigger on .docx, Word text extraction, NongMark slicing, structure/format inspection, validation, merge, template fill, or Word edits.
 ---
 
-# DocxCore — Word Document Intelligence
+# Word
 
-Three independent capabilities, loaded on demand:
+Use `nong` as the only deterministic Word entrypoint. GroundPA routes Word work to the CLI and does not reimplement DOCX parsing or generation logic.
 
-- **Read Word** → load [read-word.md](references/read-word.md)
-- **Write Word** → load [write-word.md](references/write-word.md)
-- **Paper Analysis** → load [paper-analysis.md](references/paper-analysis.md)
+## Prerequisites
 
-## Dependencies
-
-- .NET SDK 11.0 (`dotnet` command available)
-- NuGet package: `Angri450.Nong.Docx` (sole dependency, transitively pulls `DocumentFormat.OpenXml`)
-
-If .NET SDK 11.0 is missing, stop immediately and tell the user to install it. Do not attempt to fix.
-
-## Dispatch Logic
-
-1. User mentions "analyze", "read", "extract", "template", "format", "dissect" → **load read-word.md**
-2. User mentions "generate", "create", "write", "output docx", "fill template" → **load write-word.md**
-3. User mentions "paper diagnosis", "paper type", "variable plan", "reference check", "evidence chain", "data requirement", "quality diagnosis" → **load paper-analysis.md**
-4. Both read + write → read first, then write
-5. Write + paper analysis → both loaded
-
-## Core Operations
-
-### Dissect (read a docx)
+Verify the installed command surface before work:
 
 ```powershell
-.\scripts\dissect-docx.ps1 -DocxPath <input.docx> [-OutDir <output-dir>] [-ProjectPath <project-path>]
+nong commands --json
 ```
 
-Outputs: `content.txt` (text preview), `images/` (extracted images), `format.json` (TemplateEngine fingerprint, requires project-path). Default output to `~/Documents/GroundPA Toolkit Workplace/word/`. Only save format fingerprints after user confirmation.
-
-### Preview
+If `nong` is missing, install the CLI:
 
 ```powershell
-dotnet run --project <project-path> -- preview <input.docx>
+dotnet tool install --global Angri450.Nong.Cli
 ```
 
-Returns `PreviewResult { Text, Warnings, Errors, Info, Statistics }`. Integrates OpenXmlValidator for OOXML schema validation. Always run after generation and before delivery.
+## Implemented Commands
 
-### Validate
+Current `nong commands --json` exposes these 30 implemented Word leaf commands.
+
+Read and inspect:
 
 ```powershell
-.\scripts\validate.ps1 <output.docx>
+nong word read <file.docx> --json
+nong word preview <file.docx> --json
+nong word dissect <file.docx> --output <slice-dir> --json
+nong word stats <file.docx> --json
+nong word fonts <file.docx> --json
+nong word styles <file.docx> --json
+nong word outline <file.docx> --json
+nong word images <file.docx> --json
+nong word comments <file.docx> --json
+nong word revisions <file.docx> --json
 ```
 
-7 checks: basic structure → XML well-formedness → content stats → style references → three-line tables → font usage → content quality diagnosis (paper type classification, evidence chain, reference quality).
-
-### Safe Write
-
-For files with non-ASCII content, use Base64 encoding to avoid tool-layer corruption:
+Validate, repair, and infer:
 
 ```powershell
-.\scripts\safe-write.ps1 <target-path> <base64-content>
+nong word validate <file.docx> --json
+nong word infer-format "黑体 四号 居中" --json
+nong word fix-order <file.docx> -o <out.docx> --json
+nong word rebuild <file.docx> -o <out.docx> --json
 ```
 
-**CRITICAL: safe-write.ps1 must use the PowerShell tool, never Bash.** Prefer the Write tool for direct file writes when possible; use safe-write only when Write is unavailable.
-
-## Workspace
-
-First use: create the .NET project with two commands:
+Generate, combine, and protect:
 
 ```powershell
-dotnet new console -n DocxWriter -o <target-dir> --force
-dotnet add <target-dir> package Angri450.Nong.Docx
+nong word fill <template.docx> <data.json> -o <out.docx> --json
+nong word merge <file1.docx> <file2.docx> -o <out.docx> --json
+nong word extract <file.docx> -o <images-dir> --json
+nong word protect <file.docx> -o <out.docx> --mode readonly --json
+nong word embed-font <file.docx> <font-file> -o <out.docx> --json
 ```
 
-Then write a `Program.cs` template. See [workspace-setup.md](references/workspace-setup.md) for the full template and details.
+Append content. Use this nested `word add ...` form in examples, scripts, and automation:
 
-After setup, each session only modifies `Program.cs`. Output always goes to `~/Documents/GroundPA Toolkit Workplace/output/`.
+```powershell
+nong word add paragraph <file.docx> --spec paragraph.json -o <out.docx> --json
+nong word add table <file.docx> --spec table.json -o <out.docx> --json
+nong word add footnote <file.docx> --text "Footnote text" -o <out.docx> --json
+nong word add endnote <file.docx> --text "Endnote text" -o <out.docx> --json
+nong word add image <file.docx> --src fig.png --caption "Figure 1" -o <out.docx> --json
+nong word add toc <file.docx> --title "Contents" -o <out.docx> --json
+nong word add xref <file.docx> --to "_Toc001" --text "see Table 1" -o <out.docx> --json
+nong word add link <file.docx> --url "https://example.com" --text "Example" -o <out.docx> --json
+nong word add bookmark <file.docx> --name "_Toc001" -o <out.docx> --json
+nong word add comment <file.docx> --text "Review note" -o <out.docx> --json
+nong word add math <file.docx> --latex "E=mc^2" --display -o <out.docx> --json
+```
 
-## Format Library
+`word add-*` remains a compatibility alias pattern only. Do not use flattened add aliases as canonical examples.
 
-See [formats/INDEX.md](formats/INDEX.md).
+## Primary DOCX Slice Path
+
+For complex `.docx` files, use NongMark one-cut three-stream slicing before making model decisions:
+
+```powershell
+nong word dissect paper.docx --output paper.slice --json
+```
+
+The slice directory separates content, structure, formatting, and assets:
+
+- `document.json`: document identity, package-level metadata, relationships, and top-level counts.
+- `content.jsonl`: ordered block stream with stable block IDs for paragraphs, tables, images, comments, and other content units.
+- `structure.json`: heading tree, section hierarchy, outline order, and block-to-section mapping.
+- `format.json`: styles, fonts, paragraph/run formatting, page setup, and detected format features.
+- Media manifest JSON in the slice output: extracted or referenced media assets, relationship IDs, source paths, captions, and content links.
+- `content.md`: readable Markdown projection for paper-level analysis, review, and summarization.
+- `summary.json`: compact counts, warnings, errors, artifact paths, and recommended next commands.
+
+Use block IDs from the slice with `--after <blockId>` when inserting paragraphs, tables, images, notes, links, bookmarks, comments, or math.
+
+## Dispatch
+
+1. For a complex source document, run `nong word dissect <file> --output <slice-dir> --json` first, then inspect the slice files.
+2. For quick plain text only, run `nong word read <file> --json`.
+3. For structural warnings and OOXML diagnostics, run `nong word preview <file> --json`, `nong word validate <file> --json`, or `nong word outline <file> --json`.
+4. For format inventory, run `nong word fonts`, `nong word styles`, `nong word stats`, and `nong word infer-format`.
+5. For embedded media, run `nong word images <file> --json`; only extract files with `nong word extract <file> -o <dir> --json` when the user asks for assets or the workflow needs them.
+6. For document edits, use `nong word add ...`, `fill`, `merge`, `protect`, `embed-font`, `fix-order`, or `rebuild`; do not edit OOXML directly.
+7. For paper diagnosis, reference checks, or semantic analysis, create text or a NongMark slice first, then use the `inspect` skill.
+
+## Contract
+
+Always pass `--json` when output will feed another tool or model decision. Treat `status: "error"` as failed even if stdout contains useful text.
+
+Handle common error codes explicitly:
+
+- `E001 file_not_found`: verify the input path and do not continue with stale output.
+- `E003 missing_argument`: add the required option or argument, such as `--spec`, `--text`, `--latex`, `--src`, or `-o`.
+- `E006 validation_failed`: fix the JSON spec, format description, or document validation issue before retrying.
+
+Generated DOCX paths should be explicit with `-o`; use `artifacts.docx` only when no better user-facing path is available.

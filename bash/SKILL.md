@@ -1,6 +1,6 @@
 ---
 name: bash
-description: Write reliable Bash scripts and invoke the Bash tool safely. Use when the user writes or reviews shell scripts, hits quoting/expansion/array bugs, asks about set -e or trap, runs git commit/push/PR, sees 'Operation not permitted' or sandbox failures, needs tool-selection guidance (Bash vs Glob/Grep/Read/Edit), or invokes the Bash tool from any AI agent — even without explicitly saying "bash".
+description: Bash scripting and CLI operations. Trigger on shell scripts, quoting bugs, set -e, trap, git commands, sandbox failures, or tool-selection between Bash and Glob/Grep.
 ---
 
 # Claude Code Bash

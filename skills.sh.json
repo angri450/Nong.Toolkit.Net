@@ -1,9 +1,10 @@
 {
+  "version": "2.1.0",
   "groups": [
     {
-      "title": "Office & Document Generation",
-      "description": "Word, Excel, PowerPoint, chart, diagram, and OCR via OpenXML NuGet — read, write, format with full intelligence",
-      "skills": ["word", "excel", "pptx", "chart", "diagram", "multimodal"]
+      "title": "Nong CLI Document Tools",
+      "description": "Implemented nong commands for Word, paper inspection, Excel, statistics, diagrams, PPTX reads, OCR/image QA, templates, and Bioicons",
+      "skills": ["word", "inspect", "excel", "chart", "diagram", "pptx", "multimodal", "genre", "icons"]
     },
     {
       "title": "Shell Scripting",
@@ -12,8 +13,8 @@
     },
     {
       "title": "Developer Tools",
-      "description": ".NET development, GitHub CLI, NuGet package management, assembly decompilation, and GitHub acceleration proxy",
-      "skills": ["dotnet", "github", "ghproxy", "nuget", "ilspycmd"]
+      "description": "Git version control, GitHub CLI, Gitee MCP, NuGet, .NET development, assembly decompilation, and proxy acceleration",
+      "skills": ["dotnet", "github", "gitee", "ghproxy", "nuget", "ilspycmd"]
     },
     {
       "title": "Communication & Meta",

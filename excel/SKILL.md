@@ -1,86 +1,76 @@
 ---
 name: excel
-description: >
-  Read and write Excel spreadsheets (.xlsx, .xlsm, .csv) with full formatting intelligence.
-  MUST use this skill when the user wants to create spreadsheets, financial models, dashboards,
-  or trackers; read, parse, or extract data from .xlsx files; edit or update workbooks; work
-  with formulas, charts, or templates; import CSV/TSV data; add data validation and dropdown menus.
-  Trigger when the user mentions spreadsheet, workbook, Excel, .xlsx, financial model, tracker,
-  dashboard, 电子表格, 图表, 下拉, 数据验证, or 数据透视 — even if they do not explicitly say
-  "excel". Do NOT trigger when the primary deliverable is a Word document, HTML report, or Python script.
+description: Excel CLI operations via nong. Trigger on .xlsx, worksheet listing, table reading, extracting data, creating simple workbooks from JSON specs, or converting treatment/value columns into grouped JSON for statistics.
 ---
 
-# ExcelCore — Excel Document Intelligence
+# Excel
 
-Two independent capabilities, loaded on demand:
+Use `nong` for deterministic Excel reads, simple workbook creation, and data preparation. GroundPA routes to the CLI; do not create ad hoc Excel writer projects or bypass `nong`.
 
-- **Read Excel** → load [read-excel.md](references/read-excel.md)
-- **Write Excel** → load [write-excel.md](references/write-excel.md)
+## Prerequisites
 
-## Dependencies
-
-- .NET SDK 11.0 (`dotnet --version` must work)
-
-If missing, stop immediately and tell the user to install. Do not attempt to fix.
-
-## Dispatch Logic
-
-1. User mentions "analyze", "read", "extract", "data", "structure" → **load read-excel.md**
-2. User mentions "generate", "create", "write", "build", "report", "chart" → **load write-excel.md**
-3. Both → read first, then write
-
-## Core Operations
-
-### Preview
-
-Always run a text preview after generating xlsx — this is the AI's "eyes":
-
-```csharp
-var result = ExcelPreview.Preview(path);
-Console.WriteLine(result.Text);
-```
-
-Formulas shown as `[=SUM(A1:A10)]`, errors as `#ERR:`, truncation as `###`. Warnings must be fixed, never ignored.
-
-### Validate
+Run once before work:
 
 ```powershell
-.\scripts\validate-xlsx.ps1 <output.xlsx>
+nong commands --json
 ```
 
-4 checks: ZIP structure → formula error markers → column width overflow → file size. Only deliver after PASS.
-
-### Safe Write
-
-For files with non-ASCII content, use Base64 encoding to avoid tool-layer corruption:
+If `nong` is missing, tell the user to install:
 
 ```powershell
-.\scripts\safe-write.ps1 <target-path> <base64-content>
+dotnet tool install --global Angri450.Nong.Cli
 ```
 
-**CRITICAL: safe-write.ps1 must use the PowerShell tool, never Bash.** Prefer the Write tool for direct file writes when possible; use safe-write only when Write is unavailable.
-
-## Workspace
-
-First use: create the .NET project with two commands:
+## Implemented Commands
 
 ```powershell
-dotnet new console -n ExcelWriter -o <target-dir> --force
-dotnet add <target-dir> package Angri450.Nong.Excel
+nong excel sheets <file.xlsx> [--json]
+nong excel read <file.xlsx> [--sheet <name>] [--range <A1:D20>] [--json]
+nong excel to-groups <file.xlsx> --group <col> --value <col> [--sheet <name>] [--json]
+nong excel to-groups <file.xlsx> --group <col> --value <col> --raw > groups.json
+nong excel create <spec.json> -o <out.xlsx> [--json]
 ```
 
-Then write a `Program.cs` template. See [workspace-setup.md](references/workspace-setup.md) for the full template and details.
+## Dispatch
 
-After setup, each session only modifies `Program.cs`. Output always goes to `~/Documents/GroundPA Toolkit Workplace/output/`.
+1. To list worksheets, run `nong excel sheets <file> --json`.
+2. To inspect data, run `nong excel read <file> --json`; add `--sheet` and `--range` when known.
+3. To prepare agricultural experiment data for statistics, run `nong excel to-groups ... --raw > groups.json`.
+4. To create a simple workbook from JSON, write an Excel create spec and run `nong excel create spec.json -o out.xlsx --json`.
+5. Feed raw grouped JSON directly into `nong chart analyze`, `anova`, `duncan`, or `bar`.
+6. Do not promise arbitrary workbook styling, complex formulas, pivot tables, dashboards, or general Excel editing unless a future `nong commands --json` exposes those as implemented CLI commands.
 
-## Format Library
+## Create Spec
 
-See [formats/INDEX.md](formats/INDEX.md). Color schemes, number format reference, conditional formatting templates.
+`excel create` supports simple sheets with headers and rows:
 
-## Formula Safety
+```json
+{
+  "sheets": [
+    {
+      "name": "Data",
+      "headers": ["Treatment", "Yield"],
+      "rows": [
+        ["A", 1.2],
+        ["A", 1.3],
+        ["B", 2.1]
+      ]
+    }
+  ]
+}
+```
 
-Three iron rules when writing formulas:
+Sheet names are required and must be 31 characters or fewer. `headers` and `rows` are required for each sheet.
 
-1. All computable values must use formulas, never hardcode results
-2. All `/` operations must wrap in `IFERROR(x/y, 0)` or `IF(y=0, 0, x/y)`
-3. All VLOOKUP must wrap in `IFERROR(VLOOKUP(...), "")`
+## Groups JSON
+
+`chart` commands expect:
+
+```json
+{
+  "Control": [1.2, 1.3, 1.1],
+  "Treatment": [2.0, 2.2, 2.1]
+}
+```
+
+Use `--raw` for pipeline files. Use `--json` for model-readable reports.

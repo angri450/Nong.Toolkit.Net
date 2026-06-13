@@ -1,82 +1,66 @@
-# Read Word — Document Reading and Feature Extraction
+# Read Word
 
-## Quick Start
+Use `nong word dissect` as the main path for complex `.docx` reading. It creates a NongMark slice that separates readable content, structural hierarchy, formatting facts, and assets.
 
-### Format Fingerprint Extraction
+## Primary Path
 
-```csharp
-var result = TemplateEngine.Analyze(@"path\to\document.docx");
+```powershell
+nong word dissect paper.docx --output paper.slice --json
 ```
 
-Returns `TemplateResult` with three parts:
-1. `DefinedStyles` — styles defined in the document
-2. `Paragraphs` — each paragraph's content + formatting + format hints
-3. `Issues` — formatting problems found
+Slice files:
 
-### Paper Structure Extraction (v2.0)
+| File | Purpose |
+|------|---------|
+| `document.json` | Document metadata, package facts, relationships, and top-level counts. |
+| `content.jsonl` | Ordered block stream with stable IDs for paragraphs, tables, images, comments, and other content units. |
+| `structure.json` | Heading tree, section hierarchy, outline order, and block-to-section mapping. |
+| `format.json` | Styles, fonts, page setup, paragraph/run formatting, and detected format features. |
+| `assets/manifest.json` | Media assets and their relationship IDs, paths, captions, and linked blocks. |
+| `content.md` | Readable Markdown projection for review, summarization, and inspect workflows. |
+| `summary.json` | Compact counts, warnings, errors, generated artifacts, and recommended next steps. |
 
-```csharp
-var structure = PaperStructureExtractor.BuildPaperStructure(paperText);
+When you need to insert content later, keep block IDs from `content.jsonl` or `structure.json` and pass them with `--after <blockId>`.
+
+## Lightweight Reads
+
+Use these commands when a full slice is unnecessary:
+
+```powershell
+nong word read paper.docx --json
+nong word preview paper.docx --json
+nong word outline paper.docx --json
+nong word stats paper.docx --json
 ```
 
-Returns `PaperStructure` with: Title, Authors, Abstract, Keywords, Sections (with canonical labels), Tables.
-Supports 14 canonical section types (abstract, keywords, introduction, literature_review, theory, research_question, method, data, variables, results, discussion, conclusion, references, appendix).
+- `read`: plain text extraction for quick inspection.
+- `preview`: seven-step document structure diagnostics and OOXML warnings.
+- `outline`: heading and section outline.
+- `stats`: document statistics.
 
-### Document Preview & Diagnosis
+## Format and Asset Reads
 
-```csharp
-var preview = WordPreview.Preview(@"path\to\document.docx");
+```powershell
+nong word fonts paper.docx --json
+nong word styles paper.docx --json
+nong word images paper.docx --json
+nong word comments paper.docx --json
+nong word revisions paper.docx --json
+nong word validate paper.docx --json
 ```
 
-Returns `PreviewResult` with: Text (first 3000 chars), Warnings, Errors, Info, Statistics (paragraph/table/image counts, fonts, OOXML validation results). Integrates OpenXmlValidator for formal OOXML schema validation.
+Only export media when needed:
 
-## 阅读能力
+```powershell
+nong word extract paper.docx -o paper.images --json
+```
 
-### L1: Plain Text Extraction
-`paragraph.InnerText` returns all text. Good for quick browsing.
+## Feature Deposition
 
-### L2: Paragraph Structure
-Each paragraph outputs: style ID, style name, text content, actual font/size/bold/alignment/indent. Good for understanding document structure.
+Do not save extracted format facts or assets into `word/formats/` by default. After reading, report the useful findings and ask whether the user wants to save a reusable format profile.
 
-### L3: Format Feature Extraction
-Each paragraph also outputs `FormatHints` — format descriptions parsed from text content:
-- Font names: "黑体", "宋体", "Times New Roman"
-- Size keywords: "四号"(28) → size=四号, "小五号"(18) → size=小五号
-- Style keywords: "加粗"(bold), "居中"(centered), "首行缩进"(first-line indent)
+Only write to `formats/` and update [INDEX.md](../formats/INDEX.md) when the user explicitly asks to save or record the format. Skip this step when the user says no.
 
-### L4: Style Inference
-`TemplateEngine.InferFormatFromText(paragraphText)` maps textual descriptions to concrete format parameters:
-- "黑体, 四号, 居中" → Font=黑体, Size=28, Align=Center
-- "宋体, 小五号, 加粗" → Font=宋体, Size=18, Bold=True
+## Boundaries
 
-### L5: Format Contamination Detection
-Detects WPS/Office compatibility issues:
-- Theme font overrides on explicit fonts (rFonts with `*Theme` attributes)
-- Unexpected overrides in style inheritance chain
-- Manual formatting inconsistent with style definitions
-
-## Feature Deposition (Key Rule)
-
-**Do not auto-save.** After each read, report what format features were found, then **ask the user**:
-
-> Does this document's formatting have anything worth saving? Saved formats can be reused for similar needs next time.
-
-Only write to `formats/` and update INDEX.md when the user explicitly says "save" or "record". Skip if user says "no".
-
-Same rule applies to image extraction (see below).
-
-只有用户明确说"保存"或"记下来"，才写入 `formats/` 目录并更新 INDEX.md。用户说"不用"就跳过。
-
-保存格式同上。同样规则适用于图片提取（见下）。
-
-## Image Extraction
-
-**Do not extract images by default.** Only extract when:
-1. User explicitly says "extract images", "export figures", "read the images too"
-2. After reading, AI detects images and asks "Export images?" → user says "yes"
-
-Use `TemplateEngine.ExtractImages(docxPath, outputDir)` for extraction. Images exported to specified directory in original format.
-
-## Accumulated Feature Library
-
-参见 [formats/INDEX.md](../formats/INDEX.md) 查看所有已确认有价值的格式特征。
+Do not parse raw OOXML with ad hoc scripts as a Word reading path. If `nong word dissect`, `read`, or `preview` returns `status: "error"`, fix the input or command arguments and rerun the CLI.

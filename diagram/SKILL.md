@@ -1,100 +1,100 @@
 ---
 name: diagram
-description: >
-  Scientific diagram generator — flowcharts, network graphs, phylogenetic trees, mechanism diagrams.
-  MUST use this skill when the user wants to create flowcharts, network diagrams, phylogenetic trees,
-  system trees, process diagrams, or any scientific/technical illustrations. Also trigger when the
-  user mentions flowchart, network graph, phylogenetic tree, 流程图, 网络图, 系统发育树,
-  机制图, 关系图, Newick, diagram, illustration — even if they do not explicitly say "diagram".
+description: Scientific diagram CLI via nong. Trigger on flowchart, workflow diagram, process diagram, network graph, relationship graph, mechanism network, phylogenetic tree, or Newick rendering.
 ---
 
-# DiagramCore — Scientific Diagram Generator
+# Diagram
 
-Three capabilities, loaded on demand:
+Use `nong` for implemented scientific diagram rendering. GroundPA routes to the CLI; do not recreate diagram rendering logic in scripts or temporary projects.
 
-- **Flowchart** (process diagrams) → load [diagram-api.md](references/diagram-api.md)
-- **Network** (relationship graphs) → load [diagram-api.md](references/diagram-api.md)
-- **Tree** (phylogenetic trees) → load [diagram-api.md](references/diagram-api.md)
+## Prerequisites
 
-## Dependencies
-
-- .NET SDK (`dotnet` command available)
-
-If missing, stop immediately and tell the user to install. Do not attempt to fix.
-
-## Dispatch Logic
-
-1. User mentions "flowchart", "process", "workflow", "流程图", "流程", "工作流" → **flowchart mode**
-2. User mentions "network", "relationship", "graph", "网络图", "关系图", "图谱" → **network mode**
-3. User mentions "tree", "phylogenetic", "Newick", "系统发育树", "进化树", "树状图" → **tree mode**
-4. User mentions "bioicons", "icon", "图标", "素材" → **icon sheet mode**
-
-## Cross-Skill Flow
-
-| Step | Skill | Role |
-|------|-------|------|
-| 1. Data preparation | Excel | Create .xlsx with raw data |
-| 2. Statistical analysis | Chart | ANOVA + Duncan → significance letters |
-| 3. Chart generation | Chart | Bar charts with error bars + significance |
-| 4. Diagram generation | Diagram | Flowcharts, network graphs, phylogenetic trees |
-| 5. Paper insertion | Word | Insert figures into academic paper |
-
-## Core Operations
-
-### Flowchart (Sugiyama layout)
+Run once before work:
 
 ```powershell
-dotnet run --project <project-path>
+nong commands --json
 ```
 
-Generates flowchart PNG. Typical flow: `Graph` → `SugiyamaLayout` → `FlowchartRenderer` → PNG output.
-
-### Network (Force-directed layout)
+If `nong` is missing, tell the user to install:
 
 ```powershell
-dotnet run --project <project-path>
+dotnet tool install --global Angri450.Nong.Cli
 ```
 
-Generates network graph PNG. Typical flow: `Graph` → `ForceDirectedLayout` → `NetworkGraphRenderer` → PNG output.
-
-### Tree (Newick format)
+## Implemented Commands
 
 ```powershell
-dotnet run --project <project-path>
+nong diagram flowchart <spec.json> -o <out.png> [--json]
+nong diagram network <spec.json> -o <out.png> [--json]
+nong diagram tree <tree.nwk|tree.txt|spec.json> -o <out.png> [--json]
 ```
 
-Generates phylogenetic tree PNG. Typical flow: `NewickTree.Parse()` → `TreeLayout` → `TreeRenderer` → PNG output.
+## Dispatch
 
-### Icon Sheet
+1. For process, workflow, protocol, or pipeline diagrams, prepare a flowchart JSON spec and run `nong diagram flowchart`.
+2. For relationship, mechanism, interaction, or network diagrams, prepare a network JSON spec and run `nong diagram network`.
+3. For phylogenetic trees, use Newick text (`.nwk` or `.txt`) or a tree JSON spec and run `nong diagram tree`.
+4. Read `artifacts.png` from JSON output for the generated image path.
+5. For Bioicons listing/search, use the `icons` skill.
+
+## Contracts
+
+Flowchart JSON:
+
+```json
+{
+  "type": "flowchart",
+  "title": "Workflow",
+  "nodes": [
+    { "id": "sample", "label": "Sample" },
+    { "id": "dna", "label": "DNA extraction" }
+  ],
+  "edges": [
+    { "from": "sample", "to": "dna" }
+  ]
+}
+```
+
+Network JSON:
+
+```json
+{
+  "nodes": [
+    { "id": "A", "label": "Gene A" },
+    { "id": "B", "label": "Gene B" }
+  ],
+  "edges": [
+    { "from": "A", "to": "B", "label": "activates" }
+  ],
+  "title": "Interaction network"
+}
+```
+
+Tree Newick:
+
+```text
+((A:0.1,B:0.2):0.3,C:0.4);
+```
+
+Tree JSON:
+
+```json
+{
+  "type": "tree",
+  "title": "Phylogeny",
+  "newick": "((A:0.1,B:0.2):0.3,C:0.4);",
+  "radial": false
+}
+```
+
+Always use `--json` for generated diagrams. Treat `status: "error"` as failed and fix the spec before retrying.
+
+## Optional Visual QA
+
+After generating a PNG, you may suggest:
 
 ```powershell
-dotnet run --project <project-path>
+nong ocr analyze-image tree.png -o tree.analysis --json
 ```
 
-Generates bioicons sheet PNG with all 40 scientific icons organized by category.
-
-### Validate
-
-```powershell
-.\scripts\validate-diagram.ps1 <output.png>
-```
-
-Checks: file exists → non-zero size → reasonable dimensions. Reports PASS/FAIL.
-
-## Workspace
-
-First use: create the .NET project:
-
-```powershell
-dotnet new console -n DiagramWriter -o <target-dir> --force
-dotnet add <target-dir> package Angri450.Nong.Diagram
-```
-
-Then write a `Program.cs` template. See [workspace-setup.md](references/workspace-setup.md) for the full template and details.
-
-After setup, each session only modifies `Program.cs` in `~/Documents/GroundPA Toolkit Workplace/diagram/`. Output goes to `~/Documents/GroundPA Toolkit Workplace/output/`.
-
-## Icon Library
-
-40 scientific SVG icons across 6 categories: Biology, Chemistry, Medical, LabEquipment, Arrows, Experimental.
-Use `DiagramBuilder.BioIconSheet()` to generate a preview sheet of all available icons.
+This is structural image QA for dimensions, blankness, whitespace, and content regions. It is not OCR, text recognition, or semantic understanding of the diagram.

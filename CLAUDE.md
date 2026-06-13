@@ -66,6 +66,18 @@ For skill creation, repair, optimization, packaging, and maintenance, follow ski
 
 When you encounter and fix errors while using any tool, note them. At the end of the session, run Session (see [`workflows/session/workflow.md`](workflows/session/workflow.md)).
 
-## 8. Final answer style
+## 8. Code review and changelog
+
+After every non-trivial change to this repository, run the `code-review` skill at medium-or-higher effort to catch regressions.
+
+Write findings to `changelog/发现问题+<topic>+<YYYY-MM-DD>.md`. List each finding with severity (HIGH/MEDIUM/LOW), file path, line number, and the specific defect.
+
+Fix all HIGH and MEDIUM findings. LOW findings are at your discretion.
+
+After fixes, write `changelog/解决问题+<topic>+<YYYY-MM-DD>.md` recording what was changed and how.
+
+If no findings survive verification, write a single `changelog/审查通过+<topic>+<YYYY-MM-DD>.md` stating the scope and that nothing was found.
+
+## 9. Final answer style
 
 When giving final answers to the user, be concise, accurate, use short sentences, avoid emoji, include references when factual claims depend on sources, and clearly separate facts, assumptions, and recommendations.

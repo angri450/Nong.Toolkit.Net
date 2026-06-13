@@ -15,9 +15,10 @@ Create the sub-mailbox via:
 # resolve main email
 MAIN_EMAIL=$(mail-cli clawemail list --json | jq -r '.data.userEmail')
 
-# derive sub-mailbox address (workspace prefix + .ghbot)
+# derive sub-mailbox address (workspace prefix + ghbot suffix)
 WORKSPACE=$(mail-cli clawemail list --json | jq -r '.data.mailbox.email' | cut -d@ -f1)
-SUB_EMAIL="${WORKSPACE}.ghbot@claw.163.com"
+DOMAIN=$(mail-cli clawemail list --json | jq -r '.data.mailbox.email' | cut -d@ -f2)
+SUB_EMAIL="${WORKSPACE}.ghbot@${DOMAIN}"
 echo "Main: $MAIN_EMAIL  Sub: $SUB_EMAIL"
 ```
 

@@ -1,13 +1,8 @@
 ---
 name: ghproxy
 description: >
-  Add GitHub acceleration proxy prefix to URLs. Use this skill whenever the user
-  mentions that a GitHub link is slow, cannot download from GitHub, needs GitHub
-  download acceleration, mentions "ghproxy", "gh-proxy", "github加速", "加速下载",
-  or pastes a GitHub URL saying it's not accessible / too slow. Also trigger when
-  the user types /ghproxy followed by a URL or pastes any GitHub raw content,
-  release, or archive URL that needs a proxy prefix for faster access in
-  restricted-network environments.
+  GitHub download acceleration via proxy. Trigger on GitHub links that are slow,
+  inaccessible, or need mirroring.
 ---
 
 # GitHub 加速链接 (ghproxy)

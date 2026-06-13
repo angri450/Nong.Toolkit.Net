@@ -1,152 +1,55 @@
 # Excel Read Reference
 
-## Reading Excel Files with ClosedXML
+This skill uses the current `nong` CLI for Excel inspection. Do not load `.xlsx` files through custom ClosedXML scripts unless the user explicitly asks for library-level development outside the GroundPA skill workflow.
 
-### Open a workbook
+## Commands
 
-```csharp
-using var wb = new XLWorkbook("input.xlsx");
-// Or from stream:
-using var wb = new XLWorkbook(File.OpenRead("input.xlsx"));
+List worksheets:
+
+```powershell
+nong excel sheets data.xlsx --json
 ```
 
-### List and access worksheets
+Read the first sheet:
 
-```csharp
-// List all sheet names
-foreach (var ws in wb.Worksheets)
-    Console.WriteLine(ws.Name);
-
-// Access by name or position
-var ws = wb.Worksheet("Data");
-var ws = wb.Worksheet(1);
-
-// Check sheet existence
-if (wb.TryGetWorksheet("Data", out var sheet))
-    Console.WriteLine("Found");
+```powershell
+nong excel read data.xlsx --json
 ```
 
-### Read data
+Read a specific sheet or range:
 
-```csharp
-var ws = wb.Worksheet("Data");
+```powershell
+nong excel read data.xlsx --sheet Sheet1 --range A1:D20 --json
+```
 
-// Get used range dimensions
-var lastRow = ws.LastRowUsed()?.RowNumber() ?? 0;
-var lastCol = ws.LastColumnUsed()?.ColumnNumber() ?? 0;
+Convert treatment/value columns into grouped JSON:
 
-// Read cell by address
-var val = ws.Cell("B2").Value;
-var text = ws.Cell("B2").GetString();
-var num = ws.Cell("B2").GetDouble();
+```powershell
+nong excel to-groups data.xlsx --group Treatment --value Yield --raw > groups.json
+```
 
-// Read cell by row/col
-var val = ws.Cell(2, 2).Value;
+Column selectors for `to-groups` can be column letters or header names. Use `--raw` when the output will be piped to `nong chart`; use `--json` when the agent needs the standard response envelope.
 
-// Iterate all used cells
-foreach (var cell in ws.CellsUsed())
-    Console.WriteLine($"{cell.Address}: {cell.Value}");
+## Expected JSON Handling
 
-// Iterate a range
-foreach (var cell in ws.Range("A2:D100").Cells())
-    Console.WriteLine($"{cell.Address}: {cell.Value}");
+Every `--json` response uses the standard `nong` envelope:
 
-// Read row by row
-for (int r = 1; r <= lastRow; r++)
+```json
 {
-    var row = ws.Row(r);
-    // access row.Cell(1), row.Cell(2), etc.
+  "status": "ok",
+  "command": "excel read",
+  "summary": "...",
+  "data": {},
+  "issues": [],
+  "artifacts": {},
+  "metrics": {},
+  "errors": [],
+  "meta": { "durationMs": 0, "version": "3.1.0" }
 }
 ```
 
-### Read formulas
+Treat `status: "error"` as failed. Inspect `errors[].code` and `errors[].message`, fix the workbook path, sheet name, range, or column selector, then retry.
 
-```csharp
-// Has formula?
-if (cell.HasFormula)
-{
-    var formulaA1 = cell.FormulaA1;     // e.g., "SUM(B2:B10)"
-    var cachedVal = cell.CachedValue;    // The last cached result
-}
+## Boundaries
 
-// Find all formula cells
-var formulaCells = ws.CellsUsed(c => c.HasFormula);
-```
-
-### Detect errors
-
-```csharp
-// Check for error values
-if (cell.CachedValue.IsError)
-{
-    var err = cell.GetError();  // XLError enum: DivisionByZero, NameNotRecognized, etc.
-}
-
-// Scan all cells for errors
-var errors = new List<string>();
-foreach (var cell in ws.CellsUsed())
-{
-    if (cell.CachedValue.IsError)
-        errors.Add($"{ws.Name}!{cell.Address}: {cell.GetError()}");
-}
-```
-
-### Extract structure
-
-```csharp
-// Tables (ListObjects)
-foreach (var table in ws.Tables)
-{
-    Console.WriteLine($"Table: {table.Name}, Range: {table.RangeBase.RangeAddress}");
-    foreach (var field in table.Fields)
-        Console.WriteLine($"  Column: {field.Name}");
-}
-
-// Named ranges (workbook-level)
-foreach (var name in wb.DefinedNames)
-    Console.WriteLine($"Name: {name.Name}, RefersTo: {name.RefersTo}");
-
-// Hyperlinks
-foreach (var cell in ws.CellsUsed(c => c.HasHyperlink))
-    Console.WriteLine($"{cell.Address}: {cell.GetHyperlink().ExternalAddress}");
-```
-
-### Type-safe reading
-
-```csharp
-// TryGetValue avoids exceptions
-if (cell.TryGetValue<int>(out var intVal))
-    Console.WriteLine($"Integer: {intVal}");
-if (cell.TryGetValue<double>(out var dblVal))
-    Console.WriteLine($"Double: {dblVal}");
-if (cell.TryGetValue<DateTime>(out var dateVal))
-    Console.WriteLine($"Date: {dateVal}");
-if (cell.TryGetValue<string>(out var strVal))
-    Console.WriteLine($"String: {strVal}");
-
-// Or use XLCellValue type checks
-var v = cell.Value;
-if (v.IsNumber) { var d = v.GetNumber(); }
-if (v.IsText) { var s = v.GetText(); }
-if (v.IsDateTime) { var dt = v.GetDateTime(); }
-if (v.IsTimeSpan) { var ts = v.GetTimeSpan(); }
-```
-
-### Data extraction patterns
-
-```csharp
-// Extract table as List<T>
-var rows = new List<Dictionary<string, object>>();
-var ws = wb.Worksheet("Data");
-var headers = new List<string>();
-for (int c = 1; c <= ws.LastColumnUsed()?.ColumnNumber(); c++)
-    headers.Add(ws.Cell(1, c).GetString());
-
-for (int r = 2; r <= (ws.LastRowUsed()?.RowNumber() ?? 1); r++)
-{
-    var row = new Dictionary<string, object>();
-    for (int c = 0; c < headers.Count; c++)
-        row[headers[c]] = ws.Cell(r, c + 1).Value;
-    rows.Add(row);
-}
-```
+`excel read` and `excel sheets` are inspection commands. They do not edit workbooks. For creation, use `nong excel create` with the simple JSON spec described in `write-excel.md`.

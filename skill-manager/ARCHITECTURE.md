@@ -2,7 +2,7 @@
 
 ## Version
 
-Target: `net11.0`. Execution: `dotnet run --project tools/SkillManager.Cli`.
+Target: `net8.0`. Execution: `dotnet run --project tools/SkillManager.Cli`.
 
 ## Directory Layout
 
@@ -14,7 +14,7 @@ skill-manager/
 ├── .scan-allowlist.json               # scan allowlist
 
 ├── tools/SkillManager.Cli/            # .NET CLI
-│   ├── SkillManager.Cli.csproj        # net11.0
+│   ├── SkillManager.Cli.csproj        # net8.0
 │   ├── Program.cs                     # entry + command routing
 │   ├── Models/                        # data models
 │   │   ├── SkillFrontmatter.cs

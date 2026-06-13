@@ -1,12 +1,8 @@
 ---
 name: powershell
 description: >
-  PowerShell 7+ scripting reference. MUST use this skill when writing or
-  reviewing .ps1/.psm1/.psd1 files, debugging PowerShell errors, creating
-  shell automation scripts, building CI/CD pipelines, or any task that
-  involves shell scripting. Covers error handling, cmdlet conventions,
-  pipelines, modules, credential security, WhatIf/dry-run, WSL/cross-platform
-  execution, comment-based help, approved verbs, PSScriptAnalyzer, and Pester
+  PowerShell 7+ scripting reference. Trigger on .ps1, .psm1, .psd1 files, debugging
+  PowerShell errors, shell automation, CI/CD pipelines, or credential security.
   testing. Only PS 7+ — no 5.1 legacy.
 ---
 

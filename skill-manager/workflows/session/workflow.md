@@ -112,5 +112,5 @@ Append one JSON line per finding to session-records:
 
 - Writing code that did not appear in the session. If you find yourself inventing a command, it is speculation — go back and either (a) find where in the session it actually ran, or (b) skip it.
 - Documenting a bug with no fix. Known issues without fixes are noise. Omit them.
-- Hardcoding the user's real file paths (`/Users/<username>/...`, etc.) into any file. Use `$HOME` or the agent's standard install locations.
+- Hardcoding the user's real file paths into any file. Use `$HOME` or the agent's standard install locations.
 - Committing credentials, tokens, or any personally identifying content.

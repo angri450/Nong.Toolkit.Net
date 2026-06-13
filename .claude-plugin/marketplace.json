@@ -1,14 +1,14 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "groundpa-marketplace",
-  "description": "GroundPA Toolkit — 15 skills for Office, Shell, .NET, GitHub, and more",
+  "name": "angri450",
+  "description": "GroundPA Toolkit — Nong CLI-first skills for agricultural paper and document workflows",
   "owner": {
     "name": "angri450"
   },
   "plugins": [
     {
       "name": "groundpa-toolkit",
-      "description": "GroundPA Toolkit: 15 skills — Office six-piece (Word/Excel/PPT/Chart/Diagram/MultiModal via OpenXML NuGet), shell scripting, .NET, GitHub, NuGet, ILSpy, email, and skill-manager",
+      "description": "GroundPA Toolkit 2.1.0: implemented nong CLI workflows for Word, paper inspection, Excel, statistics, diagrams, PPTX reads, OCR/image QA, templates, Bioicons, plus shell, .NET, GitHub/Gitee, NuGet, ILSpy, email, and skill-manager",
       "author": {
         "name": "angri450"
       },

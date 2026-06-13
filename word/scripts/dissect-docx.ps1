@@ -17,6 +17,22 @@ if (-not $ProjectPath -or -not (Test-Path $ProjectPath)) {
     exit 1
 }
 
+# 0. 检测 Program.cs 是否包含 subcommand 路由
+$programCs = Join-Path $ProjectPath "Program.cs"
+if (-not (Test-Path $programCs)) {
+    Write-Output "ERROR: Program.cs not found at $programCs"
+    exit 1
+}
+$programContent = Get-Content $programCs -Raw
+$hasSubcommandRoute = ($programContent -match 'args\[0\]' -or
+                       $programContent -match 'preview' -or
+                       $programContent -match 'dissect')
+if (-not $hasSubcommandRoute) {
+    Write-Output "ERROR: Program.cs 不包含 subcommand 路由（未检测到 args[0] / preview / dissect 分支）。"
+    Write-Output "请使用 workspace-setup.md 的模板 Program.cs 重新生成后再执行 dissect。"
+    exit 1
+}
+
 $docxName = [System.IO.Path]::GetFileNameWithoutExtension($DocxPath)
 if (-not $OutDir) {
     $docsRoot = Join-Path $env:USERPROFILE "Documents\GroundPA Toolkit Workplace\word"

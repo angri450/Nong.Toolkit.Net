@@ -1,78 +1,43 @@
-# Local OCR — PaddleOCR CPU
+# Local OCR Reference
 
-Local PaddleOCR text recognition via Python subprocess. For offline use or sensitive documents.
-
-## Prerequisites
+Local OCR is a gated Nong CLI path:
 
 ```powershell
-pip install paddlepaddle paddleocr
+nong ocr local scan.png --json
 ```
 
-Verify the environment:
+It is implemented as a CLI entrypoint, but it may return E005 or E009 unless the local PP-OCRv5 path is installed, discoverable, and verified with a real image.
 
-```csharp
-var local = new LocalOcrClient(pythonExe: "python", lang: "ch");
-var (ok, msg) = await local.CheckEnvironmentAsync();
-Console.WriteLine(msg); // "PaddleOCR environment ready" or error details
+## Required Gate
+
+Run environment and model checks first:
+
+```powershell
+nong ocr check-env --json
+nong ocr models --json
 ```
 
-## Single Image Recognition
+If model installation is needed:
 
-```csharp
-var local = new LocalOcrClient();
-
-// From file
-var blocks = await local.RecognizeAsync("crop.png");
-foreach (var b in blocks)
-    Console.WriteLine($"[{b.Confidence:P0}] {b.Text}");
-
-// From memory
-byte[] imageBytes = ...;
-var blocks = await local.RecognizeAsync(imageBytes);
+```powershell
+nong ocr install-model pp-ocrv5-mobile --json
 ```
 
-## Output Structure
+Treat E009 from installation as an honest external limitation. Do not continue as though local OCR is available.
 
-```csharp
-public record LocalOcrBlock
-{
-    public float[] Bbox { get; init; }     // [x0, y0, x1, y1] pixel coordinates
-    public string Text { get; init; }      // recognized text
-    public float Confidence { get; init; } // confidence 0-1
-}
+## Smoke Test
+
+Only describe local OCR as available after a real image command exits 0:
+
+```powershell
+nong ocr local scan.png --json
 ```
 
-## Batch Recognition
+If it returns E005 or E009, report the limitation and use cloud OCR only when `PADDLEOCR_ACCESS_TOKEN` is available.
 
-```csharp
-var results = await local.RecognizeBatchAsync(new[] { "page1.png", "page2.png" });
-```
+## GroundPA Boundary
 
-## Parameters
-
-| Parameter | Default | Description |
-|---|---|---|
-| `pythonExe` | `"python"` | Python executable path |
-| `scriptPath` | auto-detect | Path to ocr_local.py |
-| `lang` | `"ch"` | OCR language (ch/en/fr/german/korean/japan) |
-| `useGpu` | `false` | Enable GPU acceleration |
-| `timeout` | 3 min | Per-image OCR timeout |
-
-## How It Works
-
-1. `LocalOcrClient` spawns a Python child process
-2. Python script calls `paddleocr.PaddleOCR(lang='ch').ocr(image_path)`
-3. Results serialized to JSON via stdout
-4. C# side parses JSON → `List<LocalOcrBlock>`
-
-## Relationship with Cloud API
-
-- Cloud API handles layout analysis + special elements (tables/formulas/seals)
-- Local OCR handles text block character recognition
-- This Hybrid pattern saves API quota; currently requires manual orchestration
-- Future `MultiModalClient.HybridProcessAsync()` will automate this flow
-
-## Roadmap
-
-- ONNX Runtime pure .NET inference, removing Python dependency
-- Direct integration into `Angri450.Nong.MultiModal` Hybrid mode
+- Do not install or invoke OCR through Python from GroundPA.
+- Do not add alternate local OCR scripts.
+- Do not translate E005/E009 into success.
+- Do not prefer local OCR over cloud OCR unless the local gate has passed in this environment.

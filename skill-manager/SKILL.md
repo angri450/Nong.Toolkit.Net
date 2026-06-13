@@ -1,6 +1,6 @@
 ---
 name: skill-manager
-description: Create new skills, modify and improve existing skills, and measure skill performance. Use when users want to create a skill from scratch, edit or optimize an existing skill, fix a broken skill, debug why a skill is not triggering, merge overlapping skills, split oversized skills, deprecate obsolete skills, run evals to test a skill, benchmark skill performance with variance analysis, audit skill quality, or optimize a skill's description for better triggering accuracy.
+description: Create, improve, and maintain skills. Trigger on create skill, edit skill, fix skill, merge skills, split skills, deprecate skill, run evals, benchmark, audit quality, or optimize descriptions.
 ---
 
 # skill-manager
@@ -10,10 +10,11 @@ Meta-skill for creating, improving, and maintaining skills throughout their life
 ## Prerequisites
 
 ```bash
-dotnet tool install --global Angri450.Nong.Skill.Manager
+dotnet tool install --global Angri450.Nong.Cli
+nong commands --json
 ```
 
-All commands below use `skill-manager`. Full list below.
+For GroundPA plugin validation, prefer `nong skill ...`. Legacy `skill-manager` commands are still useful for older eval/scaffold workflows, but they are not the primary packaging gate for this repository.
 
 ## Core Loop
 
@@ -83,13 +84,13 @@ Optimize for triggering accuracy. See [`references/description-optimization.md`]
 For public distribution, remove business-specific content. See [`references/sanitization_checklist.md`](references/sanitization_checklist.md).
 
 ### Step 10: Security Review
-Run: `skill-manager scan .`
+Run: `nong skill scan . --json`
 
 See [`references/security-guide.md`](references/security-guide.md) for what the scanner detects and how to handle findings.
 
 ### Step 11: Package
 ```bash
-skill-manager package .
+nong skill package . --json
 ```
 
 This validates, scans, and creates the `.zip` archive. See [`references/packaging-guide.md`](references/packaging-guide.md).
@@ -116,24 +117,26 @@ Read accumulated session-records. Group by error type, sort by frequency. See [`
 Follow [`workflows/wrapper/workflow.md`](workflows/wrapper/workflow.md).
 
 ### Step 4: Run Evals
-`skill-manager eval evals/evals.json`. See [`references/evaluation-workflow.md`](references/evaluation-workflow.md).
+Use legacy `skill-manager eval evals/evals.json` for eval files. See [`references/evaluation-workflow.md`](references/evaluation-workflow.md).
 
 ### Step 5: Ship
 Commit, package, ship per Create Skill Steps 11-12. See [`references/packaging-guide.md`](references/packaging-guide.md).
 
 ## .NET CLI Command Reference
 
-Install as global tool: `dotnet tool install --global Angri450.Nong.Skill.Manager`
+Primary commands are in `Angri450.Nong.Cli`: `dotnet tool install --global Angri450.Nong.Cli`
 
 | Command | Purpose |
 |---------|---------|
-| `skill-manager validate .` | Validate SKILL.md structure and references |
-| `skill-manager scan .` | Security scan (always-on) |
-| `skill-manager package .` | Validate + scan + create .zip |
-| `skill-manager eval <file>` | Load and validate eval schema |
-| `skill-manager eval serve` | Start interactive eval viewer (browser) |
-| `skill-manager scaffold <name> --tool <x>` | Scaffold wrapper skill skeleton |
-| `skill-manager inventory .` | List all components |
+| `nong skill validate <skill-dir> --json` | Validate one SKILL.md directory |
+| `nong skill inventory <plugin-root> --json` | List plugin skills and manifests |
+| `nong skill scan <plugin-root> --json` | Security scan with High+ gate |
+| `nong skill package <plugin-root> --json` | Validate + scan + create plugin .zip |
+| `skill-manager eval <file>` | Legacy eval schema workflow |
+| `skill-manager eval serve` | Legacy interactive eval viewer |
+| `skill-manager scaffold <name> --tool <x>` | Legacy wrapper skill skeleton |
+
+`nong skill validate` accepts a single skill directory. For plugin roots, run `nong skill inventory`, then validate each returned `skill.path`.
 
 ## Non-Negotiables
 
@@ -143,7 +146,7 @@ Install as global tool: `dotnet tool install --global Angri450.Nong.Skill.Manage
 4. **Never edit skills in `~/.claude/plugins/cache/`** — that's read-only cache. Edit source repositories.
 5. **Never delete backup versions** — only deprecate active copies.
 6. **Never introduce remote CDNs** — viewer and reports must be CDN-free.
-7. **Security scan is always-on** — `skill-manager scan .` detects HIGH+ without verbose gate.
+7. **Security scan is always-on** — `nong skill scan . --json` detects High+ findings.
 8. **Description honesty boundary** — descriptions must only claim implemented capabilities. "Pushy" is OK; false claims are not.
 9. **SKILL.md is a kernel, not a tutorial** — move detailed content to references/.
 10. **Convert real failures to regression evals** — every production incident gets an eval entry.

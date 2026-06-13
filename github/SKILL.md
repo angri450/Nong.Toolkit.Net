@@ -1,23 +1,42 @@
 ---
 name: github
 description: >
-  Git version control and GitHub CLI operations. MUST use this skill whenever the user
-  mentions git, github, gh, commit, push, pull, pull request, issue, branch, merge,
-  clone, repository, 提交, 推送, 仓库, 分支, or wants to interact with GitHub. Covers
-  git init/add/commit/push/pull/log/status/branch/merge and gh auth/repo/issue/pr/release.
+  Git version control and GitHub CLI. Trigger on git init, commit, push, pull,
+  branch, merge, clone, gh repo, gh issue, gh pr, gh release, or gh actions.
+  git init/add/commit/push/pull/log/status/branch/merge and gh auth/repo/issue/pr/release/
+  actions/search/projects/gist/label/secret/api/codespace.
 ---
 
 # GitHub Skill — Git + GitHub CLI
 
 Combined git version control and GitHub operations via `git` and `gh` CLI.
 
-## Prerequisites Check
-
-Before any git/gh operation:
+## Prerequisites
 
 1. `git --version` — must be installed and in PATH
 2. `gh auth status` — must be authenticated. If not: `gh auth login`, select GitHub.com → HTTPS → browser/paste token
-3. If `gh` is installed but not in current PATH: refresh via `$env:Path = [Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [Environment]::GetEnvironmentVariable("Path","User")`
+3. On Windows, refresh PATH if gh not found: `$env:Path = [Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [Environment]::GetEnvironmentVariable("Path","User")`
+
+## Dispatch Logic
+
+| 用户意图 | 关键词 | 参考 |
+|---------|--------|------|
+| Git 基本操作 | "git init", "clone", "commit", "push", "pull", "branch", "merge", "rebase", "reset" | 见下方 git Core Commands |
+| Repo 操作 | "创建仓库", "fork", "clone", "view repo", "delete repo" | [gh-cli.md](references/gh-cli.md) §2 |
+| Issue | "issue", "bug", "feature", "label", "close issue" | [gh-cli.md](references/gh-cli.md) §3 |
+| PR | "PR", "pull request", "review", "merge", "draft" | [gh-cli.md](references/gh-cli.md) §4 |
+| Actions/CI | "action", "workflow", "run", "rerun", "log" | [gh-cli.md](references/gh-cli.md) §5 |
+| Release | "release", "发版", "changelog", "tag" | [gh-cli.md](references/gh-cli.md) §6 |
+| Gist | "gist", "代码片段" | [gh-cli.md](references/gh-cli.md) §7 |
+| Search | "搜索", "search", "找代码" | [gh-cli.md](references/gh-cli.md) §8 |
+| Labels | "label", "标签", "clone labels" | [gh-cli.md](references/gh-cli.md) §9 |
+| Secrets/Variables | "secret", "密码", "环境变量", "env" | [gh-cli.md](references/gh-cli.md) §10 |
+| Projects V2 | "project", "项目", "board", "看板" | [gh-cli.md](references/gh-cli.md) §12 |
+| API | "api", "graphql", "REST" | [gh-cli.md](references/gh-cli.md) §13 |
+| Codespaces | "codespace", "云开发" | [gh-cli.md](references/gh-cli.md) §15 |
+
+完整 gh CLI 参考: [gh-cli.md](references/gh-cli.md)
+开发与发布经验: [lessons-learned.md](../gitee/references/lessons-learned.md) (21 节, 覆盖所有 gh 命令)
 
 ## git Core Commands
 
@@ -30,7 +49,7 @@ git config user.email "..."       # set identity (one-time per repo)
 git config user.name "..."
 ```
 
-### Daily Workflow (the only three you need 90% of the time)
+### Daily Workflow
 
 ```bash
 git add .                         # stage everything
@@ -76,42 +95,12 @@ git commit --amend -m "new msg"   # fix last commit message (before push)
 git reset --soft HEAD~1           # undo last commit, keep changes staged
 ```
 
-### Security — NEVER suggest these without explicit user request
+### Security — NEVER suggest without explicit user request
 
 ```bash
-# NEVER run these unless user explicitly asks:
 git push --force          # overwrites remote history
 git reset --hard          # destroys uncommitted work
-git push --force origin main  # DESTROYS main branch history on GitHub
-```
-
-## gh CLI — GitHub Operations
-
-### Common Shortcuts
-
-```bash
-gh repo view [owner/repo]        # see repo details in terminal
-gh repo view --web               # open in browser
-gh issue list                    # list issues
-gh issue create                  # create new issue (interactive)
-gh pr list                       # list pull requests
-gh pr create                     # create PR from current branch
-gh release create <tag>          # create a release
-```
-
-### After pushing code — quick verification
-
-```bash
-gh repo view                     # confirm repo looks right
-gh repo view --web               # open GitHub to visually check
-```
-
-### Auth & Config
-
-```bash
-gh auth status                   # check login state
-gh auth login                    # login (GitHub.com → HTTPS → browser/token)
-gh config list                   # show all config
+git push --force origin main  # DESTROYS main branch history
 ```
 
 ## Combined Workflows
@@ -123,11 +112,6 @@ git init
 git add .
 git commit -m "Initial commit"
 gh repo create <name> --public --push --source .
-# OR manually: create repo on github.com, then:
-git remote add origin https://github.com/<user>/<repo>.git
-git branch -M main
-git push -u origin main
-gh repo view  # verify
 ```
 
 ### Update and verify
@@ -136,17 +120,26 @@ gh repo view  # verify
 git add .
 git commit -m "description of changes"
 git push
-gh repo view  # optional: confirm in terminal
 ```
 
 ### Check what's on GitHub vs local
 
 ```bash
 git fetch origin
-git log --oneline origin/main   # remote commits
-git log --oneline                # local commits
-git diff --stat origin/main     # what's different
+git log --oneline origin/main
+git log --oneline
+git diff --stat origin/main
 ```
+
+## Cross-Skill Flow
+
+| Step | Skill | Role |
+|------|-------|------|
+| 1. 研究需求 | Gitee / GitHub | 浏览 Issue, 搜索代码 |
+| 2. 编写代码 | dotnet / bash / powershell | 实际编码 |
+| 3. 提交代码 | GitHub (git + gh pr) | 提交 PR, 关联 Issue |
+| 4. CI 检查 | GitHub (gh run/checks) | 查看 CI 状态 |
+| 5. 发布版本 | GitHub (gh release) | 创建 Release |
 
 ## Tool Selection Rules
 
@@ -154,4 +147,4 @@ git diff --stat origin/main     # what's different
 2. Use **Bash tool** for git/gh commands on Linux/macOS
 3. Never mix tools: if the environment is PowerShell, all commands go through PowerShell
 4. Always quote paths with spaces
-5. Check `gh auth status` before any `gh` command; if not authenticated, guide user through `gh auth login`
+5. Check `gh auth status` before any `gh` command

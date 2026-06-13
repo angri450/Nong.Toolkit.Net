@@ -197,7 +197,7 @@ Things that should make you stop and reconsider:
 - Documenting a bug with no fix. Known issues without fixes are noise. Omit them.
 - Vendoring any upstream files into the new skill directory. If you need to reference upstream, reference it by URL or by install-path, not by copying.
 - Generating a repair command that you haven't mentally walked through for idempotency. Every command should be safe to run twice.
-- Hardcoding the user's real file paths (`/Users/<username>/...`, etc.) into any file. Use `$HOME` or the agent's standard install locations.
+- Hardcoding the user's real file paths into any file. Use `$HOME` or the agent's standard install locations.
 - Committing credentials, tokens, or any personally identifying content.
 
 If you catch yourself doing any of the above, stop and ask the user.

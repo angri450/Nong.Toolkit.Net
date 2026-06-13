@@ -1,193 +1,127 @@
-# ChartCore API Reference
+# Chart CLI Reference
 
-所有 API 位于 `ChartCore` 命名空间。完整类型定义见 NuGet 包的 IntelliSense。
+GroundPA uses the implemented `nong chart` CLI commands. Do not call ChartCore directly for normal skill routing.
 
-## StatsEngine — 统计引擎
+## Statistics
 
-### OneWayAnova
+Full analysis:
 
-```csharp
-var anova = StatsEngine.OneWayAnova(groups);
-// 返回: AnovaResult { F, P, SSB, SSW, SST, MSB, MSW, dfB, dfW, N, GroupStats }
+```powershell
+nong chart analyze groups.json --alpha 0.05 --json
 ```
 
-### DuncanMRT
+ANOVA only:
 
-```csharp
-var duncan = StatsEngine.DuncanMRT(groups, anova.MSW, anova.dfW, alpha: 0.05);
-// 返回: DuncanResult { Groups = List<DuncanGroup> }
-// DuncanGroup { Label, Mean, SD, Significance }
+```powershell
+nong chart anova groups.json --json
 ```
 
-从 DuncanResult 构造字典供 ChartBuilder 用:
+Duncan MRT only:
 
-```csharp
-var sigLabels = duncan.Groups.ToDictionary(g => g.Label, g => g.Significance);
+```powershell
+nong chart duncan groups.json --alpha 0.05 --json
 ```
 
-### FullAnalysis
-
-```csharp
-var result = StatsEngine.FullAnalysis(groups, alpha: 0.05);
-// 返回: FullAnalysisResult { Anova, Duncan }
-result.Print();  // 格式化输出到 stdout
-```
-
-### GroupStats
-
-```csharp
-var stats = GroupStats.Compute(list);
-// GroupStats { N, Mean, SD, SEM, Min, Max }
-```
-
-## ChartBuilder — 图表生成器
-
-### 带显著性标注的柱形图（论文推荐）
-
-```csharp
-ChartBuilder.BarChartWithSignificance(
-    groups,           // Dictionary<string, List<double>>
-    sigLabels,        // Dictionary<string, string> 显著性字母
-    "不同处理对株高的影响",  // 标题
-    "株高 / cm",      // Y轴标签
-    "chart.png",      // 输出路径
-    width: 800,       // 可选，默认 800
-    height: 600);     // 可选，默认 600
-```
-
-### 简单柱形图
-
-```csharp
-ChartBuilder.BarChart(
-    groups, "标题", "Y轴", "chart.png",
-    colors: null,       // 默认色盲友好配色
-    width: 800, height: 600,
-    showErrorBar: true, showGrid: true);
-```
-
-### 完整配置（BarChartConfig）
-
-```csharp
-ChartBuilder.BarChart(new BarChartConfig
-{
-    Groups = groups,
-    Title = "...",
-    YLabel = "...",
-    OutPath = "chart.png",
-    Width = 800, Height = 600,
-    Colors = BarChartConfig.DefaultColors,
-    ShowErrorBar = true,
-    ShowSignificance = true,
-    SignificanceLabels = sigLabels,
-    ShowMeanValue = false,
-    TitleFontSize = 20,
-    AxisFontSize = 14,
-    BarWidth = 0.6f,
-    ShowGrid = true,
-});
-```
-
-## ChartCombine — 多图拼接
-
-```csharp
-ChartCombine.MergeHorizontal(
-    new[] { "fig1.png", "fig2.png", "fig3.png" },
-    new[] { "A", "B", "C" },      // 标号，null 不标
-    "fig_combined.png",
-    panelHeight: 0,                 // 0=自动，>0=强制统一高度
-    gap: 10,                        // 图间距 px
-    labelFontSize: 18);
-```
-
-## DataLoader — 数据加载
-
-### 从 JSON 读（推荐）
+Input is grouped JSON:
 
 ```json
-{"T1": [1.2, 1.5, 1.8, 1.1, 1.4], "T2": [2.1, 2.3, 2.5, 2.2, 2.8]}
+{
+  "Control": [1.2, 1.3, 1.1],
+  "Treatment": [2.0, 2.2, 2.1]
+}
 ```
 
-```csharp
-var groups = DataLoader.FromJson("data.json");
+Each group should contain numeric observations suitable for the requested analysis. Fix `E006 validation_failed` before trusting results.
+
+## Bar Chart
+
+```powershell
+nong chart bar groups.json -o fig.png --title "Yield" --ylabel "kg/ha" --error sem --json
 ```
 
-### 从 xlsx 读单列
+Options:
 
-列 A=处理组名，列 B=观测值:
+- `--error sem|none`
+- `--no-significance`
+- `--title <text>`
+- `--ylabel <text>`
 
-```csharp
-var groups = DataLoader.FromXlsx("data.xlsx", "Sheet1",
-    groupCol: 1, valueCol: 2);
+## Line Chart
+
+```powershell
+nong chart line line.json -o line.png --json
 ```
 
-### 从 xlsx 读多列取均值
+Spec:
 
-列 A=处理组名，列 B/C/D=重复观测值（取均值作为每个重复单元）:
-
-```csharp
-var groups = DataLoader.FromXlsxMultiColumn("data.xlsx", "Sheet1",
-    groupCol: 1, valueCols: new[] { 2, 3, 4 });
+```json
+{
+  "title": "Growth",
+  "xLabel": "Days",
+  "yLabel": "Height",
+  "series": [
+    { "name": "A", "x": [0, 7, 14], "y": [1.0, 2.0, 3.0] },
+    { "name": "B", "x": [0, 7, 14], "y": [1.1, 2.4, 3.4] }
+  ]
+}
 ```
 
-### 从 CSV 读
+Validation requires a non-empty `series` array. Each series needs `name`, `x`, and `y`; `x` and `y` must be non-empty arrays of the same length.
 
-```csharp
-var groups = DataLoader.FromCsv("data.csv");
-// CSV 格式: label,value
+## Scatter Plot
+
+```powershell
+nong chart scatter scatter.json -o scatter.png --json
 ```
 
-## 默认配色
+Spec:
 
-色盲友好的默认配色（Blue/Orange/Green/Yellow/Purple/Red）:
-
-```
-#5B9BD5  蓝
-#ED7D31  橙
-#70AD47  绿
-#FFC000  黄
-#A574B6  紫
-#DB4453  红
-```
-
-自定义配色:
-
-```csharp
-var myColors = new ScottPlot.Color[] {
-    new(0, 100, 200),
-    new(200, 80, 40),
-};
-ChartBuilder.BarChart(config with { Colors = myColors });
+```json
+{
+  "title": "Correlation",
+  "xLabel": "pH",
+  "yLabel": "Yield",
+  "points": [
+    { "x": 6.1, "y": 12.3, "group": "A" },
+    { "x": 6.5, "y": 13.1, "group": "A" },
+    { "x": 7.0, "y": 15.2, "group": "B" }
+  ],
+  "trendline": true
+}
 ```
 
-## 典型 workflow
+Validation requires a non-empty `points` array with finite numeric `x` and `y`. `group` is optional. `trendline` draws one overall linear trendline when there are at least two points.
 
-```csharp
-// 1. 加载数据
-var groups = DataLoader.FromJson("data.json");
-// 或者从 xlsx:
-// var groups = DataLoader.FromXlsxMultiColumn("data.xlsx", "新梢长度",
-//     groupCol: 1, valueCols: new[] { 2, 3, 4, 5 });
+## Pie Chart
 
-// 2. 统计分析
-var analysis = StatsEngine.FullAnalysis(groups);
-
-// 3. 打印结果
-analysis.Print();
-
-// 4. 构造显著性字典
-var sigLabels = analysis.Duncan.Groups.ToDictionary(g => g.Label, g => g.Significance);
-
-// 5. 生成图表
-ChartBuilder.BarChartWithSignificance(
-    groups, sigLabels,
-    "不同处理对桃树新梢长度的影响",
-    "新梢长度 / cm",
-    Path.Combine(outDir, "fig1_shoot.png"));
+```powershell
+nong chart pie pie.json -o pie.png --json
 ```
 
-## 错误处理
+Spec:
 
-- 数据为空：`OneWayAnova` 抛出 `InvalidOperationException`
-- 分组数 < 2：ANOVA 需要至少 2 个处理
-- 文件不存在：`DataLoader` 抛出 `FileNotFoundException`
-- xlsx 工作表不存在：ClosedXML 抛出异常
+```json
+{
+  "title": "Composition",
+  "values": [
+    { "label": "A", "value": 30 },
+    { "label": "B", "value": 70 }
+  ]
+}
+```
+
+Validation requires at least two values. Each value needs a non-empty `label` and a positive numeric `value`.
+
+## Output and QA
+
+PNG-generating commands return the generated path in `artifacts.png` when `--json` is used. After rendering, optional structural QA can be run with:
+
+```powershell
+nong ocr analyze-image fig.png -o fig.analysis --json
+```
+
+This checks image structure such as dimensions, whitespace, blankness, and content regions. It is not OCR, text recognition, or semantic figure interpretation.
+
+## Unsupported Chart Requests
+
+Do not promise box plots, histograms, heatmaps, radar charts, combined panels, or arbitrary post-render editing through the current `nong chart` command surface.

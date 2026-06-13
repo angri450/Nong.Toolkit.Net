@@ -1,12 +1,8 @@
 ---
 name: nuget
 description: >
-  NuGet package management with the dotnet CLI. MUST use this skill when the user
-  wants to install, update, remove, search, publish, or push NuGet packages; manage
-  NuGet sources; clear the NuGet cache; or pack a project into a .nupkg. Also trigger
-  when the user mentions nuget, nupkg, dotnet pack, dotnet nuget, dotnet tool
-  install, NuGet 源, NuGet 缓存, NuGet 包, 打包, 推送, or 发布包 — even if they
-  do not explicitly say "nuget".
+  NuGet package management via dotnet CLI. Trigger on install package, update package,
+  push nupkg, pack project, manage NuGet sources, or clear NuGet cache.
 ---
 
 # NuGet

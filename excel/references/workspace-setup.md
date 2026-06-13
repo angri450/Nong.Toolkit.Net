@@ -1,67 +1,46 @@
-# Workspace Setup — ExcelCore .NET 工程搭建
+# Excel Workspace Setup
 
-首次使用 Write Excel 功能前必须完成。后续每次写 Excel 只修改 `Program.cs`。
+Excel workflows in GroundPA are CLI-first. A separate Excel writer project is not required for the supported command surface.
 
-## 1. 检查依赖
+## Recommended Workspace
+
+Keep inputs and outputs in a task-local directory, for example:
+
+```text
+GroundPA Toolkit Workplace/
+  excel/
+    specs/
+    input/
+    output/
+```
+
+Use normal file writes only for JSON specs and output paths, then call `nong`.
+
+## Smoke Commands
+
+Create a workbook from a spec:
 
 ```powershell
-dotnet --version
+nong excel create specs\workbook.json -o output\workbook.xlsx --json
 ```
 
-若未安装 .NET SDK,告知用户去 https://dotnet.microsoft.com/download 安装。
-
-## 2. 创建工程
-
-询问用户工作目录,建议 `~/Documents/GroundPA Toolkit Workplace/excel/ExcelWriter/`。用户确认后执行:
+Inspect the workbook:
 
 ```powershell
-dotnet new console -n ExcelWriter -o <target-dir> --force
-dotnet add <target-dir> package Angri450.Nong.Excel
+nong excel sheets output\workbook.xlsx --json
+nong excel read output\workbook.xlsx --sheet Data --json
 ```
 
-## 3. 写入 Program.cs 模板
+Prepare chart input:
 
-用 Write 工具写入 `<target-dir>/Program.cs`,内容:
-
-```csharp
-using ClosedXML.Excel;
-using ExcelCore;
-
-string outDir = Path.Combine(
-    Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-    "GroundPA Toolkit Workplace", "output",
-    $"<timestamp>+<project>+<seq>");
-Directory.CreateDirectory(outDir);
-string outPath = Path.Combine(outDir, "data.xlsx");
-
-var wb = new XLWorkbook();
-var preset = StylePresets.Mono;
-
-ExcelBuilder.Sheet(wb, "Sheet1")
-    .Headers("列1", "列2", "列3")
-    .Data(new[] {
-        new[] { "数据1", "数据2", "数据3" },
-        new[] { "数据4", "数据5", "数据6" }
-    })
-    .ColumnWidths(10, 10, 10);
-
-FormulaValidator.SaveWithEvaluation(wb, outPath);
-Console.WriteLine("OK: " + System.IO.Path.GetFullPath(outPath));
+```powershell
+nong excel to-groups output\workbook.xlsx --sheet Data --group Treatment --value Yield --raw > output\groups.json
 ```
 
-## 4. 工程结构
+## Error Handling
 
-```
-<target-dir>/
-├── ExcelWriter.csproj        ← 引用 Angri450.Nong.Excel (NuGet)
-├── Program.cs                ← 表格内容,每次覆盖
-├── bin/Debug/               ← 编译产物(正常,勿删)
-└── obj/Debug/               ← 中间文件(正常,勿删)
-```
+Use `--json` for agent-facing commands and treat `status: "error"` as failure. Common fixes are correcting the file path, sheet name, A1 range, group column, value column, or create spec shape.
 
-## 5. 后续使用
+## Boundary
 
-每次生成 Excel 时:
-1. 用 Write 工具写入新的 `Program.cs`
-2. `dotnet run --project <project-path>` 生成 xlsx
-3. 输出固定到 `~/Documents/GroundPA Toolkit Workplace/output/<timestamp>+<project>+<seq>/data.xlsx`
+Do not install Excel libraries or build custom .NET writer projects for GroundPA routing. If the user needs unsupported Excel authoring features, state that the current `nong excel` CLI only exposes `sheets`, `read`, `to-groups`, and `create`.

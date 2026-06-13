@@ -28,8 +28,14 @@ SlideBuilder.Create().Theme(ThemePreset.Professional)
 
 ### 使用 JSON 主题（BuildFromJson）
 
+**先将 JSON 复制到项目目录**（禁止直接从 skill 路径引用——路径含插件版本号，升级后失效）：
+
+```powershell
+cp <skill-root>/pptx/formats/*.json <project-dir>/formats/
+```
+
 ```csharp
-var theme = ThemePreset.BuildFromJson("<skill-path>/formats/midnight-executive.json");
+var theme = ThemePreset.BuildFromJson("formats/midnight-executive.json");
 SlideBuilder.Create().Theme(theme)
 ```
 

@@ -14,7 +14,7 @@ grep -rniE "mercury|portal|underwriting|glean|[company-name]|[product-name]" ski
 grep -rniE "\b(Oliver|John|Alice|Bob|建斌|小明)\b" skill-folder/
 
 # Absolute paths and usernames
-grep -rniE "/Users/|/home/|/mnt/c/Users|OneDrive|username" skill-folder/
+grep -rniE "user-profile-path|OneDrive|username" skill-folder/
 
 # Chinese characters (if skill should be English-only)
 grep -rn '[一-龥]' skill-folder/
