@@ -4,7 +4,7 @@ Use Nong CLI commands for Word generation and edits. Nong.Toolkit.Net should pre
 
 For edits to existing user documents, especially legacy `.doc` conversions or table-heavy contracts, read [existing-document-editing.md](existing-document-editing.md) before choosing commands.
 
-Do not write `python-docx`, Markdown-to-DOCX, or PowerShell + Word COM scripts for normal Word generation, formatting, or edits. If installed Microsoft Word must be driven explicitly, use [com-automation.md](com-automation.md) and treat COM as the final escape hatch, not the default implementation path.
+Do not write `python-docx`, Markdown-to-DOCX, or PowerShell + Word COM scripts for normal Word generation, formatting, or edits. COM automation patterns have moved to Nong.Dev.Net (`references/word-com-automation.md`). Load that reference only when installed Microsoft Word must be driven explicitly, and treat COM as the final escape hatch.
 
 ## 1. Choose the Output Path
 

@@ -1,7 +1,7 @@
 {
   "name": "nong-toolkit",
-  "version": "2.4.0",
-  "description": "Nong.Toolkit.Net 2.4.0. Claude Code multi-skill plugin for Nong 4.0.0+ pure .NET document work, literature retrieval, agricultural paper inspection, Office formats, OCR/image QA, slices, skill lifecycle, progress reports, and Bioicons.",
+  "version": "4.1.0",
+  "description": "Nong.Toolkit.Net 4.1.0. Claude Code multi-skill plugin for Nong.Cli.Net 4.1.0+ — modular architecture: light CLI router + 6 independent dotnet tools. Pure .NET document work, literature retrieval, agricultural paper inspection, Office formats, OCR/image QA, slices, skill lifecycle, and Bioicons.",
   "author": {
     "name": "angri450"
   },
@@ -11,7 +11,7 @@
   "keywords": [
     "nong", "cli", "office", "word", "pdf", "literature", "openalex", "crossref",
     "unpaywall", "excel", "chart", "diagram", "pptx", "ocr", "image-qa", "paper",
-    "inspect", "slice", "skill", "progress-report", "agriculture", "bioicons", "dotnet", "claude-code-plugin"
+    "inspect", "slice", "skill", "agriculture", "bioicons", "dotnet", "claude-code-plugin"
   ],
   "skills": [
     "./word",
@@ -26,8 +26,9 @@
     "./genre",
     "./icons",
     "./slice",
-    "./skill",
-    "./skill-manager",
-    "./progress-report"
+    "./skill-grader",
+    "./skill-breeder",
+    "./skill-tester",
+    "./skill-pruner"
   ]
 }

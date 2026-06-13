@@ -26,7 +26,7 @@ Use `word check` before working on user-supplied `.doc`/`.docx`. Use `word conve
 
 For layout or formatting questions, `read` is insufficient evidence. Run `word dissect --output`, inspect `format.json`, `content.jsonl`, and `structure.json`, then add `fonts`, `styles`, `preview`, or `validate` as targeted follow-ups. Do not answer "open Word manually" unless the CLI failed or the exact visual property is outside the current extraction contract.
 
-Do not use desktop Word COM automation as a fallback for these commands. If the user explicitly asks to automate installed Word, read [com-automation.md](com-automation.md) before writing any PowerShell COM script.
+Do not use desktop Word COM automation as a fallback for these commands. COM automation is a developer tool in Nong.Dev.Net (`references/word-com-automation.md`).
 
 ## Validate, Repair, and Infer
 

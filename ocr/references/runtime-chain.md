@@ -4,9 +4,10 @@ When OCR fails to install or run, the problem can be in any layer of this chain:
 
 ```
 ocr skill (Toolkit)
-  → nong ocr CLI (Nong.Cli.Net 4.0.0+)
-    → Angri450.Nong.MultiModal (NuGet core package, Sdcb.PaddleOCR + ONNX Runtime)
-      → Angri450.Nong.OcrRuntime.* (5 platform runtime packages, managed in separate Nong.OcrRuntime repo)
+  → nong ocr CLI (Nong.Cli.Net 4.1.0+)
+    → Anti450.Nong.MultiModal (NuGet core package, Sdcb.PaddleOCR + ONNX Runtime)
+      → Angri450.Nong.OcrRuntime.* (5 platform runtime packages, shared by v5 and v6)
+      → PP-OCR model files (v5: NuGet embedded / v6: CDN download to local cache)
 ```
 
 ## Platform Packages
@@ -27,9 +28,13 @@ Five platform-specific runtime packages:
 nong ocr check-env --json
 ```
 
-If `localDotNetPpOcrV5.status` is not `ok`:
+If `localDotNetPpOcrV6.status` is not `ok` (or `localDotNetPpOcrV5.status` for legacy):
 
 ```powershell
+# v6 (recommended) — downloads model from PaddleOCR CDN, no NuGet source needed
+nong ocr install-model pp-ocrv6-medium --json
+
+# v5 legacy — deploys native runtime from NuGet
 nong ocr install-model pp-ocrv5-mobile --source https://mirrors.huaweicloud.com/repository/nuget/v3/index.json --json
 ```
 

@@ -11,7 +11,9 @@ The primary readable artifact is `content.nongmark`, not plain Markdown. `previe
 
 ## Nong CLI Preflight
 
-Read [../references/shared/nong-cli-preflight.md](../references/shared/nong-cli-preflight.md) before the first Nong command in a session. Confirm Nong.Cli.Net `4.0.0+` and the needed command group.
+Read [../references/shared/nong-cli-preflight.md](../references/shared/nong-cli-preflight.md) before the first Nong command in a session. Confirm Nong.Cli.Net `4.1.0+` and the `pdf` command group.
+
+**Modular (4.1.0+):** `nong pdf` routes to the standalone `Angri450.Nong.Tool.Pdf` dotnet tool. First use auto-installs. Command surface unchanged.
 ## Default Workflow
 
 For detailed routing notes, read [references/pdf-routing.md](references/pdf-routing.md).
@@ -61,7 +63,7 @@ nong ocr install-model pp-ocrv5-mobile --source https://mirrors.huaweicloud.com/
 nong pdf dissect <scan.pdf> --output <slice-dir> --mode ocr --json
 ```
 
-Local OCR runtime bundles track the CLI version (`Angri450.Nong.OcrRuntime.*` 4.0.0 for Nong 4.0.0). Right after a fresh NuGet release, domestic mirrors can lag; if Huawei has not synced the runtime package yet, use NuGet.org explicitly or report mirror lag instead of falling back silently.
+Local OCR runtime bundles track the CLI version (`Angri450.Nong.OcrRuntime.*` 4.1.0 for Nong 4.1.0). Right after a fresh NuGet release, domestic mirrors can lag; if Huawei has not synced the runtime package yet, use NuGet.org explicitly or report mirror lag instead of falling back silently.
 
 Local OCR is text recognition only. It does not provide cloud-grade layout labels, table structure, Word formatting, or reliable cross-page reconstruction. For page-faithful PDF-to-Word/NongMark output, prefer readable-text `pdf dissect` first; use cloud OCR/to-word when scan layout, tables, or page alignment matter and a token is available.
 
@@ -114,7 +116,7 @@ nong pdf ocr <scan.pdf> -o <output.pdf> --dpi 200 --json
 
 Do not use Pandoc as a PDF parser. Do not require Python, pip, MinerU, or a Pandoc executable on the client machine.
 
-`pdf dissect --mode auto` is reliable for selectable text PDFs in Nong 4.0.0+. Hybrid mode preserves native text and embedded image evidence, while image-region OCR/layout enrichment is still limited. OCR mode depends on Nong's local PP-OCRv5 runtime and should be treated as text extraction, not full document reconstruction.
+`pdf dissect --mode auto` is reliable for selectable text PDFs in Nong 4.1.0+. Hybrid mode preserves native text and embedded image evidence, while image-region OCR/layout enrichment is still limited. OCR mode depends on Nong's local PP-OCRv5 runtime and should be treated as text extraction, not full document reconstruction.
 
 `pdf ocr` renders each page of a scanned PDF as JPEG images and embeds them in a new PDF with placeholder text markers. For full text recognition, combine with `nong ocr cloud` or local OCR. `--dpi` controls render quality (default 200).
 

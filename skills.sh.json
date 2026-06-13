@@ -1,10 +1,20 @@
 {
-  "version": "2.4.0",
-  "groups": [
+  "version": "2.5.0",
+  "groupings": [
     {
-      "title": "Nong Document Workflows",
-      "description": "Nong 4.0.0+ pure .NET CLI workflows for Word, PDF, literature retrieval, paper inspection, Excel, statistics, diagrams, PPTX reads, OCR/image QA, templates, slices, skill lifecycle, progress reports, and Bioicons",
-      "skills": ["word", "pdf", "literature", "inspect", "excel", "chart", "diagram", "pptx", "ocr", "genre", "icons", "slice", "skill", "skill-manager", "progress-report"]
+      "title": "Documents",
+      "description": "Word, PDF, Excel, PPTX, OCR, slices, and Bioicons",
+      "skills": ["word", "pdf", "excel", "pptx", "ocr", "slice", "icons"]
+    },
+    {
+      "title": "Analysis",
+      "description": "Literature retrieval, paper inspection, statistics, diagrams, and writing templates",
+      "skills": ["literature", "inspect", "chart", "diagram", "genre"]
+    },
+    {
+      "title": "Governance",
+      "description": "Skill lifecycle management with 5 agricultural personas",
+      "skills": ["skill-grader", "skill-breeder", "skill-tester", "skill-pruner"]
     }
   ]
 }

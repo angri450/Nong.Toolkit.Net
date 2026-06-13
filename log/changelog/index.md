@@ -2,7 +2,7 @@
 
 Format: `- YYYY-MM-DD | file | summary`
 
-- 2026-06-10 | 2026-06-10-skill-cli-package-map.md | Skill / CLI / 包 / runtime 对照图：逐项标清每个 skill 的命令组、核心包、依赖包和 OCR runtime 链
+- 2026-06-11 | 2026-06-11-multi-plugin-marketplace-skills-sh.md | Multi-plugin marketplace: 16 skill 独立可安装, marketplace 命名统一, skills.sh 接入, CLAUDE.md 模板精简
 - 2026-06-10 | 2026-06-10-toolkit-skill-system-audit.md | Toolkit 整体 skill 系统审计：分出可用、偏薄、优先整改三类，并明确命名与例子纪律问题
 - 2026-06-10 | 2026-06-10-toolkit-cli-alignment.md | Nong.Toolkit.Net 2.4.0 alignment with Nong.Cli.Net 4.0.0 command surface, including official-document commands
 - 2026-06-10 | 2026-06-10-skill-manager-audit.md | skill-manager 审计：触发过宽、材料过薄、职责混杂，建议拆层

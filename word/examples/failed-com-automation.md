@@ -38,5 +38,5 @@ nong word format-audit contract.clean.docx --json
 ## 关键点
 
 - `.doc` 文件不要直接操作。先用 `word check` 判断状态，再用 `word convert` 转到 `.docx`。
-- **禁止桌面 Word COM 自动化做普通 Word 操作。** COM 只在 `word convert` 内部作为边界转换手段时自动启用，不需要 AI 自己调。
+- **禁止桌面 Word COM 自动化做普通 Word 操作。** COM 只在 `word convert` 内部作为边界转换手段时自动启用，不需要 AI 自己调。完整的 COM 自动化逃生舱模式已移至 Nong.Dev.Net（`references/word-com-automation.md`），需要时从那里加载。
 - 进入 `.docx` 管线后，所有 word skill 的命令都可以正常使用。

@@ -14,7 +14,7 @@ Recommended stance:
 4. After conversion, return immediately to `nong word`.
 5. Do not use COM as the main reading/editing engine.
 
-`word convert` tries available conversion engines such as LibreOffice and, on Windows, hidden Word COM as a fallback. If you must write a custom Word COM script anyway, read [com-automation.md](com-automation.md). Prefer hidden Word, unique output paths, `SaveAs2(..., 16)`, explicit document close, `Quit()`, COM release, and no blanket `Stop-Process WINWORD -Force`.
+`word convert` tries available conversion engines such as LibreOffice and, on Windows, hidden Word COM as a fallback. If you must write a custom Word COM script anyway, COM automation patterns are in Nong.Dev.Net (`references/word-com-automation.md`). Prefer hidden Word, unique output paths, `SaveAs2(..., 16)`, explicit document close, `Quit()`, COM release, and no blanket `Stop-Process WINWORD -Force`.
 
 ## Real-Case Pipeline
 

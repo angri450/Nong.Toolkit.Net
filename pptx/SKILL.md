@@ -9,7 +9,9 @@ Use `nong` as the only Nong.Toolkit.Net entrypoint for PPTX work. Supports readi
 
 ## Nong CLI Preflight
 
-Read [../references/shared/nong-cli-preflight.md](../references/shared/nong-cli-preflight.md) before the first Nong command in a session. Confirm Nong.Cli.Net `4.0.0+` and the needed command group.
+Read [../references/shared/nong-cli-preflight.md](../references/shared/nong-cli-preflight.md) before the first Nong command in a session. Confirm Nong.Cli.Net `4.1.0+` and the `pptx` command group.
+
+**Modular (4.1.0+):** `nong pptx` routes to the standalone `Angri450.Nong.Tool.Pptx` dotnet tool. First use auto-installs. Command surface unchanged.
 ## Implemented Commands
 
 Use only these PPTX commands:

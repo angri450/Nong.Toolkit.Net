@@ -9,7 +9,7 @@ Use `nong slice` as the canonical reader for NongPandoc packages produced by `wo
 
 ## Nong CLI Preflight
 
-Read [../references/shared/nong-cli-preflight.md](../references/shared/nong-cli-preflight.md) before the first Nong command in a session. Confirm Nong.Cli.Net `4.0.0+` and the `slice` command group.
+Read [../references/shared/nong-cli-preflight.md](../references/shared/nong-cli-preflight.md) before the first Nong command in a session. Confirm Nong.Cli.Net `4.1.0+` and the `slice` command group.
 
 ## Commands
 

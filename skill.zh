@@ -22,11 +22,12 @@ Nong.Toolkit.Net 是一个 Claude Code 多 skill 插件。目标是让 Claude Co
 | `genre` | 论文体裁和写作指导 |
 | `icons` | Bioicons 查询 |
 | `slice` | NongPandoc 包检查、严格证据检查、block 读取和资源清单 |
-| `skill` | `nong skill` 校验、扫描、清单和打包 |
-| `skill-manager` | skill 设计、维护、触发质量和旧工作流迁移 |
-| `progress-report` | 结构化日志摘要和 HTML 进展报告 |
+| `skill-grader` | `nong skill` 校验、扫描、清单和打包（入库） |
+| `skill-breeder` | Skill 育种：模板、命名规范、结构约定 |
+| `skill-tester` | Skill 验种：触发精度检查、失败反馈回收 |
+| `skill-pruner` | Skill 修剪：合并、拆分、废弃 |
 
-Nong.Toolkit.Net 2.4.0 面向 Nong 4.0.0+。使用前通过 `nong commands --json` 确认需要的命令组存在。
+Nong.Toolkit.Net 2.5.0 面向 Nong 4.1.0+。使用前通过 `nong commands --json` 确认需要的命令组存在。
 
 Stage19 文献提供方只包括 OpenAlex、Crossref 和 Unpaywall。全文检索、爬虫、绕过付费墙、Semantic Scholar、PubMed、PMC、arXiv、万方和自动中英同义词扩展都未实现。
 
@@ -34,7 +35,11 @@ Stage19 文献提供方只包括 OpenAlex、Crossref 和 Unpaywall。全文检�
 
 ```bash
 claude plugin marketplace add https://gitcode.com/angri450/Nong.Toolkit.Net.git
-claude plugin install nong-toolkit@angri450
+# 全量安装
+claude plugin install nong-toolkit@nong-toolkit
+# 或按需安装
+claude plugin install word@nong-toolkit
+claude plugin install pdf@nong-toolkit
 ```
 
 安装后重启 Claude Code，或执行 `/reload-plugins`。

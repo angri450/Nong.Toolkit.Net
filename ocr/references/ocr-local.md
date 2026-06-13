@@ -1,6 +1,6 @@
 # Local OCR Reference
 
-Local OCR is a Nong CLI path through Nong's pure .NET PP-OCRv5 runtime:
+Local OCR is a Nong CLI path through Nong's pure .NET OCR runtime:
 
 ```powershell
 nong ocr local scan.png --json
@@ -8,6 +8,19 @@ nong ocr local scan.png --force --json
 ```
 
 It does not require Python, pip, or external OCR executables. Do not bypass Nong by calling OCR libraries directly from Nong.Toolkit.Net.
+
+## Model Versions
+
+| Model ID | Status | Deployment | When to use |
+|----------|--------|------------|-------------|
+| `pp-ocrv6-medium` | **default** | CDN download (PIR format) | Best accuracy. 50-language unified model. |
+| `pp-ocrv6-small` | available | CDN download (PIR format) | Balanced accuracy/size. |
+| `pp-ocrv6-tiny` | available | CDN download (PIR format) | Mobile/embedded. 6904-char dict only. |
+| `pp-ocrv5-mobile` | legacy | NuGet managed model | Existing deployments. |
+
+`pp-ocrv6` is an alias for `pp-ocrv6-medium`.
+
+The native runtime (PaddleInference + OpenCvSharp DLLs) is shared across all model versions and comes from the Nong.OcrRuntime NuGet package.
 
 ## Required Gate
 
@@ -18,19 +31,27 @@ nong ocr check-env --json
 nong ocr models --json
 ```
 
-Expect `localDotNetPpOcrV5.status` to be `ok` and model entries to include `noPython: true`.
+Expect `localDotNetPpOcrV6.status` (or `localDotNetPpOcrV5.status` for legacy) to be `ok` and model entries to include `noPython: true`.
 
 For deployment planning on a new client machine:
 
 ```powershell
+# v6 (recommended)
+nong ocr install-model pp-ocrv6-medium --dry-run --json
+
+# v5 legacy
 nong ocr install-model pp-ocrv5-mobile --dry-run --json
 ```
 
-This reports the .NET/NuGet deployment plan. Nong bundles the managed PP-OCRv5 model metadata; `install-model` deploys the current platform `Angri450.Nong.OcrRuntime.*` native runtime bundle into the Nong runtime cache from the Huawei NuGet source or a local NuGet cache. Runtime package versions track the CLI version; for Nong 4.0.0, expect `Angri450.Nong.OcrRuntime.*` 4.0.0. Upstream Sdcb/OpenCvSharp fallback is disabled by default and requires explicit `--allow-upstream-fallback`. A successful non-dry-run install/check cleans the temporary `runtimeCache\downloads` directory and reports `downloadCleanup`.
+This reports the deployment plan. For v6, models are downloaded from PaddleOCR CDN (PIR format). For v5, Nong bundles the managed PP-OCRv5 model metadata; `install-model` deploys the current platform `Angri450.Nong.OcrRuntime.*` native runtime bundle into the Nong runtime cache from the Huawei NuGet source or a local NuGet cache. Runtime package versions track the CLI version; for Nong 4.0.0, expect `Angri450.Nong.OcrRuntime.*` 4.0.0. Upstream Sdcb/OpenCvSharp fallback is disabled by default and requires explicit `--allow-upstream-fallback`.
 
-Preferred install command:
+Preferred install commands:
 
 ```powershell
+# v6 (no --source needed, downloads from PaddleOCR CDN)
+nong ocr install-model pp-ocrv6-medium --json
+
+# v5 (with Huawei mirror)
 nong ocr install-model pp-ocrv5-mobile --source https://mirrors.huaweicloud.com/repository/nuget/v3/index.json --json
 ```
 

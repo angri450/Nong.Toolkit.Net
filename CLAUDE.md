@@ -1,83 +1,186 @@
-# Personal Communication and Truthfulness Rules
+# CLAUDE.md - Nong.Toolkit.Net
 
-## 1. Factuality first
+Nong.Toolkit.Net is the Claude Code skill layer for Nong.Cli.Net. It teaches agents how to route document, literature, Office, OCR, slice, and skill lifecycle work through the deterministic `nong` CLI.
 
-All answers must be grounded in facts, evidence, provided context, tool results, or clear reasoning.
+## Current Contract
 
-Do not fabricate facts, sources, file contents, test results, command outputs, citations, links, implementation status, or user intent.
+- Toolkit version: `4.1.0`.
+- Required CLI: Nong.Cli.Net `4.1.0+`.
+- Plugin id: `nong-toolkit`.
+- Modular architecture: `nong` (12MB router) + 6 auto-install external tools (chart/diagram/pdf/pptx/ocr/imaging).
+  - External tools install on first use: `nong chart bar ...` auto-installs `Angri450.Nong.Tool.Chart`.
+  - Package IDs use `Angri450.Nong.Tool.*` prefix. Core library IDs (`Angri450.Nong.Chart` etc.) reserved for library packaging.
+- Do not use retired GroundPA or GroundPA-Toolkit names for active docs, manifests, skills, scripts, or install commands.
+- This repository contains skills and documentation only. Deterministic execution belongs in Nong.Cli.Net.
 
-If you do not know, say you do not know.
+## Plugin Infrastructure
 
-If information is uncertain, say what is uncertain and why.
+`.claude-plugin/` must contain both files:
 
-If a task requires current or niche facts, verify them before answering when tools are available.
+| File | Purpose |
+|------|---------|
+| `marketplace.json` | Marketplace descriptor — name, owner, plugin list. Required for `claude plugin marketplace add` |
+| `plugin.json` | Plugin manifest — version, skills array, keywords. Required for `claude plugin install` |
 
-Do not present guesses as facts.
+Creating a new plugin repository without `marketplace.json` causes `Marketplace file not found` on `marketplace add`. Always create both files together.
 
-## 2. Source and citation discipline
+**Marketplace name**: use the project name — `nong-toolkit` for this repo, `nong-dev` for Nong.Dev.Net. Never use personal names as marketplace ids.
 
-When using external facts, research, documents, uploaded files, command outputs, or tool results, cite or reference the source.
+### Multi-plugin structure
 
-Put references near the relevant claim when possible.
+One marketplace, multiple plugins. Each skill directory has its own `.claude-plugin/plugin.json` with `"skills": [\"./\"]`. Users install only what they need:
 
-Do not add fake references.
+```
+claude plugin install word@nong-toolkit       # ~20 tok
+claude plugin install chart@nong-toolkit      # ~20 tok
+claude plugin install nong-toolkit@nong-toolkit   # full bundle, ~320 tok
+```
 
-Do not cite sources that were not actually used.
+Directory layout:
+```
+.claude-plugin/
+  marketplace.json        ← plugins array lists all 17 entries (bundle + 16 skills)
+  plugin.json             ← root bundle plugin, skills: all subdirs
+word/.claude-plugin/plugin.json   ← skills: ["./"]
+chart/.claude-plugin/plugin.json  ← skills: ["./"]
+...
+```
 
-Do not copy long passages from other people's work. Summarize, transform, and attribute instead.
+### marketplace.json fields
 
-Respect copyright and avoid reproducing complete articles, posts, documentation pages, books, or long proprietary text.
+Validated by `claude plugin validate . --strict`. Schema URI: `https://anthropic.com/claude-code/marketplace.schema.json` (404, reference only).
 
-## 3. Style
+**Top-level (marketplace)**
 
-Use Chinese by default when the user speaks Chinese.
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `$schema` | string | no | Schema URI for documentation |
+| `name` | string | **yes** | Namespace id. Used as `@<name>` in `claude plugin install`. Must be unique across repos |
+| `description` | string | no | Marketplace introduction |
+| `owner` | object | no | `{ "name": "..." }` |
+| `plugins` | array | **yes** | Plugin entries, at least one |
 
-The tone should be between written and conversational Chinese. Use short sentences. Avoid long, nested, complex sentences. Avoid rare characters, obscure words, uncommon idioms, and overly literary phrasing. Prefer direct, practical wording.
+**plugins[] entry**
 
-Do not use emoji. Do not use emoji in prose, comments, code, commit messages, filenames, logs, examples, or documentation unless the user explicitly asks.
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | string | **yes** | Plugin id. Used as `<name>@` in `claude plugin install` |
+| `source` | string | **yes** | Path to plugin directory. `"./"` means the marketplace root itself is the plugin |
+| `description` | string | no | Plugin description shown during install |
+| `author` | object | no | `{ "name": "..." }` |
+| `category` | string | no | Category label, e.g. `"developer-tools"` |
 
-## 4. Structure
+## Required Workflow
 
-Minimize unordered bullet lists. Prefer numbered lists, short paragraphs, and progressive explanation.
+1. Inspect the relevant `SKILL.md` and linked references before editing.
+2. Keep each `SKILL.md` concise. Put shared or detailed rules in `references/`.
+3. Use `references/shared/nong-cli-preflight.md` for the common CLI prerequisite instead of duplicating install blocks.
+4. Keep generated outputs, package zips, experiments, and cache material outside the repository in `../Nong.Toolkit_archive/`.
+5. Record development work under `log/plans/`, `log/changelog/`, `log/debug/`, or `log/guidance/` and update the matching `index.md`.
 
-Use hierarchy and sequence: first explain the core point, then explain the reason, then give the actionable step, then list risks or exceptions if needed.
+## Credentials
 
-Avoid dense walls of text. Avoid over-formatting. Use tables only when comparison is clearer in table form.
+- GitHub: `gh auth` logged in as angri450. Token in Windows Credential Manager.
+- NuGet: `NUGET_API_KEY` in user environment. Persistent across reboots.
+- Gitee / GitCode: cached in Windows Credential Manager.
+- On 401/403: tell the user to refresh their token.
 
-## 5. Reasoning style
+## Skill governance
 
-Follow first principles. Reduce communication overhead. Do not add unnecessary background.
+Five agricultural personas govern all skill work:
 
-Do not ask for confirmation when the safe and intended path is clear.
+```
+skill-breeder   Breeder   — create: templates, naming, reference structure
+skill-tester    Tester    — test: trigger precision, description accuracy, feedback loops
+skill-grader    Grader    — gate: validate → scan → inventory → package
+skill-patrol    Patrol    — monitor: detect stale skills after CLI upgrades (pending)
+skill-pruner    Pruner    — prune: merge, split, deprecate
+```
 
-When there is a tradeoff, state the tradeoff and recommend one path.
+## Skill Boundaries
 
-When a decision depends on missing information, either make a safe assumption and say it, or ask one focused question.
+- `word`, `pdf`, `excel`, and `pptx` teach document routing and evidence reading.
+- `ocr` teaches OCR and image-structure QA through `nong ocr`.
+- `slice` teaches the unified NongPandoc package reader commands.
+- `skill-grader` teaches `nong skill validate/scan/inventory/package`.
+- `skill-breeder` teaches skill authoring: templates, naming, structure.
+- `skill-tester` teaches skill quality testing and feedback loops.
+- `skill-pruner` teaches lifecycle governance: merge, split, deprecate.
+- `progress-report` teaches project log reporting. If a report generator is needed, it should be implemented in Nong.Cli.Net, not as a private Toolkit script.
 
-## 6. Engineering communication
+## Validation
 
-For engineering tasks, report exact status. Use clear labels: PASS, FAIL, PARTIAL, SKIPPED.
+Use the local 4.0.0 CLI when the global `nong` tool is stale:
 
-Do not use vague status words like READY when a command was not actually run. Do not say a test passed unless the test actually ran and passed. Do not say a file was modified unless it was actually modified. Do not say a package was verified unless it was actually built or unpacked and checked.
+```powershell
+..\Nong.Cli.Net\Cli\bin\Release\net8.0\nong.exe skill inventory . --json
+..\Nong.Cli.Net\Cli\bin\Release\net8.0\nong.exe skill scan . --json
+..\Nong.Cli.Net\Cli\bin\Release\net8.0\nong.exe skill package . --json
+```
 
-## 7. Skill work defaults
+Validate changed skills directly:
 
-For skill creation, repair, optimization, packaging, and maintenance, follow skillmanager conventions (see its references/ for details). 
+```powershell
+..\Nong.Cli.Net\Cli\bin\Release\net8.0\nong.exe skill validate .\word --json
+```
 
-When you encounter and fix errors while using any tool, note them. At the end of the session, run Session (see [`workflows/session/workflow.md`](workflows/session/workflow.md)).
+## Nong CLI reference
 
-## 8. Code review and changelog
+Global `nong` tool: 125 commands across 16 modules. All support `--json`. Command surface: `nong commands --json`. NanoBot bridge: `nong commands --format openai-tools`.
 
-After every non-trivial change to this repository, run the `code-review` skill at medium-or-higher effort to catch regressions.
+| Module | Key commands |
+|--------|-------------|
+| word (39) | check, create, read, dissect, diagnose, clean-styles, format-gongwen, format-audit, table-reflow, add *, merge, protect, compare, crop, fit-images, compact-tables, regroup-images, estimate, page-setup, indent, paragraph-control, image-wrap, cell-format, run-format, images (->nong-imaging for analyze/crop) |
+| inspect (12) | diagnose, classify, structure, refs, evidence, data-req, gap, semantics, write-paper, write-official, official-check |
+| chart (11) | analyze, anova, duncan, bar, line, scatter, pie, boxplot, histogram, heatmap, radar |
+| excel (8) | sheets, read, to-groups, create, dissect, style, formula, pivot |
+| pdf (8) | check, dissect, render, images, merge, split, ocr, compress |
+| ocr (11) | local, cloud, check-env, analyze-image, models, install-model, to-word, batch, video, screen, camera |
+| lit (5) | parse, validate, plan, search, export |
+| pptx (4) | read, slides, dissect, create |
+| diagram (3) | flowchart, network, tree |
+| genre (2) | list, show |
+| icons (2) | list, search |
+| slice (4) | inspect, blocks, block, assets |
+| skill (4) | validate, scan, inventory, package |
+| progress (1) | report |
+| commands (1) | list commands (--json / --format openai-tools) |
 
-Write findings to `changelog/发现问题+<topic>+<YYYY-MM-DD>.md`. List each finding with severity (HIGH/MEDIUM/LOW), file path, line number, and the specific defect.
+## Skill authoring rules
 
-Fix all HIGH and MEDIUM findings. LOW findings are at your discretion.
+### Every skill must have
 
-After fixes, write `changelog/解决问题+<topic>+<YYYY-MM-DD>.md` recording what was changed and how.
+1. **SKILL.md** — name + description frontmatter, route table, boundaries
+2. **At least 1 example** in `examples/`. Format: What the user wants → What was done → Result → Key takeaways
+3. **At least 1 reference** in `references/`. Split files exceeding 30 lines. High-frequency skills need 2-3 references.
+4. **At least 1 eval** in `evals/`. One JSON file, 2-3 items, covering the most-used CLI entry points.
+5. **Exact parameter names** — every CLI command shown in SKILL.md must use parameters that actually exist. Do not write `--block-id` if the CLI takes a positional argument.
 
-If no findings survive verification, write a single `changelog/审查通过+<topic>+<YYYY-MM-DD>.md` stating the scope and that nothing was found.
+### Gate checklist after any skill change
 
-## 9. Final answer style
+```
+nong skill validate .\<name> --json
+nong skill scan . --json
+nong skill inventory . --json
+nong skill package . --json
+```
 
-When giving final answers to the user, be concise, accurate, use short sentences, avoid emoji, include references when factual claims depend on sources, and clearly separate facts, assumptions, and recommendations.
+### CLI-mirror naming rule
+
+CLI-mirror skills must match the CLI command group name exactly: `ocr` ↔ `nong ocr`, `word` ↔ `nong word`. Never give a CLI-mirror skill a vague name like `multimodal` when the CLI group is `ocr`.
+
+### CLI → skill sync
+
+After changing the CLI:
+- Never rename existing commands. Use aliases for better names.
+- Never expand the semantics of an existing command (e.g. do not stuff histograms into `chart analyze`).
+- Sync affected SKILL.md, references, and examples immediately.
+- Verify with `nong commands --json` and `nong skill validate`.
+
+## Legacy rules
+
+- SKILL.md is the routing kernel. Long guidance goes in references.
+- Deterministic work goes in .NET CLI tools. Python is legacy fallback only.
+- Security scan is mandatory (`nong skill scan`).
+- Blind eval must be blind.
+- Description must be honest. Do not declare capabilities the CLI does not implement.

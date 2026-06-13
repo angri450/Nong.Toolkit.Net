@@ -9,7 +9,7 @@ Use `nong lit` as the deterministic literature retrieval entrypoint. Nong.Toolki
 
 ## Nong CLI Preflight
 
-Read [../references/shared/nong-cli-preflight.md](../references/shared/nong-cli-preflight.md) before the first Nong command in a session. Confirm Nong.Cli.Net `4.0.0+` and the needed command group.
+Read [../references/shared/nong-cli-preflight.md](../references/shared/nong-cli-preflight.md) before the first Nong command in a session. Confirm Nong.Cli.Net `4.1.0+` and the needed command group.
 ## DSL
 
 The stable contract is the CNKI-like Nong DSL, not any provider's native query language.
@@ -86,7 +86,7 @@ Do not treat export success as valid unless the output artifact exists and is no
 
 For provider credentials, query planning, and boundaries, read [references/provider-contract.md](references/provider-contract.md).
 
-Implemented Nong.Cli.Net 4.0.0 providers:
+Implemented Nong.Cli.Net 4.1.0 providers:
 
 - OpenAlex: metadata search and DOI lookup; optional `NONG_LIT_OPENALEX_API_KEY` or `NONG_LIT_OPENALEX_KEY`.
 - Crossref: metadata search and DOI enrichment; optional `NONG_LIT_MAILTO`.

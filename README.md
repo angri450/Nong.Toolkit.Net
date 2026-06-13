@@ -1,23 +1,33 @@
 # Nong.Toolkit.Net
 
-Nong.Toolkit.Net is a Claude Code multi-skill plugin for agricultural paper and document workflows.
+Nong.Toolkit.Net is a Claude Code multi-plugin marketplace for agricultural paper and document workflows. 17 plugins — one full bundle plus 16 individual skills. Install only what you need.
 
-The plugin gives Claude Code a focused set of skills for Word, PDF, literature retrieval, Excel, statistics charts, diagrams, PPTX reads, OCR/image QA, format templates, Bioicons, and paper inspection. Deterministic document and literature work is routed through the pure .NET `nong` CLI from [Nong.Cli.Net](https://github.com/angri450/Nong.Cli.Net); the model handles planning, interpretation, and writing.
+Deterministic document and literature work is routed through the pure .NET `nong` CLI from [Nong.Cli.Net](https://github.com/angri450/Nong.Cli.Net); the model handles planning, interpretation, and writing.
 
 ## Install
 
-Install the Claude Code plugin from a marketplace source:
+### Full bundle
 
 ```bash
 claude plugin marketplace add https://gitcode.com/angri450/Nong.Toolkit.Net.git
-claude plugin install nong-toolkit@angri450
+claude plugin install nong-toolkit@nong-toolkit
+```
+
+### Individual skills (lower token cost)
+
+```bash
+claude plugin marketplace add https://gitcode.com/angri450/Nong.Toolkit.Net.git
+claude plugin install word@nong-toolkit          # ~78 tok always-on
+claude plugin install pdf@nong-toolkit
+claude plugin install chart@nong-toolkit
+# ... install any subset
 ```
 
 GitHub source:
 
 ```bash
 claude plugin marketplace add angri450/Nong.Toolkit.Net
-claude plugin install nong-toolkit@angri450
+claude plugin install word@nong-toolkit
 ```
 
 After installation, restart Claude Code or run `/reload-plugins`.
@@ -40,29 +50,30 @@ Check the command surface before using the skills:
 nong commands --json
 ```
 
-Nong.Toolkit.Net 2.4.0 targets Nong 4.0.0+ with the 93-command surface.
+Nong.Toolkit.Net 2.5.0 targets Nong 4.1.0+.
 
 ## Skills
 
-| Skill | Purpose |
-|-------|---------|
-| `word` | DOC/DOCX check, conversion handoff, slicing, layout evidence, repair, filling, edits, validation, merge, comments, images, fonts, and protection |
-| `pdf` | PDF check, local slicing, `content.nongmark`, page rendering, embedded image extraction, and text/scan routing |
-| `literature` | CNKI-like search DSL, OpenAlex/Crossref/Unpaywall metadata and OA lookup, local filtering/ranking, and JSON/Markdown/BibTeX export |
-| `inspect` | Agricultural paper diagnosis, references, structure, evidence, data requirements, gaps, and writing support |
-| `excel` | Workbook reads, sheet inventory, grouped data extraction, and workbook creation |
-| `chart` | Statistics and chart workflows: analyze, ANOVA, Duncan, bar, line, scatter, and pie |
-| `diagram` | Flowchart, network, and tree diagram generation through Nong |
-| `pptx` | PPTX reads and slide inventory |
-| `ocr` | OCR environment checks, image structure QA, cloud OCR, image/PDF-to-Word, OCR model inventory, and gated local OCR |
-| `genre` | Paper genre listing and genre-specific writing guidance |
-| `icons` | Bioicons listing and search |
-| `slice` | NongPandoc package inspection, strict provenance checks, block reads, and asset inventory |
-| `skill` | `nong skill validate/scan/inventory/package` lifecycle gates |
-| `skill-manager` | Skill design, maintenance, trigger quality, and legacy workflow migration |
-| `progress-report` | Structured log summaries and HTML progress report guidance |
+| Skill | Purpose | Plugin id |
+|-------|---------|-----------|
+| `word` | DOC/DOCX check, conversion handoff, slicing, layout evidence, repair, filling, edits, validation, merge, comments, images, fonts, and protection | `word@nong-toolkit` |
+| `pdf` | PDF check, local slicing, `content.nongmark`, page rendering, embedded image extraction, text/scan routing, merge, split, ocr | `pdf@nong-toolkit` |
+| `literature` | CNKI-like search DSL, OpenAlex/Crossref/Unpaywall metadata and OA lookup, local filtering/ranking, and JSON/Markdown/BibTeX export | `literature@nong-toolkit` |
+| `inspect` | Agricultural paper diagnosis, references, structure, evidence, data requirements, gaps, and writing support | `inspect@nong-toolkit` |
+| `excel` | Workbook reads, sheet inventory, grouped data extraction, workbook creation, cell styling, formulas, pivot tables | `excel@nong-toolkit` |
+| `chart` | Statistics and chart workflows: analyze, ANOVA, Duncan, bar, line, scatter, pie, boxplot, histogram, heatmap, radar | `chart@nong-toolkit` |
+| `diagram` | Flowchart, network, and tree diagram generation through Nong | `diagram@nong-toolkit` |
+| `pptx` | PPTX reads, slide inventory, PPTX creation from JSON spec | `pptx@nong-toolkit` |
+| `ocr` | OCR environment checks, image structure QA, cloud OCR, image/PDF-to-Word, OCR model inventory, gated local OCR | `ocr@nong-toolkit` |
+| `genre` | Paper genre listing and genre-specific writing guidance | `genre@nong-toolkit` |
+| `icons` | Bioicons listing and search | `icons@nong-toolkit` |
+| `slice` | NongPandoc package inspection, strict provenance checks, block reads, asset inventory | `slice@nong-toolkit` |
+| `skill-grader` | `nong skill validate/scan/inventory/package` lifecycle gates | `skill-grader@nong-toolkit` |
+| `skill-breeder` | Skill breeding: templates, naming conventions, structure | `skill-breeder@nong-toolkit` |
+| `skill-tester` | Skill testing: trigger precision, feedback loops | `skill-tester@nong-toolkit` |
+| `skill-pruner` | Lifecycle pruning: merge, split, deprecate | `skill-pruner@nong-toolkit` |
 
-Archived development-only material is kept outside the repository at `../Nong.Toolkit_archive/` and ignored by Git if it is accidentally copied back. Development process records stay in `log/` and are committed.
+Archived development-only material is kept outside the repository at `../Nong.Toolkit_archive/`. Development process records stay in `log/`.
 
 ## Common Commands
 
@@ -74,6 +85,14 @@ nong word dissect paper.docx --output paper.slice --json
 nong word fonts paper.docx --json
 nong word styles paper.docx --json
 nong word validate paper.docx --json
+# Compaction pipeline
+nong word estimate paper.docx --json           # page break analysis
+nong word crop paper.docx -o cropped.docx      # auto-crop image borders
+nong word fit-images paper.docx -o fit.docx    # side-by-side image pairs
+nong word compact-tables paper.docx -o out.docx # table width + row height
+nong word page-setup paper.docx --size A4 --margin-top 25 -o out.docx
+nong word indent paper.docx --role body --first-line 7.4 -o out.docx
+nong word paragraph-control paper.docx --role heading --keep-next true -o out.docx
 ```
 
 PDF:
@@ -114,43 +133,49 @@ nong pptx slides deck.pptx --json
 nong ocr check-env --json
 nong ocr analyze-image fig.png -o fig.analysis --json
 nong ocr cloud scan.png -o ocr-out --json
+nong ocr local scan.png --json
 nong ocr to-word scan.png -o out.docx --json
+nong ocr batch ./scans/ --pattern "*.png" --json
+nong ocr video demo.mp4 -o subtitles.srt --json
+nong ocr screen --x 0 --y 0 --w 800 --h 600 --json
 ```
 
-`ocr cloud` and `ocr to-word` require `PADDLEOCR_ACCESS_TOKEN` from `https://aistudio.baidu.com/account/accessToken`.
+`ocr cloud` and `ocr to-word` require `PADDLEOCR_ACCESS_TOKEN` from `https://aistudio.baidu.com/account/accessToken`. `ocr local` uses PP-OCRv6 with pure .NET native runtime. `ocr batch` processes directories. `ocr video` extracts frames with dHash dedup and outputs SRT subtitles. `ocr screen` captures screen regions on Windows.
 
 ## Development Boundary
 
-This repository is organized as an installable Claude Code plugin. The installable plugin surface is:
+This repository is organized as a Claude Code multi-plugin marketplace. Each skill directory has its own `.claude-plugin/plugin.json`. The installable plugin surface is:
 
 ```text
 .claude-plugin/
 word/ pdf/ literature/ inspect/ excel/ chart/ diagram/ pptx/ ocr/ genre/ icons/
-slice/ skill/ skill-manager/ progress-report/
+slice/ skill-grader/ skill-breeder/ skill-tester/ skill-pruner/
 README.md README.zh-CN.md skill.zh skills.sh.json LICENSE
 ```
 
-The Git commit surface also keeps `log/` for development-process history. `nong skill package` packages the plugin surface, while `log/` remains visible in the repository.
+The Git commit surface also keeps `log/` for development-process history.
 
-Keep generated outputs, old experiments, local rules, package artifacts, and temporary builds out of both surfaces. Move retained local material to `../Nong.Toolkit_archive/`, not to a repo-local `_archive/`.
+Keep generated outputs, old experiments, local rules, package artifacts, and temporary builds out of both surfaces. Move retained local material to `../Nong.Toolkit_archive/`.
 
 ## Validation
 
-Validate the plugin:
+Validate the marketplace:
 
 ```bash
 claude plugin validate .
 ```
 
-Validate the Nong-facing skills:
+Validate individual plugins:
+
+```bash
+claude plugin validate word
+claude plugin validate chart
+```
+
+Validate Nong-facing skills:
 
 ```powershell
 nong skill inventory . --json
-```
-
-For a specific skill:
-
-```powershell
 nong skill validate .\word --json
 ```
 
