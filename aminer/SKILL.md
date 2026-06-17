@@ -46,8 +46,8 @@ aminer patent-detail
 
 For credentials, paid/free boundaries, and command-family routing, read [references/api-contract.md](references/api-contract.md).
 
-1. For free scholar lookup, start with `nong aminer scholar --name <name> --json`.
-2. For free paper title lookup, run `nong aminer paper --title <title> --json`.
+1. For free scholar lookup, start with `nong aminer scholar --name <name> --ingest --json`.
+2. For free paper title lookup, run `nong aminer paper --title <title> --ingest --json`.
 3. For scholar/topic recommendation, run `nong aminer rec --author <name> --topics <topic1> <topic2> --json`.
 4. For patent, organization, or venue discovery, use `nong aminer patent`, `nong aminer org`, or `nong aminer venue`.
 5. For batch paper lookup by IDs, use `nong aminer paper-info --ids <id1> <id2> --json`.

@@ -21,7 +21,7 @@ Current `nong commands --json` exposes these 11 implemented `lit` commands:
 nong lit parse --query "<expr>" --json
 nong lit validate --query "<expr>" --json
 nong lit plan --query "<expr>" --sources openalex,crossref,unpaywall --json
-nong lit search --query "<expr>" --sources openalex,crossref,unpaywall --limit 50 --profile balanced --cache -o refs.json --json
+nong lit search --query "<expr>" --sources openalex,crossref,unpaywall --limit 50 --profile balanced --ingest -o refs.json --json
 nong lit export --input refs.json --format markdown -o refs.md --json
 nong lit batch <dir> --sources openalex,crossref,unpaywall --limit 10 --profile balanced --json
 nong lit cache-import --input refs.json --json

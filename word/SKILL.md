@@ -1,6 +1,6 @@
 ---
 name: word
-description: Word document workflows through nong. Trigger on .doc/.docx conversion handoff, DOCX reading, formatting/layout inspection, NongMark slicing, unified NongDb import/list/block/image reads, existing-document repair, template fill, document edits, validation, merge, compare, render-preview, to-pdf, protection, comments, images, fonts, or Word-to-paper/official-document preparation.
+description: Word document workflows through nong. Trigger on .doc/.docx conversion handoff, DOCX reading, formatting/layout inspection, NongMark slicing, unified NongDb import/list/block/image reads, semantic search, document ingest (--ingest), existing-document repair, template fill, document edits, validation, merge, compare, render-preview, to-pdf, protection, comments, images, fonts, or Word-to-paper/official-document preparation.
 ---
 
 # Word

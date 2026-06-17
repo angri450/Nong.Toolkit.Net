@@ -1,6 +1,6 @@
 ---
 name: metaso
-description: Metaso search workflows through nong metaso. Trigger on citation-backed web or scholar search, page reader/fetch, or Metaso RAG chat requests where the user wants API-backed search rather than ad hoc browsing.
+description: Metaso search workflows through nong metaso. Trigger on citation-backed web or scholar search, page reader/fetch, or Metaso RAG chat requests where the user wants API-backed search rather than ad hoc browsing. Use --ingest to save results into nong.db for nong search.
 ---
 
 # Metaso
@@ -16,8 +16,8 @@ Read [../../.claude/references/nong-cli-preflight.md](../../.claude/references/n
 Current `nong commands --json` exposes these 3 implemented Metaso commands:
 
 ```powershell
-nong metaso search --query "<query>" --scope scholar --size 10 --json
-nong metaso reader --url "https://example.com" --format markdown --json
+nong metaso search --query "<query>" --scope scholar --size 10 --ingest --json
+nong metaso reader --url "https://example.com" --format markdown --ingest --json
 nong metaso chat --query "<question>" --scope scholar --model fast_thinking --json
 ```
 
