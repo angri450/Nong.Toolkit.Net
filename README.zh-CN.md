@@ -1,6 +1,6 @@
 # Nong.Toolkit.Net
 
-Nong.Toolkit.Net 是一个 Claude Code 多 plugin marketplace，面向农学论文和文档工作流。17 个 plugin——1 个全量包 + 16 个独立 skill，按需安装。
+Nong.Toolkit.Net 是一个 Claude Code 多 plugin marketplace，面向农学论文和文档工作流。19 个 plugin——1 个全量包 + 18 个独立 skill，按需安装。
 
 确定性的文档和文献处理统一交给纯 .NET `nong` CLI（来自 [Nong.Cli.Net](https://github.com/angri450/Nong.Cli.Net)）；模型负责判断流程、解释结果和写作。
 
@@ -44,23 +44,25 @@ dotnet tool install --global Angri450.Nong.Cli --add-source https://mirrors.huaw
 dotnet tool update --global Angri450.Nong.Cli --add-source https://mirrors.huaweicloud.com/repository/nuget/v3/index.json
 ```
 
-使用前先确认命令面：
+使用前先确认命令面。当前 Toolkit 文档对齐的是 Nong.Cli.Net 4.3.0 / 167 个已实现命令：
 
 ```powershell
 nong commands --json
 ```
 
-Nong.Toolkit.Net 2.5.0 面向 Nong 4.1.0+。
+Nong.Toolkit.Net 面向已安装的 `nong` CLI。如果 `nong commands --json` 显示的版本或命令数不同，以本机已安装 CLI 为准，发布前先更新本仓库。
 
 ## Skills
 
 | Skill | 用途 | Plugin id |
 |-------|------|-----------|
-| `word` | DOC/DOCX 检查、转换交接、切片、版式证据、修复、填充、编辑、校验、合并、批注、图片、字体和保护 | `word@nong-toolkit` |
-| `pdf` | PDF 检查、本地切片、`content.nongmark`、页面渲染、内嵌图片提取、文本/扫描路由、合并、分割、OCR | `pdf@nong-toolkit` |
-| `literature` | 类 CNKI 检索 DSL、OpenAlex/Crossref/Unpaywall 元数据和开放获取查询、本地过滤排序，以及 JSON/Markdown/BibTeX 导出 | `literature@nong-toolkit` |
+| `word` | DOC/DOCX 检查、转换交接、切片、版式证据、修复、填充、编辑、校验、合并、比较、页面预览渲染、转 PDF、统一 NongDb 导入/列表/block/图片读取、批注、图片、字体和保护 | `word@nong-toolkit` |
+| `pdf` | PDF 检查、本地切片、`content.nongmark`、页面渲染、内嵌图片提取、文本/扫描路由、合并、分割、OCR、压缩，以及统一 NongDb 导入/列表/block/图片读取 | `pdf@nong-toolkit` |
+| `literature` | 类 CNKI 检索 DSL、OpenAlex/Crossref/Unpaywall 元数据和开放获取查询、统一 nong.db 缓存导入/查询/统计/导出、`lit search --cache` 直入库，以及 Word 模板填充 | `literature@nong-toolkit` |
+| `aminer` | Scholar、paper、patent、org、venue、推荐和付费详情分析面 | `aminer@nong-toolkit` |
+| `metaso` | 搜索、reader 和 RAG chat | `metaso@nong-toolkit` |
 | `inspect` | 农学生论文诊断、参考文献、结构、证据、数据需求、差距分析和写作支持 | `inspect@nong-toolkit` |
-| `excel` | 工作簿读取、sheet 清单、分组数据提取、工作簿创建、单元格样式、公式、数据透视表 | `excel@nong-toolkit` |
+| `excel` | 工作簿读取、sheet 清单、分组数据提取、工作簿创建、实验重构、单元格样式、公式、数据透视表 | `excel@nong-toolkit` |
 | `chart` | 统计和图表流程：analyze、ANOVA、Duncan、柱状图、折线图、散点图、饼图、箱线图、直方图、热力图、雷达图 | `chart@nong-toolkit` |
 | `diagram` | 通过 Nong 生成流程图、网络图和树图 | `diagram@nong-toolkit` |
 | `pptx` | PPTX 读取、幻灯片清单、PPTX 创建 | `pptx@nong-toolkit` |
@@ -73,7 +75,7 @@ Nong.Toolkit.Net 2.5.0 面向 Nong 4.1.0+。
 | `skill-tester` | Skill 验种：触发精度检查、失败反馈回收 | `skill-tester@nong-toolkit` |
 | `skill-pruner` | Skill 修剪：合并、拆分、废弃 | `skill-pruner@nong-toolkit` |
 
-开发态和旧材料本地保存在仓库外的 `../Nong.Toolkit_archive/`。开发过程记录保留在 `log/`。
+开发态和旧材料本地保存在仓库外的 `../Nong.Toolkit_archive/`。开发过程记录和历史 changelog 现在归到跨仓库 `.claude/` 档案，不放进插件包面。
 
 ## 常用命令
 
@@ -82,6 +84,12 @@ Word：
 ```powershell
 nong word check paper.docx --json
 nong word dissect paper.docx --output paper.slice --json
+nong word db-import paper.slice paper.docx --json
+nong word db-list --json
+nong word db-blocks <document-id> --limit 20 --json
+nong word render-preview paper.docx -o pages --dpi 150 --json
+nong word compare before.docx after.docx --json
+nong word to-pdf paper.docx -o paper.pdf --json
 nong word fonts paper.docx --json
 nong word styles paper.docx --json
 nong word validate paper.docx --json
@@ -92,7 +100,7 @@ nong word fit-images paper.docx -o fit.docx    # 图片并排
 nong word compact-tables paper.docx -o out.docx # 表格紧缩
 nong word page-setup paper.docx --size A4 --margin-top 25 -o out.docx
 nong word indent paper.docx --role body --first-line 7.4 -o out.docx
-nong word paragraph-control paper.docx --role heading --keep-next true -o out.docx
+nong word paragraph-control paper.docx --role heading --keep-next -o out.docx
 ```
 
 PDF：
@@ -100,8 +108,13 @@ PDF：
 ```powershell
 nong pdf check guide.pdf --json
 nong pdf dissect guide.pdf --output guide.slice --mode auto --json
+nong pdf db-import guide.slice guide.pdf --json
+nong pdf db-list --json
+nong pdf db-blocks <document-id> --type paragraph --limit 20 --json
+nong pdf db-images <document-id> --json
 nong pdf render guide.pdf --output guide.pages --dpi 150 --json
 nong pdf images guide.pdf --output guide.assets --json
+nong pdf compress guide.pdf -o guide.min.pdf --json
 ```
 
 文献检索：
@@ -109,8 +122,13 @@ nong pdf images guide.pdf --output guide.assets --json
 ```powershell
 nong lit validate --query "SU=('腐植酸'+'腐殖酸')*('稀土'+'微肥')" --json
 nong lit plan --query "SU=('腐植酸'+'腐殖酸')*('稀土'+'微肥')" --sources openalex,crossref,unpaywall --json
-nong lit search --query "DOI='10.1016/j.chemgeo.2007.05.018'" --sources openalex,crossref,unpaywall --limit 20 --profile balanced --out refs.json --json
-nong lit export --input refs.json --format bibtex --out refs.bib --json
+nong lit search --query "DOI='10.1016/j.chemgeo.2007.05.018'" --sources openalex,crossref,unpaywall --limit 20 --profile balanced --cache -o refs.json --json
+nong lit cache-import --input refs.json --json
+nong lit cache-query --keyword humic --min-year 2020 --limit 20 --json
+nong lit cache-stats --json
+nong lit cache-export --limit 20 --max-chars 8000 -o cache.md --json
+nong lit export --input refs.json --format markdown -o refs.md --json
+nong lit export --input refs.json --format bibtex -o refs.bib --json
 ```
 
 Stage19 文献提供方只包括 OpenAlex、Crossref 和 Unpaywall。Unpaywall 需要 `NONG_LIT_UNPAYWALL_EMAIL` 或 `NONG_LIT_MAILTO`；OpenAlex 可使用 `NONG_LIT_OPENALEX_API_KEY` 或 `NONG_LIT_OPENALEX_KEY`；Crossref 可使用 `NONG_LIT_MAILTO`。全文检索、爬虫、绕过付费墙、Semantic Scholar、PubMed、PMC、arXiv、万方和自动中英同义词扩展都未实现。
@@ -119,10 +137,27 @@ Excel、统计图和图示：
 
 ```powershell
 nong excel sheets data.xlsx --json
+nong excel restructure experiment.spec.json -o experiment.restructured.xlsx --json
 nong excel to-groups data.xlsx --group Treatment --value Yield --raw
 nong chart analyze groups.json --json
 nong chart bar groups.json -o fig.png --json
 nong diagram flowchart flow.json -o flow.png --json
+```
+
+AMiner：
+
+```powershell
+nong aminer scholar --name "张钹" --json
+nong aminer paper --title "humic acid" --json
+nong aminer rec --author "张钹" --topics "人工智能" "机器学习" --json
+```
+
+Metaso：
+
+```powershell
+nong metaso search --query "humic acid fertilizer" --scope scholar --json
+nong metaso reader --url "https://example.com" --format markdown --json
+nong metaso chat --query "What are the latest field-trial findings?" --scope scholar --json
 ```
 
 PPTX 和 OCR：
@@ -137,7 +172,7 @@ nong ocr local scan.png --json
 nong ocr to-word scan.png -o out.docx --json
 nong ocr batch ./scans/ --pattern "*.png" --json
 nong ocr video demo.mp4 -o subtitles.srt --json
-nong ocr screen --x 0 --y 0 --w 800 --h 600 --json
+nong ocr screen --region 0,0,800,600 --json
 ```
 
 `ocr cloud` 和 `ocr to-word` 需要 `PADDLEOCR_ACCESS_TOKEN`。Token 页面是 `https://aistudio.baidu.com/account/accessToken`。`ocr local` 使用 PP-OCRv6 纯 .NET 原生运行时。`ocr batch` 批量处理目录。`ocr video` 用 dHash 帧去重提取视频帧并输出 SRT 字幕。`ocr screen` 捕获 Windows 屏幕区域。
@@ -148,12 +183,12 @@ nong ocr screen --x 0 --y 0 --w 800 --h 600 --json
 
 ```text
 .claude-plugin/
-word/ pdf/ literature/ inspect/ excel/ chart/ diagram/ pptx/ ocr/ genre/ icons/
+word/ pdf/ literature/ aminer/ metaso/ inspect/ excel/ chart/ diagram/ pptx/ ocr/ genre/ icons/
 slice/ skill-grader/ skill-breeder/ skill-tester/ skill-pruner/
-README.md README.zh-CN.md skill.zh skills.sh.json LICENSE
+README.md README.zh-CN.md CLAUDE.md LICENSE
 ```
 
-Git 提交面还保留 `log/`，用于展示开发过程。
+Git 提交面只保留插件包和 skill 文档。开发过程历史属于跨仓库 `.claude/` 档案。
 
 生成输出、旧实验、本地规则、打包产物和构建临时文件不要进入这两个面。需要本地保留时，挪到仓库外的 `../Nong.Toolkit_archive/`。
 

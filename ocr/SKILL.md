@@ -9,9 +9,9 @@ Use `nong ocr` as the only entrypoint for OCR and image-structure analysis. Do n
 
 ## Nong CLI Preflight
 
-Read [../references/shared/nong-cli-preflight.md](../references/shared/nong-cli-preflight.md) before the first Nong command in a session. Confirm Nong.Cli.Net `4.1.0+` and the `ocr` command group.
+Read [../../.claude/references/nong-cli-preflight.md](../../.claude/references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and the `ocr` command group.
 
-**Modular (4.1.0+):** `nong ocr` routes to the standalone `Angri450.Nong.Tool.Ocr` dotnet tool. First use auto-installs. Command surface unchanged.
+**Modular:** `nong ocr` routes to the standalone `Angri450.Nong.Tool.Ocr` dotnet tool. First use auto-installs. Command surface unchanged.
 
 ## Prerequisites
 
@@ -35,20 +35,20 @@ Do not write real credentials into repository files, logs, or examples.
 
 | User wants | Command | Reference |
 |------------|---------|-----------|
-| Environment check | `nong ocr check-env --json` | — |
+| Environment check | `nong ocr check-env --json` | 鈥?|
 | Single-image text OCR | `nong ocr local <img> --json` | [ocr-local.md](references/ocr-local.md) |
 | Batch directory OCR | `nong ocr batch <dir> --pattern "*.png" --json` | [ocr-local.md](references/ocr-local.md) |
-| Video frame OCR + subtitles | `nong ocr video <file> -o <dir> --json` | — |
-| Screen region OCR (Win) | `nong ocr screen --region x,y,w,h --json` | — |
-| Camera capture OCR | `nong ocr camera --device 0 --json` | — |
+| Video frame OCR + subtitles | `nong ocr video <file> -o <dir> --json` | 鈥?|
+| Screen region OCR (Win) | `nong ocr screen --region x,y,w,h --json` | 鈥?|
+| Camera capture OCR | `nong ocr camera --device 0 --json` | 鈥?|
 | Cloud OCR with layout | `nong ocr cloud <input> -o <dir> --json` | [ocr-cloud.md](references/ocr-cloud.md) |
 | Image to Word | `nong ocr to-word <input> -o <out.docx> --json` | [ocr-cloud.md](references/ocr-cloud.md) |
 | Image structure QA | `nong ocr analyze-image <img> -o <dir> --json` | [image-analyzer.md](references/image-analyzer.md) |
-| Model inventory | `nong ocr models --json` | — |
+| Model inventory | `nong ocr models --json` | 鈥?|
 | Install local model (v5) | `nong ocr install-model pp-ocrv5-mobile --source <mirror> --json` | [runtime-chain.md](references/runtime-chain.md) |
 | Install local model (v6 default) | `nong ocr install-model pp-ocrv6-medium --json` | [runtime-chain.md](references/runtime-chain.md) |
-| Install local model (v6 small) | `nong ocr install-model pp-ocrv6-small --json` | — |
-| Install local model (v6 tiny) | `nong ocr install-model pp-ocrv6-tiny --json` | — |
+| Install local model (v6 small) | `nong ocr install-model pp-ocrv6-small --json` | 鈥?|
+| Install local model (v6 tiny) | `nong ocr install-model pp-ocrv6-tiny --json` | 鈥?|
 
 ## Implemented Commands
 

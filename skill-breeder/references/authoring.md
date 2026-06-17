@@ -16,7 +16,7 @@ description: <what it does>. Trigger on <concrete trigger keywords>.
 
 ## Nong CLI Preflight
 
-Read [../references/shared/nong-cli-preflight.md]...
+Read [../../../.claude/references/nong-cli-preflight.md]...
 
 ## Route Table
 

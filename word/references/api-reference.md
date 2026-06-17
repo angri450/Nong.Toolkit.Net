@@ -20,9 +20,18 @@ nong word outline paper.docx --json
 nong word images paper.docx --json
 nong word comments paper.docx --json
 nong word revisions paper.docx --json
+nong word compare doc1.docx doc2.docx --json
+nong word render-preview paper.docx --output pages --dpi 150 --json
+nong word db-import paper.slice paper.docx --json
+nong word db-list --json
+nong word db-blocks <document-id> --type paragraph --limit 20 --json
+nong word db-images <document-id> --json
+nong word to-pdf paper.docx --output paper.pdf --json
 ```
 
 Use `word check` before working on user-supplied `.doc`/`.docx`. Use `word convert` only as a `.doc -> .docx` boundary step, then return to OpenXML commands. Use `word dissect --output` for complex documents. Use `read` only when plain text is enough, and `preview` or `validate` when you need OOXML diagnostics.
+
+Use `word db-import` after `word dissect --output` when the document must join the unified `nong.db` object model. Then use `word db-list`, `word db-blocks`, and `word db-images` for read-only evidence from the unified store. Use `render-preview` when page image evidence matters, `compare` when checking a before/after DOCX, and `to-pdf` when the requested deliverable is PDF.
 
 For layout or formatting questions, `read` is insufficient evidence. Run `word dissect --output`, inspect `format.json`, `content.jsonl`, and `structure.json`, then add `fonts`, `styles`, `preview`, or `validate` as targeted follow-ups. Do not answer "open Word manually" unless the CLI failed or the exact visual property is outside the current extraction contract.
 

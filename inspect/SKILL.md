@@ -1,6 +1,6 @@
 ---
 name: inspect
-description: Agricultural paper and official-document inspection/generation via nong. Trigger on paper diagnosis, 论文诊断, paper type classification, structure extraction, reference check, variable plan, evidence chain, gap grade, data requirements, semantic diagnosis, paper drafting from JSON spec, or official-document drafting from JSON spec.
+description: Agricultural paper and official-document inspection/generation via nong. Trigger on paper diagnosis, 璁烘枃璇婃柇, paper type classification, structure extraction, reference check, variable plan, evidence chain, gap grade, data requirements, semantic diagnosis, paper drafting from JSON spec, or official-document drafting from JSON spec.
 ---
 
 # Inspect
@@ -9,7 +9,7 @@ Use `nong inspect` for paper-level semantic, structural, evidence, reference, an
 
 ## Nong CLI Preflight
 
-Read [../references/shared/nong-cli-preflight.md](../references/shared/nong-cli-preflight.md) before the first Nong command in a session. Confirm Nong.Cli.Net `4.1.0+` and the needed command group.
+Read [../../.claude/references/nong-cli-preflight.md](../../.claude/references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and the needed command group.
 ## Implemented Commands
 
 Current `nong commands --json` exposes these 11 implemented Inspect commands:
@@ -43,8 +43,8 @@ For input preparation, focused diagnostics, and writing handoff, read [reference
 9. For empirical paper gap grading, run `nong inspect gap <paper.txt> --json`.
 10. For research design semantics, causal wording, mechanism claims, and method alignment, run `nong inspect semantics <paper.txt> --json`.
 11. For official-document gongwen format compliance audit, run `nong inspect official-check <file.docx> --json`. Checks red header, doc number, title, recipient, body, closing, signature, and date against gongwen formatting rules.
-11. For a Word paper draft, prepare a paper spec JSON and run `nong inspect write-paper <spec.json> -o <out.docx> --json`; then use Word commands for DOCX validation and slicing.
-12. For an official-document draft, prepare an official spec JSON and run `nong inspect write-official <spec.json> -o <out.docx> --json`; then validate/slice with the Word skill. For formatting an existing DOCX into gongwen style, use `nong word format-gongwen`.
+12. For a Word paper draft, prepare a paper spec JSON and run `nong inspect write-paper <spec.json> -o <out.docx> --json`; then use Word commands for DOCX validation and slicing.
+13. For an official-document draft, prepare an official spec JSON and run `nong inspect write-official <spec.json> -o <out.docx> --json`; then validate/slice with the Word skill. For formatting an existing DOCX into gongwen style, use `nong word format-gongwen`.
 
 Inspect is not a DOCX parser. Keep Word layout, assets, comments, revisions, validation, and append edits in the `word` skill.
 

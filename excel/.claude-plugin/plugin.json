@@ -9,8 +9,8 @@
   "skills": [
     "./"
   ],
-  "description": "Excel operations through nong CLI — sheets, read, to-groups, create, dissect, style, formula, pivot",
+  "description": "Excel operations through nong CLI — sheets, read, to-groups, create, restructure, dissect, style, formula, pivot",
   "license": "Apache-2.0",
-  "version": "4.1.0",
+  "version": "1.0.0",
   "name": "excel"
 }

@@ -9,9 +9,9 @@ Use `nong` for implemented scientific diagram rendering. Nong.Toolkit.Net routes
 
 ## Nong CLI Preflight
 
-Read [../references/shared/nong-cli-preflight.md](../references/shared/nong-cli-preflight.md) before the first Nong command in a session. Confirm Nong.Cli.Net `4.1.0+` and the `diagram` command group.
+Read [../../.claude/references/nong-cli-preflight.md](../../.claude/references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and the `diagram` command group.
 
-**Modular (4.1.0+):** `nong diagram` routes to the standalone `Angri450.Nong.Tool.Diagram` dotnet tool. First use auto-installs. Command surface unchanged.
+**Modular:** `nong diagram` routes to the standalone `Angri450.Nong.Tool.Diagram` dotnet tool. First use auto-installs. Command surface unchanged.
 ## Implemented Commands
 
 ```powershell

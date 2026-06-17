@@ -11,6 +11,6 @@
   ],
   "description": "PPTX inspection and creation through nong CLI — read, slides, dissect, create",
   "license": "Apache-2.0",
-  "version": "4.1.0",
+  "version": "1.0.0",
   "name": "pptx"
 }

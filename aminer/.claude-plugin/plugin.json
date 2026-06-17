@@ -9,8 +9,8 @@
   "skills": [
     "./"
   ],
-  "description": "Skill lifecycle governance — merge, split, deprecate",
+  "description": "AMiner research API through nong aminer — scholar, paper, patent, org, venue, recommendation, and paid detail analytics",
   "license": "Apache-2.0",
   "version": "1.0.0",
-  "name": "skill-pruner"
+  "name": "aminer"
 }

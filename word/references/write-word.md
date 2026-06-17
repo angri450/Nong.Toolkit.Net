@@ -120,6 +120,22 @@ nong word add comment paper.docx --text "Review note" -o out.docx --json
 
 `word add-*` is a compatibility alias pattern only.
 
+### Extract embedded images
+
+```powershell
+nong word extract <file.docx> --output <assets-dir> --json
+```
+
+Extracts all embedded images from a DOCX to the specified output directory. Use this before `word images` if you need raw image files rather than metadata.
+
+### Rebuild (strip style pollution)
+
+```powershell
+nong word rebuild <file.docx> -o <clean.docx> --json
+```
+
+Cleans OOXML style pollution: removes latent styles, unused numbering definitions, and orphaned theme references. Useful before comparing documents or when file size is unexpectedly large.
+
 ## 5. Existing DOCX Academic Formatting
 
 For a draft DOCX that needs paper-style formatting, use the deterministic formatter before considering COM:

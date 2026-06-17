@@ -5,11 +5,11 @@ description: Nong.Cli.Net skill lifecycle gates. Trigger on validating SKILL.md,
 
 # Skill Grader
 
-Use `nong skill` as the deterministic lifecycle gate for Nong.Toolkit.Net skills and plugins: validate → scan → inventory → package.
+Use `nong skill` as the deterministic lifecycle gate for Nong.Toolkit.Net skills and plugins: validate 鈫?scan 鈫?inventory 鈫?package.
 
 ## Nong CLI Preflight
 
-Read [../references/shared/nong-cli-preflight.md](../references/shared/nong-cli-preflight.md) before the first Nong command in a session. Confirm Nong.Cli.Net `4.1.0+` and the `skill` command group.
+Read [../../.claude/references/nong-cli-preflight.md](../../.claude/references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and the `skill` command group.
 
 ## Commands
 

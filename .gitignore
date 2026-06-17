@@ -1,19 +1,29 @@
-# Local archive and development-only material.
-# Keep the real archive outside this repo as ../Nong.Toolkit_archive/.
-# These patterns protect against accidentally placing archive material back under the repo root.
-_archive/
-Nong.Toolkit_archive/
-_v1_backup/
-claude.md
+# === DO NOT UPLOAD ===
+# All development files (CLAUDE.md, AGENTS.md, PROJECT_STATE.md, logs, changelogs,
+# docs, install scripts, references, skill-creator source) are consolidated under
+# .claude/ which is gitignored below. Do not add them back to the repo root.
+#
+# Root-level CLAUDE.md and AGENTS.md entries below are safety nets only —
+# in case tools regenerate them at root. The canonical copies live in .claude/.
+
+# Project management files — canonical copies in .claude/
+CLAUDE.md
 Claude.md
+claude.md
 CLAUDE.local.md
 claude.local.md
-DEVELOP.md
-install.ps1
+AGENTS.md
+
+# Claude Code local config (covers all dev files consolidated under .claude/)
 .claude/
 .codex/
 
-# Build, package, and test outputs.
+# Archive and backup material
+_archive/
+Nong.Toolkit_archive/
+_v1_backup/
+
+# Build, package, and test outputs
 bin/
 obj/
 build/
@@ -21,12 +31,6 @@ dist/
 TestResults/
 coverage/
 .coverage
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-__pycache__/
-*.pyc
-*.pyo
 *.skill
 *.zip
 *.nupkg
@@ -36,12 +40,20 @@ __pycache__/
 .skill/
 .security-scan-passed
 
-# Local dependency caches and environments.
+# Python and test caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+__pycache__/
+*.pyc
+*.pyo
+
+# Local dependency caches and environments
 .venv/
 venv/
 node_modules/
 
-# IDE, editor, and OS noise.
+# IDE, editor, and OS noise
 .vs/
 .vscode/
 .idea/
@@ -49,7 +61,3 @@ node_modules/
 *.suo
 .DS_Store
 Thumbs.db
-
-# Keep development process records committed.
-!log/
-!log/**
