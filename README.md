@@ -44,7 +44,7 @@ If Nong is already installed:
 dotnet tool update --global Angri450.Nong.Cli --add-source https://mirrors.huaweicloud.com/repository/nuget/v3/index.json
 ```
 
-Check the command surface before using the skills. Current Toolkit docs are aligned with Nong.Cli.Net 4.3.0 / 167 implemented commands:
+Check the command surface before using the skills. Current Toolkit docs are aligned with Nong.Cli.Net 4.4.0 / 169 implemented commands:
 
 ```powershell
 nong commands --json
