@@ -1,6 +1,6 @@
 ---
 name: excel
-description: Excel CLI operations via nong. Trigger on .xlsx, worksheet listing, table reading, grouped extraction, experiment workbook restructuring, workbook creation, cell styling, formula writing, pivot tables, or converting treatment/value columns into grouped JSON for statistics.
+description: Excel CLI operations via nong. Trigger on .xlsx, worksheet listing, table reading, grouped extraction, experiment workbook restructuring, workbook creation, cell styling, formula writing, pivot tables, dissect --ingest for semantic search, or converting treatment/value columns into grouped JSON for statistics.
 ---
 
 # Excel
@@ -21,7 +21,7 @@ nong excel read <file.xlsx> [--sheet <name>] [--range <A1:D20>] [--json]
 nong excel to-groups <file.xlsx> --group <col> --value <col> [--sheet <name>] [--raw] [--json]
 nong excel create <spec.json> -o <out.xlsx> [--json]
 nong excel restructure <spec.json> -o <out.xlsx> [--json]
-nong excel dissect <file.xlsx> -o <slice-dir> [--json]
+nong excel dissect <file.xlsx> -o <slice-dir> --ingest [--json]
 nong excel style <file.xlsx> <spec.json> -o <out.xlsx> [--json]
 nong excel formula <file.xlsx> <spec.json> -o <out.xlsx> [--json]
 nong excel pivot <file.xlsx> <spec.json> -o <out.xlsx> [--json]

@@ -43,6 +43,16 @@ nong word preview <file.docx> --json
 nong word validate <file.docx> --json
 ```
 
+### Semantic search + document ingest
+
+Dissected documents can be ingested into NongDb and searched across:
+
+```powershell
+nong word dissect document.docx -o document.slice --ingest --json
+nong lit search "query" --ingest --json
+nong search "水稻产量" --limit 5 --json                # cross-source semantic search
+```
+
 ### Existing documents 鈥?repair & format
 
 ```powershell

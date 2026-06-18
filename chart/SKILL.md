@@ -15,7 +15,7 @@ Read [../../.claude/references/nong-cli-preflight.md](../../.claude/references/n
 ## Implemented Commands
 
 ```powershell
-nong chart analyze <groups.json> [--alpha 0.05] [--json]
+nong chart analyze <groups.json> [--alpha 0.05] [--ingest] [--json]
 nong chart anova <groups.json> [--json]
 nong chart duncan <groups.json> [--alpha 0.05] [--json]
 nong chart bar <groups.json> -o <out.png> [--title <text>] [--ylabel <text>] [--error sem|none] [--no-significance] [--json]

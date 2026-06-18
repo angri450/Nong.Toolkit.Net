@@ -1,6 +1,6 @@
 ---
 name: pdf
-description: Local PDF document slicing and editing through nong. Trigger on PDF preflight, selectable-text PDF extraction, hybrid/scan routing, PDF page rendering, embedded PDF image extraction, PDF merge, PDF split, PDF OCR, PDF compression, unified NongDb import/list/block/image reads, content.nongmark, page/bbox evidence, or PDF-to-AI-readable document packages.
+description: Local PDF document slicing and editing through nong. Trigger on PDF preflight, selectable-text PDF extraction, hybrid/scan routing, PDF page rendering, embedded PDF image extraction, PDF merge, PDF split, PDF OCR, PDF compression, PDF dissect --ingest for semantic search, unified NongDb import/list/block/image reads, content.nongmark, page/bbox evidence, or PDF-to-AI-readable document packages.
 ---
 
 # PDF
@@ -29,7 +29,7 @@ Use `classification`, `recommendedMode`, `hasTextLayer`, `textCharsPerPage`, `im
 2. For selectable text PDFs, local slicing is the default:
 
 ```powershell
-nong pdf dissect <file.pdf> --output <slice-dir> --mode auto --json
+nong pdf dissect <file.pdf> --output <slice-dir> --mode auto --ingest --json
 ```
 
 Read at least:
@@ -115,7 +115,7 @@ Implemented local commands:
 
 ```powershell
 nong pdf check <file.pdf> --json
-nong pdf dissect <file.pdf> --output <slice-dir> --mode auto --json
+nong pdf dissect <file.pdf> --output <slice-dir> --mode auto --ingest --json
 nong pdf render <file.pdf> --output <pages-dir> --dpi 150 --json
 nong pdf images <file.pdf> --output <assets-dir> --json
 nong pdf merge <file1.pdf> <file2.pdf> ... -o <merged.pdf> --json

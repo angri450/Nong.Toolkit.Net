@@ -18,7 +18,7 @@ Current `nong commands --json` exposes these 3 implemented Metaso commands:
 ```powershell
 nong metaso search --query "<query>" --scope scholar --size 10 --ingest --json
 nong metaso reader --url "https://example.com" --format markdown --ingest --json
-nong metaso chat --query "<question>" --scope scholar --model fast_thinking --json
+nong metaso chat --query "<question>" --scope scholar --model fast_thinking --ingest --json
 ```
 
 ## Dispatch

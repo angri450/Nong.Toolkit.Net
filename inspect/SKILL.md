@@ -1,6 +1,6 @@
 ---
 name: inspect
-description: Agricultural paper and official-document inspection/generation via nong. Trigger on paper diagnosis, 璁烘枃璇婃柇, paper type classification, structure extraction, reference check, variable plan, evidence chain, gap grade, data requirements, semantic diagnosis, paper drafting from JSON spec, or official-document drafting from JSON spec.
+description: Agricultural paper and official-document inspection/generation via nong. Trigger on paper diagnosis, 璁烘枃璇婃柇, paper type classification, structure extraction, reference check, variable plan, evidence chain, gap grade, data requirements, semantic diagnosis, paper drafting from JSON spec, official-document drafting from JSON spec, or inspect diagnose --ingest for semantic search.
 ---
 
 # Inspect
@@ -15,7 +15,7 @@ Read [../../.claude/references/nong-cli-preflight.md](../../.claude/references/n
 Current `nong commands --json` exposes these 11 implemented Inspect commands:
 
 ```powershell
-nong inspect diagnose <paper.txt> --json
+nong inspect diagnose <paper.txt> [--ingest] [--json]
 nong inspect refs <paper.txt> --json
 nong inspect write-paper <spec.json> -o <out.docx> --json
 nong inspect write-official <spec.json> -o <out.docx> --json
@@ -33,7 +33,7 @@ nong inspect semantics <paper.txt> --json
 For input preparation, focused diagnostics, and writing handoff, read [references/paper-diagnostics.md](references/paper-diagnostics.md).
 
 1. For `.docx` papers, run `nong word dissect <file.docx> --output <slice-dir> --json` and use `<slice-dir>/content.nongmark` as the inspect input. Use `nong word read <file.docx> --json` only for quick plain-text extraction.
-2. For full paper quality diagnosis, run `nong inspect diagnose <paper.txt> --json`.
+2. For full paper quality diagnosis, run `nong inspect diagnose <paper.txt> [--ingest] [--json]`.
 3. For references and citation risk, run `nong inspect refs <paper.txt> --json`.
 4. For paper type routing, run `nong inspect classify <paper.txt> --json`.
 5. For title, abstract, keywords, section, table, and reference extraction, run `nong inspect structure <paper.txt> --json`.
