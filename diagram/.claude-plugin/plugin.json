@@ -11,6 +11,6 @@
   ],
   "description": "Scientific diagrams through nong diagram — flowchart, network, tree",
   "license": "Apache-2.0",
-  "version": "1.2.0",
+  "version": "2.0",
   "name": "diagram"
 }
