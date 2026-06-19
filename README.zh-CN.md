@@ -44,7 +44,7 @@ dotnet tool install --global Angri450.Nong.Cli --add-source https://mirrors.huaw
 dotnet tool update --global Angri450.Nong.Cli --add-source https://mirrors.huaweicloud.com/repository/nuget/v3/index.json
 ```
 
-使用前先确认命令面。当前 Toolkit 文档对齐的是 Nong.Cli.Net 4.4.0 / 169 个已实现命令：
+使用前先确认命令面。当前 Toolkit 文档对齐的是 Nong.Cli.Net 12.1.0 / 332 个已实现命令（22 skills）：
 
 ```powershell
 nong commands --json
