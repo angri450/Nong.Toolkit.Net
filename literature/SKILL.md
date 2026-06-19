@@ -1,6 +1,6 @@
 ---
 name: literature
-description: Literature retrieval and local literature cache workflows through nong lit. Trigger on CNKI-like search expressions, literature search planning, DOI lookup, OpenAlex/Crossref/Unpaywall metadata or OA lookup, cache import/query/export, Word template fill from cached papers, or bibliography preparation for agricultural papers.
+description: Literature retrieval and local literature cache workflows through nong lit. Trigger on local literature retrieval, CNKI-like search, DOI lookup (NOT AMiner scholar profiles or Metaso citation-backed search) expressions, literature search planning, DOI lookup, OpenAlex/Crossref/Unpaywall metadata or OA lookup, cache import/query/export, Word template fill from cached papers, or bibliography preparation for agricultural papers.
 ---
 
 # Literature
@@ -11,7 +11,7 @@ AMiner and Metaso are separate command groups and separate skills. Keep `nong li
 
 ## Nong CLI Preflight
 
-Read [../../.claude/references/nong-cli-preflight.md](../../.claude/references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and the needed command group.
+Read [../references/nong-cli-preflight.md](../references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and the needed command group.
 
 ## Implemented Commands
 

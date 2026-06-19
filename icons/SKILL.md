@@ -9,7 +9,7 @@ Scientific icon discovery through the Bioicons library. Use `nong icons` for the
 
 ## Nong CLI Preflight
 
-Read [../../.claude/references/nong-cli-preflight.md](../../.claude/references/nong-cli-preflight.md) before the first Nong command. Confirm the `nong` CLI is installed.
+Read [../references/nong-cli-preflight.md](../references/nong-cli-preflight.md) before the first Nong command. Confirm the `nong` CLI is installed.
 
 ## Route Table
 

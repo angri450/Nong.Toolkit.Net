@@ -1,6 +1,6 @@
 ---
 name: pdf
-description: Local PDF document slicing and editing through nong. Trigger on PDF preflight, selectable-text PDF extraction, hybrid/scan routing, PDF page rendering, embedded PDF image extraction, PDF merge, PDF split, PDF OCR, PDF compression, PDF dissect --ingest for semantic search, unified NongDb import/list/block/image reads, content.nongmark, page/bbox evidence, or PDF-to-AI-readable document packages.
+description: Local PDF document slicing and editing through nong. Trigger on PDF preflight, selectable-text PDF extraction, hybrid/scan routing, PDF page rendering, embedded PDF image extraction, PDF merge, PDF split, PDF OCR, PDF compression, PDF dissect --ingest, unified NongDb import/list/block/image reads, content.nongmark, page/bbox evidence, or PDF-to-AI-readable document packages.
 ---
 
 # PDF
@@ -11,7 +11,7 @@ The primary readable artifact is `content.nongmark`, not plain Markdown. `previe
 
 ## Nong CLI Preflight
 
-Read [../../.claude/references/nong-cli-preflight.md](../../.claude/references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and the `pdf` command group.
+Read [../references/nong-cli-preflight.md](../references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and the `pdf` command group.
 
 **Modular:** `nong pdf` routes to the standalone `Angri450.Nong.Tool.Pdf` dotnet tool. First use auto-installs. Command surface unchanged.
 ## Default Workflow

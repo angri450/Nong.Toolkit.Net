@@ -1,6 +1,6 @@
 ---
 name: aminer
-description: AMiner research API workflows through nong aminer. Trigger on scholar, paper, patent, org, or venue lookup, paper recommendation, paid AMiner detail commands, scholar profile exploration, or AMiner-specific research questions.
+description: AMiner research API workflows through nong aminer. Trigger on AMiner scholar profiling, paper recommendation, patent lookup (NOT general literature search or Metaso web search), org, or venue lookup, paper recommendation, paid AMiner detail commands, scholar profile exploration, or AMiner-specific research questions.
 ---
 
 # AMiner
@@ -11,7 +11,7 @@ Do not scrape the AMiner website, hide paid API costs, or pretend the free endpo
 
 ## Nong CLI Preflight
 
-Read [../../.claude/references/nong-cli-preflight.md](../../.claude/references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and that the `aminer` group is available.
+Read [../references/nong-cli-preflight.md](../references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and that the `aminer` group is available.
 
 ## Implemented Commands
 

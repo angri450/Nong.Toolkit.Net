@@ -1,6 +1,6 @@
 ---
 name: inspect
-description: Agricultural paper and official-document inspection/generation via nong. Trigger on paper diagnosis, 璁烘枃璇婃柇, paper type classification, structure extraction, reference check, variable plan, evidence chain, gap grade, data requirements, semantic diagnosis, paper drafting from JSON spec, official-document drafting from JSON spec, or inspect diagnose --ingest for semantic search.
+description: Agricultural paper and official-document inspection/generation via nong. Trigger on paper diagnosis, 璁烘枃璇婃柇, paper type classification, structure extraction, reference check, variable plan, evidence chain, gap grade, data requirements, semantic diagnosis, paper drafting from JSON spec, official-document drafting from JSON spec, or inspect diagnose --ingest.
 ---
 
 # Inspect
@@ -9,7 +9,7 @@ Use `nong inspect` for paper-level semantic, structural, evidence, reference, an
 
 ## Nong CLI Preflight
 
-Read [../../.claude/references/nong-cli-preflight.md](../../.claude/references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and the needed command group.
+Read [../references/nong-cli-preflight.md](../references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and the needed command group.
 ## Implemented Commands
 
 Current `nong commands --json` exposes these 11 implemented Inspect commands:
@@ -94,3 +94,12 @@ Use this minimal shape for `write-official`:
 Always use `--json` when the result will feed another tool or model decision. Treat `status: "error"` as failed.
 
 Reference and semantic outputs are rule-based writing and method diagnostics. Do not present them as external database verification, advisor review, or peer review. Use `nong lit` when the task requires OpenAlex/Crossref/Unpaywall metadata, DOI lookup, or reference export.
+
+## Template Discovery (nong genre)
+
+```powershell
+nong genre list [--json]              # List available writing templates
+nong genre show <name> [--json]       # Show template details
+```
+
+Templates include: life-sciences-contest, journal-paper, course-paper, degree-thesis. Use `nong inspect write-paper <spec.json> --template <name>` to draft from a template.

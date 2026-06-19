@@ -1,6 +1,6 @@
 ---
 name: diagram
-description: Scientific diagram CLI via nong. Trigger on flowchart, workflow diagram, process diagram, network graph, relationship graph, mechanism network, phylogenetic tree, or Newick rendering.
+description: Scientific diagram CLI via nong. Trigger on flowchart, network, tree diagrams (NOT statistical bar/pie/scatter charts — see chart skill). Flowchart,, workflow diagram, process diagram, network graph, relationship graph, mechanism network, phylogenetic tree, or Newick rendering.
 ---
 
 # Diagram
@@ -9,7 +9,7 @@ Use `nong` for implemented scientific diagram rendering. Nong.Toolkit.Net routes
 
 ## Nong CLI Preflight
 
-Read [../../.claude/references/nong-cli-preflight.md](../../.claude/references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and the `diagram` command group.
+Read [../references/nong-cli-preflight.md](../references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and the `diagram` command group.
 
 **Modular:** `nong diagram` routes to the standalone `Angri450.Nong.Tool.Diagram` dotnet tool. First use auto-installs. Command surface unchanged.
 ## Implemented Commands

@@ -9,7 +9,7 @@ Use `nong nongcli` for project-level workspace setup. Creates the `.nong/` works
 
 ## Nong CLI Preflight
 
-Read [../../.claude/references/nong-cli-preflight.md](../../.claude/references/nong-cli-preflight.md) before the first Nong CLI command.
+Read [../references/nong-cli-preflight.md](../references/nong-cli-preflight.md) before the first Nong CLI command.
 
 ## Implemented Commands
 
@@ -38,3 +38,29 @@ nong nongcli where
 - `install-embedding` downloads ~100MB ONNX model to the NongWorkplace cache
 - Semantic search (`nong search`) requires the embedding model to be installed
 - The workspace persists across sessions at `%USERPROFILE%/Documents/workplace` (or configured alternative)
+
+## NongDb Search (prerequisite: install-embedding)
+
+Once documents are ingested via `--ingest` on any dissect command, use `nong search` to run semantic (vector) search across document blocks.
+
+```powershell
+nong search <query> [--limit 5] [--format docx|pdf|xlsx|pptx] [--scores] [--json]
+```
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `<query>` | Search query text (positional, required) | — |
+| `--limit` | Max results (1-20) | 5 |
+| `--format` | Filter by document format | all |
+| `--scores` | Include similarity scores in output | false |
+| `--json` | Structured JSON output | false |
+
+### Ingest → Search pipeline
+```powershell
+nong word dissect paper.docx -o slice/ --ingest
+nong pdf dissect report.pdf -o slice/ --ingest
+nong nongcli install-embedding   # one-time setup
+nong search "banana ethylene postharvest" --limit 5 --scores --json
+```
+
+Search is semantic (vector similarity), not keyword-based — it finds conceptually related content. Results include block text, source document, page/slide/sheet location, and optional similarity scores.

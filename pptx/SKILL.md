@@ -1,6 +1,6 @@
 ---
 name: pptx
-description: PPTX inspection and creation via nong. Trigger on .pptx, PowerPoint slide text extraction, deck inspection, slide structure listing, PPTX-to-NongPandoc slice packages (dissect --ingest for semantic search), or PPTX creation from JSON spec.
+description: PPTX inspection and creation via nong. Trigger on .pptx, PowerPoint slide text extraction, deck inspection, slide structure listing, PPTX-to-NongPandoc slice packages (dissect --ingest), or PPTX creation from JSON spec.
 ---
 
 # PPTX
@@ -9,7 +9,7 @@ Use `nong` as the only Nong.Toolkit.Net entrypoint for PPTX work. Supports readi
 
 ## Nong CLI Preflight
 
-Read [../../.claude/references/nong-cli-preflight.md](../../.claude/references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and the `pptx` command group.
+Read [../references/nong-cli-preflight.md](../references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and the `pptx` command group.
 
 **Modular:** `nong pptx` routes to the standalone `Angri450.Nong.Tool.Pptx` dotnet tool. First use auto-installs. v6 added slide editing: edit-slide, remove-slide, move-slide.
 ## Implemented Commands

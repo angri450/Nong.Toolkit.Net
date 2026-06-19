@@ -11,7 +11,7 @@ Schema-valid is not visual-quality complete. Cite format evidence from slice art
 
 ## Nong CLI Preflight
 
-Read [../../.claude/references/nong-cli-preflight.md](../../.claude/references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and the `word` command group.
+Read [../references/nong-cli-preflight.md](../references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and the `word` command group.
 
 **Image analysis routing:** `nong word images --analyze`, `--crop`, and `nong word crop` route to the standalone `Angri450.Nong.Tool.Imaging` dotnet tool. First use auto-installs. Other word commands run inline in the main CLI.
 

@@ -11,7 +11,7 @@ NongMark is the authoritative source format for document creation. Markdown is a
 
 ## Nong CLI Preflight
 
-Read [../../.claude/references/nong-cli-preflight.md](../../.claude/references/nong-cli-preflight.md) before the first Nong CLI command.
+Read [../references/nong-cli-preflight.md](../references/nong-cli-preflight.md) before the first Nong CLI command.
 
 ## Implemented Commands
 

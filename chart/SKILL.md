@@ -1,6 +1,6 @@
 ---
 name: chart
-description: Agricultural statistics and chart CLI via nong. Trigger on ANOVA, Duncan MRT, 鏂瑰樊鍒嗘瀽, 鏄捐憲鎬? treatment groups, error bars, bar charts, line charts, scatter plots, pie charts, box plots, histograms, heatmaps, or radar charts.
+description: Agricultural statistics and chart CLI via nong. Trigger on agricultural statistics and charting (NOT flowcharts or network graphs — see diagram skill). ANOVA, Duncan MRT,, Duncan MRT, 鏂瑰樊鍒嗘瀽, 鏄捐憲鎬? treatment groups, error bars, bar charts, line charts, scatter plots, pie charts, box plots, histograms, heatmaps, or radar charts.
 ---
 
 # Chart
@@ -9,7 +9,7 @@ Use `nong` for statistical analysis and implemented figure generation. Nong.Tool
 
 ## Nong CLI Preflight
 
-Read [../../.claude/references/nong-cli-preflight.md](../../.claude/references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and the `chart` command group.
+Read [../references/nong-cli-preflight.md](../references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and the `chart` command group.
 
 **Modular:** `nong chart` routes to the standalone `Angri450.Nong.Tool.Chart` dotnet tool. First use auto-installs via `dotnet tool install --global`. Command surface unchanged.
 ## Implemented Commands

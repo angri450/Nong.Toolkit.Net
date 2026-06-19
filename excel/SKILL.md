@@ -1,6 +1,6 @@
 ---
 name: excel
-description: Excel CLI operations via nong. Trigger on .xlsx, worksheet listing, table reading, grouped extraction, experiment workbook restructuring, workbook creation, cell styling, formula writing, pivot tables, dissect --ingest for semantic search, or converting treatment/value columns into grouped JSON for statistics.
+description: Excel CLI operations via nong. Trigger on .xlsx, worksheet listing, table reading, grouped extraction, experiment workbook restructuring, workbook creation, cell styling, formula writing, pivot tables, or converting treatment/value columns into grouped JSON for statistics.
 ---
 
 # Excel
@@ -9,7 +9,7 @@ Use `nong` for deterministic Excel reads, workbook creation, experiment workbook
 
 ## Nong CLI Preflight
 
-Read [../../.claude/references/nong-cli-preflight.md](../../.claude/references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and that the `excel` group is available.
+Read [../references/nong-cli-preflight.md](../references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and that the `excel` group is available.
 
 ## Implemented Commands
 

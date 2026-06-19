@@ -1,6 +1,6 @@
 ---
 name: metaso
-description: Metaso search workflows through nong metaso. Trigger on citation-backed web or scholar search, page reader/fetch, or Metaso RAG chat requests where the user wants API-backed search rather than ad hoc browsing. Use --ingest to save results into nong.db for nong search.
+description: Metaso search workflows through nong metaso. Trigger on Metaso citation-backed web/scholar search, page reading (NOT AMiner profiling or local literature cache), page reader/fetch, or Metaso RAG chat requests where the user wants API-backed search rather than ad hoc browsing. Use --ingest to save results into nong.db for nong search.
 ---
 
 # Metaso
@@ -9,7 +9,7 @@ Use `nong metaso` when the task needs Metaso's remote search API, page reader, o
 
 ## Nong CLI Preflight
 
-Read [../../.claude/references/nong-cli-preflight.md](../../.claude/references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and that the `metaso` group is available.
+Read [../references/nong-cli-preflight.md](../references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and that the `metaso` group is available.
 
 ## Implemented Commands
 
