@@ -11,6 +11,6 @@
   ],
   "description": "Agricultural paper inspection through nong inspect — diagnose, classify, structure, refs, evidence, data-req, gap, semantics, write-paper, write-official, official-check",
   "license": "Apache-2.0",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "name": "inspect"
 }

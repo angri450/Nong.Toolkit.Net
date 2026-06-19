@@ -43,7 +43,7 @@ nong ocr install-model pp-ocrv6-medium --dry-run --json
 nong ocr install-model pp-ocrv5-mobile --dry-run --json
 ```
 
-This reports the deployment plan. For v6, models are downloaded from PaddleOCR CDN (PIR format). For v5, Nong bundles the managed PP-OCRv5 model metadata; `install-model` deploys the current platform `Angri450.Nong.OcrRuntime.*` native runtime bundle into the Nong runtime cache from the Huawei NuGet source or a local NuGet cache. Runtime package versions track the CLI version; for Nong 4.0.0, expect `Angri450.Nong.OcrRuntime.*` 4.0.0. Upstream Sdcb/OpenCvSharp fallback is disabled by default and requires explicit `--allow-upstream-fallback`.
+This reports the deployment plan. For v6, models are downloaded from PaddleOCR CDN (PIR format). For v5, Nong bundles the managed PP-OCRv5 model metadata; `install-model` deploys the current platform `Angri450.Nong.OcrRuntime.*` native runtime bundle into the Nong runtime cache from the Huawei NuGet source or a local NuGet cache. Runtime package versions track the CLI version; for Nong 12.1.0, expect `Angri450.Nong.OcrRuntime.*` 12.1.0.
 
 Preferred install commands:
 

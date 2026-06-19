@@ -11,6 +11,6 @@
   ],
   "description": "Metaso search workflows through nong metaso — search, reader, and citation-backed RAG chat",
   "license": "Apache-2.0",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "name": "metaso"
 }

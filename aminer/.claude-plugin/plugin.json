@@ -11,6 +11,6 @@
   ],
   "description": "AMiner research API through nong aminer — scholar, paper, patent, org, venue, recommendation, and paid detail analytics",
   "license": "Apache-2.0",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "name": "aminer"
 }

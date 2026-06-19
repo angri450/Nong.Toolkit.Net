@@ -11,6 +11,6 @@
   ],
   "description": "Literature retrieval through nong lit — parse, validate, plan, search, cache-import/query/stats/export, Word template fill, with OpenAlex/Crossref/Unpaywall",
   "license": "Apache-2.0",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "name": "literature"
 }
