@@ -13,7 +13,7 @@ Read [../../.claude/references/nong-cli-preflight.md](../../.claude/references/n
 
 ## Implemented Commands
 
-Current `nong commands --json` exposes these 9 implemented Excel commands:
+Current `nong commands --json` exposes these 11 Excel commands:
 
 ```powershell
 nong excel sheets <file.xlsx> [--json]
@@ -25,6 +25,8 @@ nong excel dissect <file.xlsx> -o <slice-dir> --ingest [--json]
 nong excel style <file.xlsx> <spec.json> -o <out.xlsx> [--json]
 nong excel formula <file.xlsx> <spec.json> -o <out.xlsx> [--json]
 nong excel pivot <file.xlsx> <spec.json> -o <out.xlsx> [--json]
+nong excel chart <file.xlsx> <spec.json> -o <out.xlsx> [--json]     # v9: bar/line/pie/scatter
+nong excel evaluate <file.xlsx> [--sheet S] [--range A1:A10] [--json]  # v9: formula evaluation
 ```
 
 ## Dispatch

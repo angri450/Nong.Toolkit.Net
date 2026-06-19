@@ -29,7 +29,9 @@ nong word dissect document.docx --output document.slice --json
 
 ```powershell
 nong word check <file.docx> --json                      # preflight
-nong word convert <file.doc> -o <file.docx> --json       # .doc boundary
+	nong word convert <file.doc> -o <file.docx> --json       # .doc boundary (no external dependency — .doc gives guidance)
+	nong word tab-stops <file.docx> [--paragraph <id>] [--set <spec>] [--json]  # paragraph tab stops (v5)
+	nong word fields <file.docx> --json                     # list field codes + cached results (v5)
 nong word dissect <file.docx> --output <slice> --json    # full slice
 nong word db-import <slice> <file.docx> --json           # unify slice into nong.db
 nong word db-list --json

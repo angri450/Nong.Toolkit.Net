@@ -20,9 +20,8 @@ Claude Code skill 编排层。维护 Nong 家族的 Skills + Agent 编排文档�
 
 - 版本线: 与 Nong.Cli.Net 主版本同步（当前适配 12.1.0）
 - Skill 同步状态: 已同步到 12.1.0 实际命令面 (332 commands)
-- 当前技能数: 18（word / excel / pptx / pdf / chart / diagram / ocr / literature / aminer / metaso / inspect / genre / icons / slice + 4 skill-* lifecycle）
-- Skills 缺口: export / markdown / nongcli / search 命令组在 Cli.Net 中已实现（v12.1.0 / 332 commands），Toolkit.Net 尚未建立对应 skill 目录
-- 本次更新: v4.5.0→v12.1.0 全线贯通
+- 当前技能数: 22（word / excel / pptx / pdf / chart / diagram / ocr / literature / aminer / metaso / inspect / genre / icons / slice / export / markdown / nongcli / search + 4 skill-* lifecycle）
+- 本次更新: v4.5.0→v12.1.0 全线贯通，新增 4 个 skill 目录（export/markdown/nongcli/search），word/excel/pptx/pdf SKILL.md 同步到 v12.1.0 命令面
 - 仓库地址: `https://github.com/angri450/Nong.Toolkit.Net`
 
 ## 项目特有约束
@@ -52,7 +51,10 @@ Nong.Toolkit.Net/
   genre/                    ← 文档模板 skill
   icons/                    ← 科学图标 skill
   slice/                    ← Pandoc 切片 skill
-  slice/                    ← Pandoc 切片 skill
+  export/                   ← EPUB / LaTeX / HTML / ODF 导出 skill
+  markdown/                 ← Markdown ↔ NongMark 双向转换 skill
+  nongcli/                  ← 工作区管理 skill
+  search/                   ← 语义搜索 skill
   skill-grader/             ← Skill 生命周期门控
   skill-breeder/            ← Skill 创作指南
   skill-tester/             ← Skill 质量测试

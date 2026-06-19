@@ -122,6 +122,10 @@ nong pdf merge <file1.pdf> <file2.pdf> ... -o <merged.pdf> --json
 nong pdf split <file.pdf> -o <split.pdf> --pages <range> --json
 nong pdf ocr <scan.pdf> -o <output.pdf> --dpi 200 --json
 nong pdf compress <file.pdf> -o <compressed.pdf> --json
+nong pdf create <spec.json> -o <out.pdf> --json                      # v7: PDF generation
+nong pdf form-fields <file.pdf> --json                                # v7: AcroForm field listing (read-only)
+nong pdf metadata <file.pdf> --json                                   # v7: info dict (Title/Author/Subject)
+nong pdf annotations <file.pdf> --json                                # v7: annotation listing
 nong pdf db-import <slice-dir> <file.pdf> --json
 nong pdf db-list --json
 nong pdf db-blocks <document-id> --type paragraph --limit 20 --json

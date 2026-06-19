@@ -11,7 +11,7 @@ Use `nong` as the only Nong.Toolkit.Net entrypoint for PPTX work. Supports readi
 
 Read [../../.claude/references/nong-cli-preflight.md](../../.claude/references/nong-cli-preflight.md) before the first Nong CLI command in a session. Confirm the `nong` CLI is installed and the `pptx` command group.
 
-**Modular:** `nong pptx` routes to the standalone `Angri450.Nong.Tool.Pptx` dotnet tool. First use auto-installs. Command surface unchanged.
+**Modular:** `nong pptx` routes to the standalone `Angri450.Nong.Tool.Pptx` dotnet tool. First use auto-installs. v6 added slide editing: edit-slide, remove-slide, move-slide.
 ## Implemented Commands
 
 Use only these PPTX commands:
@@ -21,6 +21,9 @@ nong pptx read <deck.pptx> --json
 nong pptx slides <deck.pptx> --json
 nong pptx dissect <deck.pptx> -o <slice-dir> --ingest --json
 nong pptx create <spec.json> -o <out.pptx> --json
+nong pptx edit-slide <deck.pptx> --index <N> [--replace-text "old|new"] [--json]
+nong pptx remove-slide <deck.pptx> --index <N> [--json]
+nong pptx move-slide <deck.pptx> --from <N> --to <M> [--json]
 ```
 
 ## Dispatch
