@@ -1,6 +1,6 @@
 # Nong.Toolkit.Net
 
-Nong.Toolkit.Net is a Claude Code multi-plugin marketplace for agricultural paper and document workflows. 19 plugins — one full bundle plus 18 individual skills. Install only what you need.
+Nong.Toolkit.Net is a Claude Code multi-plugin marketplace for agricultural paper and document workflows. 18 plugins — one full bundle plus 17 individual skills. Install only what you need.
 
 Deterministic document and literature work is routed through the pure .NET `nong` CLI from [Nong.Cli.Net](https://github.com/angri450/Nong.Cli.Net); the model handles planning, interpretation, and writing.
 

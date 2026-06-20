@@ -1,6 +1,6 @@
 # Nong.Toolkit.Net
 
-Nong.Toolkit.Net 是一个 Claude Code 多 plugin marketplace，面向农学论文和文档工作流。19 个 plugin——1 个全量包 + 18 个独立 skill，按需安装。
+Nong.Toolkit.Net 是一个 Claude Code 多 plugin marketplace，面向农学论文和文档工作流。18 个 plugin——1 个全量包 + 17 个独立 skill，按需安装。
 
 确定性的文档和文献处理统一交给纯 .NET `nong` CLI（来自 [Nong.Cli.Net](https://github.com/angri450/Nong.Cli.Net)）；模型负责判断流程、解释结果和写作。
 
